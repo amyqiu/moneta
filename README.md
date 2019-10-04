@@ -1,3 +1,5 @@
 # moneta
 
-# test
+## Setup Instructions for Server
+Run `npm install` 
+
