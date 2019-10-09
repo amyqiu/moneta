@@ -20,7 +20,7 @@
   "homepage": "https://github.com/amyqiu/moneta#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "cd client && npm run lint"
+      "pre-commit": "cd client && npm run lint && npm run flow"
     }
   }
 }
