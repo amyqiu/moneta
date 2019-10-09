@@ -1,9 +1,20 @@
-import React from "react";
-import { StyleSheet, View, TextInput } from "react-native";
-import { Card, Button, Icon, Text, Header, Input } from "react-native-elements";
+// @flow
+import * as React from "react";
+import { View, TextInput } from "react-native";
+import { Card, Text, Header } from "react-native-elements";
 
-export default class NewEntryPage extends React.Component {
-  constructor(props) {
+type Props = {};
+
+type State = {
+  behaviours: Set<string>,
+  locations: Set<string>,
+  context: Set<string>,
+  comments: string,
+  time: Date
+};
+
+export default class NewEntryPage extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       behaviours: new Set(),
@@ -15,6 +26,8 @@ export default class NewEntryPage extends React.Component {
   }
 
   render() {
+    const { comments } = this.state;
+
     return (
       <View>
         <Header
@@ -25,7 +38,10 @@ export default class NewEntryPage extends React.Component {
             type: "feather",
             color: "#fff"
           }}
-          centerComponent={{ text: "New Entry", style: { color: "#fff" } }}
+          centerComponent={{
+            text: "New Entry",
+            style: { color: "#fff" }
+          }}
         />
         <Card>
           <Text h4>Behaviours Observed</Text>
@@ -44,9 +60,9 @@ export default class NewEntryPage extends React.Component {
             borderColor: "#d3d3d3",
             borderWidth: 1
           }}
-          onChangeText={comments => this.setState({ comments })}
-          value={this.state.comments}
-          multiline={true}
+          onChangeText={value => this.setState({ comments: value })}
+          value={comments}
+          multiline
           height={100}
         />
       </View>
