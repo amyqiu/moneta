@@ -2,6 +2,7 @@
 import * as React from "react";
 import { View, TextInput } from "react-native";
 import { Card, Text, Header } from "react-native-elements";
+import BehaviourCheckbox from "./BehaviourCheckbox";
 
 type Props = {};
 
@@ -29,7 +30,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     const { comments } = this.state;
 
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <Header
           backgroundColor="#808080"
           placement="left"
@@ -45,6 +46,10 @@ export default class NewEntryPage extends React.Component<Props, State> {
         />
         <Card>
           <Text h4>Behaviours Observed</Text>
+          <BehaviourCheckbox
+            label="Sleeping in Bed"
+            subBehaviours={["test", "test2"]}
+          />
         </Card>
         <Card>
           <Text h4>Location</Text>
