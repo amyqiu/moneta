@@ -9,6 +9,9 @@ See https://facebook.github.io/react-native/docs/getting-started
 ### For Atom
  * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
  * Also install `flow-ide` for automatic type checking
+ 
+### Components
+ * Using React Native Elements library: https://react-native-elements.github.io/react-native-elements/
 
 ### Notes
   * May need to run `sudo npm install -g expo-cli`
