@@ -7,8 +7,8 @@ Run `npm install`
 See https://facebook.github.io/react-native/docs/getting-started
 
 ### For Atom
- * install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
- * also install `flow-ide` for automatic type checking
+ * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
+ * Also install `flow-ide` for automatic type checking
 
 ### Notes
   * May need to run `sudo npm install -g expo-cli`
