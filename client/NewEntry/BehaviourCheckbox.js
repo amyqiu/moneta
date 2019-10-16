@@ -66,7 +66,7 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
           checked={checked}
           onPress={this.handleBehaviourChecked}
           containerStyle={{
-            backgroundColor: "#fff",
+            backgroundColor: "#ffffff",
             borderWidth: 0,
             padding: 4
           }}
@@ -101,7 +101,7 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
                   checked={checkedSubBehaviours.has(subBehaviour)}
                   onPress={() => this.handleSubBehaviourChecked(subBehaviour)}
                   containerStyle={{
-                    backgroundColor: "#fff",
+                    backgroundColor: "#ffffff",
                     borderWidth: 0,
                     padding: 0
                   }}
@@ -112,8 +112,8 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
                   iconType="feather"
                   checkedIcon="check-square"
                   uncheckedIcon="square"
-                  checkedColor="black"
-                  uncheckedColor="black"
+                  checkedColor="#525252"
+                  uncheckedColor="#525252"
                 />
               </View>
             ))}
