@@ -2,7 +2,9 @@
 
 ## Setup Instructions for Firebase (functions)
 Run `npm install`
+
 To deploy the server, run `firebase deploy`
+
 address to reach out to the real-time database is: https://moneta-cd128.firebaseio.com/entries
 
 ### Notes
