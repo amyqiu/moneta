@@ -6,7 +6,9 @@ import {
   ScrollView,
   KeyboardAvoidingView
 } from "react-native";
-import { Card, Text, Header, CheckBox } from "react-native-elements";
+import { Card, Text, Header, CheckBox, Button } from "react-native-elements";
+import DateTimePicker from "react-native-modal-datetime-picker";
+import { format } from "date-fns";
 import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
 import CONTEXTS from "./Contexts";
@@ -19,7 +21,8 @@ type State = {
   checkedLocations: Set<string>,
   checkedContexts: Set<string>,
   comments: string,
-  time: Date
+  date: Date,
+  showDatePicker: boolean
 };
 
 export default class NewEntryPage extends React.Component<Props, State> {
@@ -30,7 +33,8 @@ export default class NewEntryPage extends React.Component<Props, State> {
       checkedLocations: new Set(),
       checkedContexts: new Set(),
       comments: "",
-      time: new Date()
+      date: new Date(),
+      showDatePicker: false
     };
   }
 
@@ -74,9 +78,41 @@ export default class NewEntryPage extends React.Component<Props, State> {
     this.setState({ checkedContexts });
   };
 
-  render() {
-    const { comments, checkedLocations, checkedContexts } = this.state;
+  handleSetDate = (inputDate: Date) => {
+    const { date } = this.state;
+    const newDate = inputDate || date;
 
+    this.setState({
+      showDatePicker: false,
+      date: newDate
+    });
+  };
+
+  handleOpenDatePicker = () => {
+    this.setState({
+      showDatePicker: true
+    });
+  };
+
+  handleCloseDatePicker = () => {
+    this.setState({
+      showDatePicker: false
+    });
+  };
+
+  handleSubmit = () => {
+    // TODO: fill this out
+  };
+
+  render() {
+    const {
+      comments,
+      checkedLocations,
+      checkedContexts,
+      showDatePicker,
+      date
+    } = this.state;
+    const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
     return (
       <KeyboardAvoidingView behavior="position">
         <ScrollView>
@@ -185,11 +221,60 @@ export default class NewEntryPage extends React.Component<Props, State> {
                 />
               </View>
             </Card>
+            <Card containerStyle={{ borderRadius: 4 }}>
+              <View>
+                <Text h4 style={{ paddingBottom: 4 }}>
+                  Timestamp
+                </Text>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ fontSize: 16, paddingBottom: 4 }}>
+                    {formattedDate}
+                  </Text>
+                  <Button
+                    onPress={this.handleOpenDatePicker}
+                    title="Edit Timestamp"
+                    buttonStyle={{ backgroundColor: "#393939" }}
+                    titleProps={{
+                      style: { color: "#ffffff", fontWeight: "normal" }
+                    }}
+                  />
+                </View>
+                <DateTimePicker
+                  isVisible={showDatePicker}
+                  onConfirm={this.handleSetDate}
+                  onCancel={this.handleCloseDatePicker}
+                  mode="datetime"
+                  is24Hour={false}
+                />
+              </View>
+            </Card>
+            <View
+              style={{
+                paddingTop: 16,
+                paddingRight: 16,
+                alignItems: "flex-end"
+              }}
+            >
+              <Button
+                onPress={this.handleSubmit}
+                title="Submit"
+                buttonStyle={{
+                  backgroundColor: "#393939",
+                  paddingVertical: 8,
+                  paddingHorizontal: 16
+                }}
+                titleProps={{
+                  style: {
+                    color: "#ffffff",
+                    fontWeight: "normal",
+                    fontSize: 18
+                  }
+                }}
+              />
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-
-      // TODO: Make time selector and submit button
     );
   }
 }
