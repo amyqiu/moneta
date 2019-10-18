@@ -6,15 +6,16 @@ import {
   ScrollView,
   KeyboardAvoidingView
 } from "react-native";
-import { Card, Text, Header, CheckBox, Button } from "react-native-elements";
+import { Card, Text, CheckBox, Button } from "react-native-elements";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { NavigationScreenProps } from "react-navigation";
 import { format } from "date-fns";
 import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
 import CONTEXTS from "./Contexts";
 import LOCATIONS from "./Locations";
 
-type Props = {};
+type Props = NavigationScreenProps & {};
 
 type State = {
   checkedBehaviours: Map<string, Set<string>>,
@@ -102,6 +103,53 @@ export default class NewEntryPage extends React.Component<Props, State> {
 
   handleSubmit = () => {
     // TODO: fill this out
+    const {
+      checkedBehaviours,
+      checkedLocations,
+      checkedContexts,
+      comments,
+      date
+    } = this.state;
+    const { navigation } = this.props;
+    fetch("https://moneta-cd128.firebaseio.com/entries", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        checkedBehaviours,
+        checkedLocations,
+        checkedContexts,
+        comments,
+        date,
+        patientID: navigation.getParam("patientID", "NO-ID")
+      })
+    });
+    // .then(response => {
+    //   console.log("param:", navigation.getParam("patientID", "NO-ID"));
+    //   console.log("response");
+    //   console.log(response);
+    //   if (response.ok) {
+    //     console.log("success");
+    //     navigation.navigate("Patient");
+    //   }
+    // })
+    // .catch(error => {
+    //   console.log("erorr");
+    //   console.error(error);
+    // });
+  };
+
+  static navigationOptions = {
+    title: "New Entry",
+    headerStyle: {
+      backgroundColor: "#393939"
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "normal"
+    }
   };
 
   render() {
@@ -113,25 +161,13 @@ export default class NewEntryPage extends React.Component<Props, State> {
       date
     } = this.state;
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
+
     return (
       <KeyboardAvoidingView behavior="position">
         <ScrollView>
           <View
             style={{ flex: 1, backgroundColor: "#f4f4f4", paddingBottom: 16 }}
           >
-            <Header
-              backgroundColor="#393939"
-              placement="left"
-              leftComponent={{
-                icon: "arrow-left",
-                type: "feather",
-                color: "#ffffff"
-              }}
-              centerComponent={{
-                text: "New Entry",
-                style: { color: "#ffffff", fontSize: 18 }
-              }}
-            />
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Behaviours Observed</Text>
