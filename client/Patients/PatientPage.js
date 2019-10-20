@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Button, Card, Text, Avatar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import { format } from "date-fns";
+import styles from "./style";
 
 type Props = NavigationScreenProps & {};
 
@@ -46,7 +47,7 @@ export default class PatientPage extends React.Component<Props, State> {
     const formattedDate = this.getNextEntry();
 
     return (
-      <View style={{ flex: 1, backgroundColor: "#f4f4f4", paddingBottom: 16 }}>
+      <View style={styles.background}>
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
             <Text h3 style={{ paddingBottom: 4 }}>
@@ -78,11 +79,8 @@ export default class PatientPage extends React.Component<Props, State> {
                 <Button
                   onPress={this.handleNewEntry}
                   title="+ Add Entry"
-                  buttonStyle={{
-                    backgroundColor: "#393939",
-                    paddingVertical: 8,
-                    paddingHorizontal: 16
-                  }}
+                  buttonStyle={styles.smallButton}
+                  containerStyle={styles.buttonContainer}
                   titleProps={{
                     style: {
                       color: "#ffffff",
@@ -90,7 +88,6 @@ export default class PatientPage extends React.Component<Props, State> {
                       fontSize: 18
                     }
                   }}
-                  containerStyle={{ paddingTop: 8 }}
                 />
               </View>
             </View>
