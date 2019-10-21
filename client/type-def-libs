@@ -5,3 +5,19 @@ declare module 'react-native' {
 declare module 'react-native-elements' {
   declare module.exports: any
 }
+
+declare module 'react-native-modal-datetime-picker' {
+  declare module.exports: any
+}
+
+declare module 'date-fns' {
+  declare module.exports: any
+}
+
+declare module 'react-navigation' {
+  declare module.exports: any
+}
+
+declare module 'react-navigation-stack' {
+  declare module.exports: any
+}
