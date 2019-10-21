@@ -3,12 +3,8 @@
 ## Setup Instructions for Firebase (functions)
 Run `npm install`
 
-To deploy the server, run `firebase deploy`
-
-address to reach out to the real-time database is: https://moneta-cd128.firebaseio.com/entries
-
-### Notes
-* May need to run `firebase login` (and use the group gmail account)
+* To run server: `node app.js`
+* To test connection: http://localhost:1234/patients/test
 
 ## Setup Instructions for Client
 See https://facebook.github.io/react-native/docs/getting-started
@@ -16,7 +12,7 @@ See https://facebook.github.io/react-native/docs/getting-started
 ### For Atom
  * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
  * Also install `flow-ide` for automatic type checking
- 
+
 ### Components
  * Using React Native Elements library: https://react-native-elements.github.io/react-native-elements/
 

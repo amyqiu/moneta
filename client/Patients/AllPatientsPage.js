@@ -7,7 +7,7 @@ import styles from "./style";
 
 type Props = NavigationScreenProps & {};
 
-type State = { String: string };
+type State = { search: string };
 
 type Patient = {
   name: string,
@@ -26,6 +26,16 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
   updateSearch = (search: string) => {
     this.setState({ search });
+  };
+
+  navigateEntry = () => {
+    const { navigation, patient } = this.props;
+    navigation.navigate("NewEntry", { patientID: patient.id });
+  };
+
+  navigatePatient = () => {
+    const { navigation, patient } = this.props;
+    navigation.navigate("Patient", { patientID: patient.id });
   };
 
   static navigationOptions = {
@@ -54,7 +64,6 @@ export default class AllPatientsPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation } = this.props;
     const { search } = this.state;
     // replace this with loaded data
     const patients: Array<Patient> = [];
@@ -110,8 +119,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
                   <Button
                     buttonStyle={styles.smallButton}
                     containerStyle={styles.buttonContainer}
-                    onPress={() =>
-                      navigation.navigate("NewEntry", { patientID: patient.id })}
+                    onPress={this.navigateEntry}
                     title="+ Add Entry"
                     titleProps={{
                       style: {
@@ -124,8 +132,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
                   <Button
                     buttonStyle={styles.smallButton}
                     containerStyle={styles.buttonContainer}
-                    onPress={() =>
-                      navigation.navigate("Patient", { patientID: patient.id })}
+                    onPress={this.navigatePatient}
                     title="Overview"
                     titleProps={{
                       style: {
