@@ -1,6 +1,6 @@
 # moneta
 
-## Setup Instructions for Firebase (functions)
+## Setup Instructions for Server
 Run `npm install`
 
 * To run server: `node app.js`
