@@ -21,6 +21,13 @@ exports.patient_create = function (req, res) {
     })
 };
 
+exports.patient_find_all = function (req, res) {
+    Patient.find(function (err, patients) {
+        if (err) return next(err);
+        res.send(patients);
+    })
+}
+
 exports.patient_details = function (req, res) {
     Patient.findById(req.params.id, function (err, patient) {
         if (err) return next(err);
