@@ -14,6 +14,9 @@ import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
 import CONTEXTS from "./Contexts";
 import LOCATIONS from "./Locations";
+import styles from "./NewEntryStyles";
+import navigationStyles from "../NavigationStyles";
+import colours from "../Colours";
 
 type Props = NavigationScreenProps & {};
 
@@ -142,14 +145,8 @@ export default class NewEntryPage extends React.Component<Props, State> {
   };
 
   static navigationOptions = {
-    title: "New Entry",
-    headerStyle: {
-      backgroundColor: "#393939"
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "normal"
-    }
+    ...navigationStyles,
+    title: "New Entry"
   };
 
   render() {
@@ -165,9 +162,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     return (
       <KeyboardAvoidingView behavior="position">
         <ScrollView>
-          <View
-            style={{ flex: 1, backgroundColor: "#f4f4f4", paddingBottom: 16 }}
-          >
+          <View style={styles.background}>
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Behaviours Observed</Text>
@@ -191,20 +186,13 @@ export default class NewEntryPage extends React.Component<Props, State> {
                     key={location}
                     checked={checkedLocations.has(location)}
                     onPress={() => this.handleLocationChecked(location)}
-                    containerStyle={{
-                      backgroundColor: "#ffffff",
-                      borderWidth: 0,
-                      padding: 0
-                    }}
-                    textStyle={{
-                      fontSize: 16,
-                      fontWeight: "normal"
-                    }}
+                    containerStyle={styles.checkBoxContainer}
+                    textStyle={styles.checkBoxLabel}
                     iconType="feather"
                     checkedIcon="check-square"
                     uncheckedIcon="square"
-                    checkedColor="#525252"
-                    uncheckedColor="#525252"
+                    checkedColor={colours.primaryGrey}
+                    uncheckedColor={colours.primaryGrey}
                   />
                 ))}
               </View>
@@ -218,20 +206,13 @@ export default class NewEntryPage extends React.Component<Props, State> {
                     key={context}
                     checked={checkedContexts.has(context)}
                     onPress={() => this.handleContextChecked(context)}
-                    containerStyle={{
-                      backgroundColor: "#ffffff",
-                      borderWidth: 0,
-                      padding: 0
-                    }}
-                    textStyle={{
-                      fontSize: 16,
-                      fontWeight: "normal"
-                    }}
+                    containerStyle={styles.checkBoxContainer}
+                    textStyle={styles.checkBoxLabel}
                     iconType="feather"
                     checkedIcon="check-square"
                     uncheckedIcon="square"
-                    checkedColor="#525252"
-                    uncheckedColor="#525252"
+                    checkedColor={colours.primaryGrey}
+                    uncheckedColor={colours.primaryGrey}
                   />
                 ))}
               </View>
@@ -240,16 +221,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
               <View>
                 <Text h4>Comments</Text>
                 <TextInput
-                  style={{
-                    margin: 4,
-                    padding: 8,
-                    height: 64,
-                    borderColor: "#393939",
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    backgroundColor: "#ffffff",
-                    textAlignVertical: "top"
-                  }}
+                  style={styles.comments}
                   onChangeText={value => this.setState({ comments: value })}
                   value={comments}
                   multiline
@@ -263,16 +235,12 @@ export default class NewEntryPage extends React.Component<Props, State> {
                   Timestamp
                 </Text>
                 <View style={{ alignItems: "center" }}>
-                  <Text style={{ fontSize: 16, paddingBottom: 4 }}>
-                    {formattedDate}
-                  </Text>
+                  <Text style={styles.date}>{formattedDate}</Text>
                   <Button
                     onPress={this.handleOpenDatePicker}
                     title="Edit Timestamp"
-                    buttonStyle={{ backgroundColor: "#393939" }}
-                    titleProps={{
-                      style: { color: "#ffffff", fontWeight: "normal" }
-                    }}
+                    buttonStyle={{ backgroundColor: colours.primaryGrey }}
+                    titleProps={{ style: styles.datePickerTitle }}
                   />
                 </View>
                 <DateTimePicker
@@ -284,28 +252,12 @@ export default class NewEntryPage extends React.Component<Props, State> {
                 />
               </View>
             </Card>
-            <View
-              style={{
-                paddingTop: 16,
-                paddingRight: 16,
-                alignItems: "flex-end"
-              }}
-            >
+            <View style={styles.submitContainer}>
               <Button
                 onPress={this.handleSubmit}
                 title="Submit"
-                buttonStyle={{
-                  backgroundColor: "#393939",
-                  paddingVertical: 8,
-                  paddingHorizontal: 16
-                }}
-                titleProps={{
-                  style: {
-                    color: "#ffffff",
-                    fontWeight: "normal",
-                    fontSize: 18
-                  }
-                }}
+                buttonStyle={styles.submitButton}
+                titleProps={{ style: styles.submitButtonTitle }}
               />
             </View>
           </View>
