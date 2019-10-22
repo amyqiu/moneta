@@ -2,6 +2,8 @@
 import React from "react";
 import { CheckBox } from "react-native-elements";
 import { View } from "react-native";
+import styles from "./NewEntryStyles";
+import colours from "../Colours";
 
 type Props = {
   label: string,
@@ -65,15 +67,8 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
           title={label}
           checked={checked}
           onPress={this.handleBehaviourChecked}
-          containerStyle={{
-            backgroundColor: "#ffffff",
-            borderWidth: 0,
-            padding: 4
-          }}
-          textStyle={{
-            fontSize: 16,
-            fontWeight: "normal"
-          }}
+          containerStyle={styles.checkBoxContainer}
+          textStyle={styles.checkBoxLabel}
           iconType="feather"
           checkedIcon="check-square"
           uncheckedIcon="square"
@@ -81,39 +76,20 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
           uncheckedColor={color}
         />
         {subBehaviours.length >= 1 && checked ? (
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignItems: "flex-start",
-              paddingLeft: 12
-            }}
-          >
+          <View style={styles.checkBoxRow}>
             {subBehaviours.map(subBehaviour => (
-              <View
-                key={subBehaviour}
-                style={{
-                  width: "50%"
-                }}
-              >
+              <View key={subBehaviour} style={{ width: "50%" }}>
                 <CheckBox
                   title={subBehaviour}
                   checked={checkedSubBehaviours.has(subBehaviour)}
                   onPress={() => this.handleSubBehaviourChecked(subBehaviour)}
-                  containerStyle={{
-                    backgroundColor: "#ffffff",
-                    borderWidth: 0,
-                    padding: 0
-                  }}
-                  textStyle={{
-                    fontSize: 14,
-                    fontWeight: "normal"
-                  }}
+                  containerStyle={styles.checkBoxContainer}
+                  textStyle={styles.innerCheckboxText}
                   iconType="feather"
                   checkedIcon="check-square"
                   uncheckedIcon="square"
-                  checkedColor="#525252"
-                  uncheckedColor="#525252"
+                  checkedColor={colours.primaryGrey}
+                  uncheckedColor={colours.primaryGrey}
                 />
               </View>
             ))}

@@ -4,13 +4,24 @@ import { View } from "react-native";
 import { Button, Card, Text, Avatar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import { format } from "date-fns";
-import styles from "./style";
+import styles from "./PatientStyles";
+import navigationStyles from "../NavigationStyles";
 
 type Props = NavigationScreenProps & {};
 
-type State = {};
+// TODO: Show how many days since observation?
+type State = {
+  inObservation: boolean
+};
 
 export default class PatientPage extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      inObservation: true
+    };
+  }
+
   getNextEntry = () => {
     const time = 1000 * 60 * 30;
     const fifteen = 1000 * 60 * 15;
@@ -27,24 +38,39 @@ export default class PatientPage extends React.Component<Props, State> {
     navigation.navigate("NewEntry", { patientID });
   };
 
+  handleStartObservation = () => {
+    this.setState({ inObservation: true });
+    // TODO: Refresh page and submit to server
+  };
+
+  handleEndObservation = () => {
+    this.setState({ inObservation: false });
+    // TODO: Show summary screen? Refresh / submit
+  };
+
+  handleExport = () => {
+    // TODO: Navigate to export page
+  };
+
   static navigationOptions = {
-    title: "Patient Overview",
-    headerStyle: {
-      backgroundColor: "#393939"
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "normal"
-    }
+    ...navigationStyles,
+    title: "Patient Overview"
   };
 
   render() {
     const { navigation } = this.props;
+    const { inObservation } = this.state;
     const patientID = navigation.getParam("patientID", "NO-ID");
     const patientName = navigation.getParam("patientName", "Jane Doe");
     const patientRoom = "E5 6004";
 
     const formattedDate = this.getNextEntry();
+    const observationTitle = inObservation
+      ? "End Observation"
+      : "Start Observation";
+    const observationAction = inObservation
+      ? this.handleEndObservation
+      : this.handleStartObservation;
 
     return (
       <View style={styles.background}>
@@ -76,18 +102,28 @@ export default class PatientPage extends React.Component<Props, State> {
                   <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
                   {formattedDate}
                 </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Button
+                    onPress={this.handleNewEntry}
+                    title="+ Add Entry"
+                    buttonStyle={styles.smallButton}
+                    containerStyle={styles.buttonContainer}
+                    titleProps={{ style: styles.smallButtonTitle }}
+                  />
+                  <Button
+                    onPress={this.handleExport}
+                    title="Export"
+                    buttonStyle={styles.smallButton}
+                    containerStyle={styles.buttonContainer}
+                    titleProps={{ style: styles.smallButtonTitle }}
+                  />
+                </View>
                 <Button
-                  onPress={this.handleNewEntry}
-                  title="+ Add Entry"
+                  onPress={observationAction}
+                  title={observationTitle}
                   buttonStyle={styles.smallButton}
                   containerStyle={styles.buttonContainer}
-                  titleProps={{
-                    style: {
-                      color: "#ffffff",
-                      fontWeight: "normal",
-                      fontSize: 18
-                    }
-                  }}
+                  titleProps={{ style: styles.smallButtonTitle }}
                 />
               </View>
             </View>
@@ -97,6 +133,13 @@ export default class PatientPage extends React.Component<Props, State> {
           <View>
             <Text h3 style={{ paddingBottom: 4 }}>
               Recent Activity
+            </Text>
+          </View>
+        </Card>
+        <Card containerStyle={{ borderRadius: 4 }}>
+          <View>
+            <Text h3 style={{ paddingBottom: 4 }}>
+              Trends/Patterns
             </Text>
           </View>
         </Card>
