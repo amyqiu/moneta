@@ -3,7 +3,9 @@ import React from "react";
 import { View } from "react-native";
 import { Button, Card, Text, Avatar, SearchBar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
-import styles from "./style";
+import styles from "./PatientStyles";
+import navigationStyles from "../NavigationStyles";
+import colours from "../Colours";
 
 type Props = NavigationScreenProps & {};
 
@@ -16,6 +18,7 @@ type Patient = {
   imageUri: string,
   date: string
 };
+
 export default class AllPatientsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -28,36 +31,91 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     this.setState({ search });
   };
 
-  navigateEntry = () => {
-    const { navigation, patient } = this.props;
+  navigateEntry = (patient: Patient) => {
+    const { navigation } = this.props;
     navigation.navigate("NewEntry", { patientID: patient.id });
   };
 
-  navigatePatient = () => {
-    const { navigation, patient } = this.props;
+  navigatePatient = (patient: Patient) => {
+    const { navigation } = this.props;
     navigation.navigate("Patient", { patientID: patient.id });
   };
 
+  renderRows = (patients: Array<Patient>) => {
+    const { search } = this.state;
+    const patientBubbles = [];
+
+    patients.forEach(patient => {
+      if (search && !patient.name.includes(search)) {
+        return;
+      }
+      patientBubbles.push(
+        <Card key={patient.id} containerStyle={{ borderRadius: 4 }}>
+          <View>
+            <Text
+              h4
+              style={{ paddingBottom: 4 }}
+              onPress={() => this.navigatePatient(patient)}
+            >
+              {patient.name}
+            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <Avatar
+                size={100}
+                rounded
+                source={{ uri: patient.imageUri }}
+                containerStyle={{ marginRight: 16 }}
+                onPress={() => this.navigatePatient(patient)}
+              />
+              <View>
+                <Text>
+                  <Text style={{ fontWeight: "bold" }}>ID: </Text>
+                  {patient.id}
+                </Text>
+                <Text>
+                  <Text style={{ fontWeight: "bold" }}>Room #: </Text>
+                  {patient.room}
+                </Text>
+                <Text>
+                  <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
+                  {patient.date}
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Button
+                    buttonStyle={styles.smallButton}
+                    containerStyle={styles.buttonContainer}
+                    onPress={() => this.navigateEntry(patient)}
+                    title="+ Add Entry"
+                    titleProps={{ style: styles.smallButtonTitle }}
+                  />
+                  <Button
+                    buttonStyle={styles.smallButton}
+                    containerStyle={styles.buttonContainer}
+                    onPress={() => this.navigatePatient(patient)}
+                    title="Overview"
+                    titleProps={{ style: styles.smallButtonTitle }}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </Card>
+      );
+    });
+
+    return patientBubbles;
+  };
+
   static navigationOptions = {
+    ...navigationStyles,
     title: "Patients",
-    headerStyle: {
-      backgroundColor: "#393939"
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "normal"
-    },
     headerRight: (
       <Button
         buttonStyle={styles.headerButton}
         containerStyle={styles.headerContainer}
         title="+ Add Patient"
         titleProps={{
-          style: {
-            color: "#393939",
-            fontWeight: "normal",
-            fontSize: 14
-          }
+          style: styles.headerButtonTitle
         }}
       />
     )
@@ -84,72 +142,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       date: "14:30 Oct 19, 2019"
     });
 
-    const patientBubbles = [];
-    function createRows(patient: Patient) {
-      if (search && !patient.name.includes(search)) {
-        return;
-      }
-      patientBubbles.push(
-        <Card containerStyle={{ borderRadius: 4 }}>
-          <View>
-            <Text h4 style={{ paddingBottom: 4 }}>
-              {patient.name}
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                size={100}
-                rounded
-                source={{ uri: patient.imageUri }}
-                containerStyle={{ marginRight: 16 }}
-              />
-              <View>
-                <Text>
-                  <Text style={{ fontWeight: "bold" }}>ID: </Text>
-                  {patient.id}
-                </Text>
-                <Text>
-                  <Text style={{ fontWeight: "bold" }}>Room #: </Text>
-                  {patient.room}
-                </Text>
-                <Text>
-                  <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
-                  {patient.date}
-                </Text>
-                <View style={{ flexDirection: "row" }}>
-                  <Button
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    onPress={this.navigateEntry}
-                    title="+ Add Entry"
-                    titleProps={{
-                      style: {
-                        color: "#ffffff",
-                        fontWeight: "normal",
-                        fontSize: 14
-                      }
-                    }}
-                  />
-                  <Button
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    onPress={this.navigatePatient}
-                    title="Overview"
-                    titleProps={{
-                      style: {
-                        color: "#ffffff",
-                        fontWeight: "normal",
-                        fontSize: 14
-                      }
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </Card>
-      );
-    }
-    patients.forEach(createRows);
+    const patientRows = this.renderRows(patients);
 
     return (
       <View style={styles.background}>
@@ -158,14 +151,10 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           placeholder="Search..."
           onChangeText={this.updateSearch}
           value={search}
-          containerStyle={{ backgroundColor: "#393939" }}
-          inputStyle={{
-            color: "#393939",
-            fontWeight: "normal",
-            fontSize: 14
-          }}
+          containerStyle={{ backgroundColor: colours.primaryGrey }}
+          inputStyle={styles.searchInput}
         />
-        {patientBubbles}
+        {patientRows}
       </View>
     );
   }
