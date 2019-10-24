@@ -1,9 +1,12 @@
 // @flow
 import React from "react";
-import { View } from "react-native";
+import { View, ScrollView, Animated } from "react-native";
 import { Button, Card, Text, Avatar } from "react-native-elements";
+import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
+import CalendarPicker from "react-native-calendar-picker";
 import { format } from "date-fns";
+import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 
@@ -11,16 +14,32 @@ type Props = NavigationScreenProps & {};
 
 // TODO: Show how many days since observation?
 type State = {
-  inObservation: boolean
+  inObservation: boolean,
+  isExpandedRecentActivity: boolean,
+  selectedStartDate: Date,
+  animation: Number,
+  maxHeight: Number,
+  minHeight: Number
 };
 
 export default class PatientPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      inObservation: true
+      inObservation: true,
+      isExpandedRecentActivity: false,
+      selectedStartDate: null,
+      animation: new Animated.Value(42),
+      maxHeight: 317,
+      minHeight: 42
     };
   }
+
+  onDateChange = date => {
+    this.setState({
+      selectedStartDate: date
+    });
+  };
 
   getNextEntry = () => {
     const time = 1000 * 60 * 30;
@@ -52,14 +71,67 @@ export default class PatientPage extends React.Component<Props, State> {
     // TODO: Navigate to export page
   };
 
+  toggleRecentActivity = () => {
+    const {
+      isExpandedRecentActivity,
+      minHeight,
+      maxHeight,
+      animation
+    } = this.state;
+    const initialValue = isExpandedRecentActivity
+      ? maxHeight + minHeight
+      : minHeight;
+    const finalValue = isExpandedRecentActivity
+      ? minHeight
+      : maxHeight + minHeight;
+
+    this.setState(previousState => ({
+      isExpandedRecentActivity: !previousState.isExpandedRecentActivity
+    }));
+
+    animation.setValue(initialValue);
+    Animated.spring(animation, {
+      toValue: finalValue
+    }).start();
+  };
+
   static navigationOptions = {
     ...navigationStyles,
     title: "Patient Overview"
   };
 
+  renderCalender = () => {
+    const { isExpandedRecentActivity } = this.state;
+    if (isExpandedRecentActivity) {
+      // TODO: replace with entries within month
+      const today = new Date();
+      const existingDates = [
+        new Date(today.setDate(today.getDate() - 1)),
+        new Date(today.setDate(today.getDate() - 6)),
+        new Date(today.setDate(today.getDate() + 5))
+      ];
+      const customDatesStyles = [];
+      existingDates.forEach(day => {
+        customDatesStyles.push({
+          date: day,
+          style: { backgroundColor: "#ccffee" }
+        });
+      });
+
+      return (
+        <CalendarPicker
+          onDateChange={this.onDateChange}
+          customDatesStyles={customDatesStyles}
+        />
+      );
+      // TODO: component to show existing entries when selectedStartDate
+    }
+    return null;
+  };
+
   render() {
     const { navigation } = this.props;
-    const { inObservation } = this.state;
+    const { inObservation, isExpandedRecentActivity, animation } = this.state;
     const patientID = navigation.getParam("patientID", "NO-ID");
     const patientName = navigation.getParam("patientName", "Jane Doe");
     const patientRoom = "E5 6004";
@@ -73,7 +145,7 @@ export default class PatientPage extends React.Component<Props, State> {
       : this.handleStartObservation;
 
     return (
-      <View style={styles.background}>
+      <ScrollView style={styles.background}>
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
             <Text h3 style={{ paddingBottom: 4 }}>
@@ -132,18 +204,32 @@ export default class PatientPage extends React.Component<Props, State> {
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
             <Text h3 style={{ paddingBottom: 4 }}>
-              Recent Activity
-            </Text>
-          </View>
-        </Card>
-        <Card containerStyle={{ borderRadius: 4 }}>
-          <View>
-            <Text h3 style={{ paddingBottom: 4 }}>
               Trends/Patterns
             </Text>
           </View>
         </Card>
-      </View>
+        <Card containerStyle={{ borderRadius: 4 }}>
+          <Animated.View style={{ height: animation }}>
+            <View style={{ flexDirection: "row" }}>
+              <Text h3 style={{ paddingBottom: 4 }}>
+                Recent Activity
+              </Text>
+              <Icon
+                name={
+                  isExpandedRecentActivity === false
+                    ? "md-arrow-dropdown"
+                    : "md-arrow-dropup"
+                }
+                color={colours.primaryGrey}
+                size={35}
+                style={{ marginLeft: "auto" }}
+                onPress={() => this.toggleRecentActivity()}
+              />
+            </View>
+            <View>{this.renderCalender()}</View>
+          </Animated.View>
+        </Card>
+      </ScrollView>
     );
   }
 }
