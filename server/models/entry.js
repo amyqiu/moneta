@@ -1,13 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-// Define PatientSchema
-var PatientSchema = new Schema({
-    name: {type: String, required: true, max: 100},
-    age: {type: Number, required: true},
-
-});
-
 // Define EntrySchema
 var EntrySchema = new Schema({
     // Requires patient_ID to associate entries with patient
@@ -50,11 +43,6 @@ var EntrySchema = new Schema({
     timestamps: true
 });
 
-// Export all models
-var patient_model = mongoose.model('Patient', PatientSchema);
 var entry_model = mongoose.model('Entry', EntrySchema);
 
-module.exports = {
-    Patient: patient_model,
-    Entry: entry_model
-};
+module.exports = entry_model;

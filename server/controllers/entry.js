@@ -1,4 +1,4 @@
-var Models = require('../models/models');
+var Entry = require('../models/entry');
 
 // Test url
 exports.entry_test = function (req, res) {
@@ -6,7 +6,7 @@ exports.entry_test = function (req, res) {
 };
 
 exports.entry_create = function (req, res) {
-    var entry = new Models.Entry(
+    var entry = new Entry(
         {
             patient_ID: req.body.patient_ID,
             // Behaviours Observed
@@ -53,28 +53,28 @@ exports.entry_create = function (req, res) {
 };
 
 exports.entry_find_all = function (req, res) {
-    Models.Entry.find(function (err, entries) {
+    Entry.find(function (err, entries) {
         if (err) return next(err);
         res.send(entries);
     })
 }
 
 exports.entry_details = function (req, res) {
-    Models.Entry.findById(req.params.id, function (err, entry) {
+    Entry.findById(req.params.id, function (err, entry) {
         if (err) return next(err);
         res.send(entry);
     })
 };
 
 exports.entry_update = function (req, res) {
-    Models.Entry.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, entry) {
+    Entry.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, entry) {
         if (err) return next(err);
         res.send('Entry updated');
     });
 };
 
 exports.entry_delete = function (req, res) {
-    Models.Entry.findByIdAndRemove(req.params.id, function (err) {
+    Entry.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
         res.send('Entry deleted successfully');
     })

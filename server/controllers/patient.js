@@ -1,4 +1,4 @@
-var Models = require('../models/models');
+var Patient = require('../models/patient');
 
 // Test url
 exports.patient_test = function (req, res) {
@@ -6,7 +6,8 @@ exports.patient_test = function (req, res) {
 };
 
 exports.patient_create = function (req, res) {
-    var patient = new Models.Patient(
+    console.log(req.body)
+    var patient = new Patient(
         {
             name: req.body.name,
             age: req.body.age
@@ -22,28 +23,28 @@ exports.patient_create = function (req, res) {
 };
 
 exports.patient_find_all = function (req, res) {
-    Models.Patient.find(function (err, patients) {
+    Patient.find(function (err, patients) {
         if (err) return next(err);
         res.send(patients);
     })
 }
 
 exports.patient_details = function (req, res) {
-    Models.Patient.findById(req.params.id, function (err, patient) {
+    Patient.findById(req.params.id, function (err, patient) {
         if (err) return next(err);
         res.send(patient);
     })
 };
 
 exports.patient_update = function (req, res) {
-    Models.Patient.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, patient) {
+    Patient.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, patient) {
         if (err) return next(err);
         res.send('Patient updated');
     });
 };
 
 exports.patient_delete = function (req, res) {
-    Models.Patient.findByIdAndRemove(req.params.id, function (err) {
+    Patient.findByIdAndRemove(req.params.id, function (err) {
         if (err) return next(err);
         res.send('Patient deleted successfully');
     })
