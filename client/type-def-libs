@@ -25,3 +25,11 @@ declare module 'react-navigation-stack' {
 declare module 'react-native-responsive-fontsize' {
   declare module.exports: any
 }
+
+declare module 'react-native-vector-icons/Ionicons' {
+  declare module.exports: any
+}
+
+declare module 'react-native-calendar-picker' {
+  declare module.exports: any
+}

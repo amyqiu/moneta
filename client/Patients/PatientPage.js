@@ -16,10 +16,10 @@ type Props = NavigationScreenProps & {};
 type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
-  selectedStartDate: Date,
-  animation: Number,
-  maxHeight: Number,
-  minHeight: Number
+  selectedStartDate: ?Date,
+  animation: any,
+  maxHeight: number,
+  minHeight: number
 };
 
 export default class PatientPage extends React.Component<Props, State> {
@@ -35,7 +35,7 @@ export default class PatientPage extends React.Component<Props, State> {
     };
   }
 
-  onDateChange = date => {
+  onDateChange = (date: Date) => {
     this.setState({
       selectedStartDate: date
     });
