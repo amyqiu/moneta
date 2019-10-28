@@ -1,12 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-// Imports routes for the patients
-var patient = require('./routes/patient');
+// Import routes for the patients and entries
+var routes = require('./routes/routes');
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use('/patients', patient);
+app.use('', routes);
 
 // Set up mongoose connection
 var mongoose = require('mongoose');

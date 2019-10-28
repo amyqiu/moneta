@@ -1,11 +1,12 @@
 var Patient = require('../models/patient');
 
 // Test url
-exports.test = function (req, res) {
-    res.send('Greetings from the Test controller!');
+exports.patient_test = function (req, res) {
+    res.send('Greetings from the patient test controller!');
 };
 
 exports.patient_create = function (req, res) {
+    console.log(req.body)
     var patient = new Patient(
         {
             name: req.body.name,

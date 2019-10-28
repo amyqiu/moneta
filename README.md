@@ -4,7 +4,12 @@
 Run `npm install`
 
 * To run server: `node app.js`
-* To test connection: http://localhost:1234/patients/test
+* To test connection: http://localhost:1234/patient/test
+
+Database hosted at: https://cloud.mongodb.com
+
+* Username and Password are same as shared FYFP account
+* If a 'MongoNetworkError' is encountered, go to Network Access and click `+ ADD IP ADDRESS` to IP Whitelist
 
 ## Setup Instructions for Client
 See https://facebook.github.io/react-native/docs/getting-started
