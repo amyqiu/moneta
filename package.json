@@ -17,10 +17,5 @@
   "bugs": {
     "url": "https://github.com/amyqiu/moneta/issues"
   },
-  "homepage": "https://github.com/amyqiu/moneta#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "cd client && npm run lint && npm run flow"
-    }
-  }
+  "homepage": "https://github.com/amyqiu/moneta#readme"
 }

@@ -159,6 +159,19 @@ export default class NewEntryPage extends React.Component<Props, State> {
     } = this.state;
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
 
+    const behavourCheckboxes = [];
+    BEHAVIOURS.forEach(behaviour => {
+      behavourCheckboxes.push(
+        <BehaviourCheckbox
+          key={behaviour.label}
+          label={behaviour.label}
+          color={behaviour.color}
+          subBehaviours={behaviour.subBehaviours}
+          onBehaviourChecked={this.onBehaviourChecked}
+        />
+      );
+    });
+
     return (
       <KeyboardAvoidingView behavior="position">
         <ScrollView>
@@ -166,15 +179,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Behaviours Observed</Text>
-                {BEHAVIOURS.map(behaviour => (
-                  <BehaviourCheckbox
-                    key={behaviour.label}
-                    label={behaviour.label}
-                    color={behaviour.color}
-                    subBehaviours={behaviour.subBehaviours}
-                    onBehaviourChecked={this.onBehaviourChecked}
-                  />
-                ))}
+                {behavourCheckboxes}
               </View>
             </Card>
             <Card containerStyle={{ borderRadius: 4 }}>
