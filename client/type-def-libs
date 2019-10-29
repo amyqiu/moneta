@@ -33,3 +33,7 @@ declare module 'react-native-vector-icons/Ionicons' {
 declare module 'react-native-calendar-picker' {
   declare module.exports: any
 }
+
+declare module 'victory-native' {
+  declare module.exports: any
+}

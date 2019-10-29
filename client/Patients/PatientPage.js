@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
+import ColumnChart from "../Trends/ColumnChart";
 
 type Props = NavigationScreenProps & {};
 
@@ -97,7 +98,7 @@ export default class PatientPage extends React.Component<Props, State> {
 
   static navigationOptions = {
     ...navigationStyles,
-    title: "Patient Overview"
+    title: "Resident Overview"
   };
 
   renderCalender = () => {
@@ -202,13 +203,6 @@ export default class PatientPage extends React.Component<Props, State> {
           </View>
         </Card>
         <Card containerStyle={{ borderRadius: 4 }}>
-          <View>
-            <Text h3 style={{ paddingBottom: 4 }}>
-              Trends/Patterns
-            </Text>
-          </View>
-        </Card>
-        <Card containerStyle={{ borderRadius: 4 }}>
           <Animated.View style={{ height: animation }}>
             <View style={{ flexDirection: "row" }}>
               <Text h3 style={{ paddingBottom: 4 }}>
@@ -228,6 +222,14 @@ export default class PatientPage extends React.Component<Props, State> {
             </View>
             <View>{this.renderCalender()}</View>
           </Animated.View>
+        </Card>
+        <Card containerStyle={{ borderRadius: 4 }}>
+          <View>
+            <Text h3 style={{ paddingBottom: 4 }}>
+              Trends/Patterns
+            </Text>
+            <ColumnChart />
+          </View>
         </Card>
       </ScrollView>
     );
