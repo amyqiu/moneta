@@ -68,15 +68,15 @@ export default class AllPatientsPage extends React.Component<Props, State> {
                 onPress={() => this.navigatePatient(patient)}
               />
               <View>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>ID: </Text>
                   {patient.id}
                 </Text>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Room #: </Text>
                   {patient.room}
                 </Text>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
                   {patient.date}
                 </Text>

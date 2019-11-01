@@ -10,7 +10,9 @@ import {
   VictoryLegend
 } from "victory-native";
 import { format } from "date-fns";
+import { RFValue } from "react-native-responsive-fontsize";
 import BEHAVIOURS from "../NewEntry/Behaviours";
+import { scaleWidth, isTablet } from "../Helpers";
 
 type Props = {
   // label: string,
@@ -96,13 +98,16 @@ export default class ColumnChart extends React.Component<Props, State> {
       });
     });
 
+    const width = scaleWidth(0.95);
+    const height = width * (isTablet() ? 1.2 : 1.6);
+
     return (
       <View pointerEvents="none">
         <VictoryChart
-          height={560}
-          width={330}
-          domainPadding={{ x: 16, y: 16 }}
-          padding={{ left: 44, top: 64, right: 32, bottom: 200 }}
+          height={height} // 560
+          width={width} // 330
+          domainPadding={{ x: 32, y: 16 }}
+          padding={{ left: 44, top: 64, right: 32, bottom: 220 }}
           style={{
             parent: {
               border: "1px solid black"
@@ -111,10 +116,10 @@ export default class ColumnChart extends React.Component<Props, State> {
         >
           <VictoryLabel
             text="Observation Period Behaviour Overview"
-            x={165}
+            x={scaleWidth(0.45)}
             y={32}
             textAnchor="middle"
-            style={{ fontSize: 16, fontWeight: "bold" }}
+            style={{ fontSize: RFValue(16) }}
           />
           <VictoryStack>
             {parsedData.map(data => {
@@ -127,18 +132,30 @@ export default class ColumnChart extends React.Component<Props, State> {
               );
             })}
           </VictoryStack>
-          <VictoryAxis dependentAxis label="Count" />
           <VictoryAxis
-            tickLabelComponent={<VictoryLabel angle={45} dx={20} />}
+            dependentAxis
+            label="Count"
+            style={{
+              tickLabels: { fontSize: RFValue(14) },
+              axisLabel: { fontSize: RFValue(14) }
+            }}
+          />
+          <VictoryAxis
+            tickLabelComponent={<VictoryLabel angle={45} dx={16} />}
+            padding={{ right: 32 }}
+            style={{ tickLabels: { fontSize: RFValue(14) } }}
           />
           <VictoryLegend
             x={4}
-            y={430}
+            y={height - 150}
             data={legendData}
-            itemsPerRow={5}
-            gutter={12}
-            symbolSpacer={8}
+            itemsPerRow={isTablet() ? 4 : 5}
+            gutter={isTablet() ? 20 : 12}
+            symbolSpacer={isTablet() ? 12 : 8}
             padding={{ bottom: 0 }}
+            style={{
+              labels: { fontSize: RFValue(14) }
+            }}
           />
         </VictoryChart>
       </View>

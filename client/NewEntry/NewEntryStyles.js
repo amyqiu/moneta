@@ -25,7 +25,8 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     backgroundColor: "#ffffff",
-    textAlignVertical: "top"
+    textAlignVertical: "top",
+    fontSize: RFValue(14)
   },
   submitContainer: {
     paddingTop: 16,
@@ -50,7 +51,8 @@ export default StyleSheet.create({
   },
   datePickerTitle: {
     color: colours.white,
-    fontWeight: "normal"
+    fontWeight: "normal",
+    fontSize: RFValue(16)
   },
   date: {
     fontSize: RFValue(16),
