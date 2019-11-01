@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-// Import routes for the patients and entries
+// Import routes
 var routes = require('./routes/routes');
 var app = express();
 app.use(bodyParser.json());

@@ -10,7 +10,8 @@ exports.patient_create = function (req, res) {
     var patient = new Patient(
         {
             name: req.body.name,
-            age: req.body.age
+            age: req.body.age,
+            room: req.body.room
         }
     );
 
