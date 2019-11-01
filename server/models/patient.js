@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 var PatientSchema = new Schema({
     name: {type: String, required: true, max: 100},
     age: {type: Number, required: true},
+    room: {type: String, required: true}
 
 });
 
