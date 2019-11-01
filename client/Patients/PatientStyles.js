@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import colours from "../Colours";
+import { isTablet } from "../Helpers";
 
 export default StyleSheet.create({
   background: {
@@ -14,7 +15,7 @@ export default StyleSheet.create({
   },
   headerButton: {
     backgroundColor: colours.white,
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 14
   },
   headerContainer: {
@@ -34,11 +35,14 @@ export default StyleSheet.create({
   headerButtonTitle: {
     color: colours.primaryGrey,
     fontWeight: "normal",
-    fontSize: RFValue(14)
+    fontSize: isTablet() ? RFValue(10) : RFValue(14)
   },
   searchInput: {
     color: colours.primaryGrey,
     fontWeight: "normal",
+    fontSize: RFValue(14)
+  },
+  patientDetailsText: {
     fontSize: RFValue(14)
   }
 });

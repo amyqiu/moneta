@@ -163,15 +163,15 @@ export default class PatientPage extends React.Component<Props, State> {
                 containerStyle={{ marginRight: 16 }}
               />
               <View>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>ID: </Text>
                   {patientID}
                 </Text>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Room #: </Text>
                   {patientRoom}
                 </Text>
-                <Text>
+                <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
                   {formattedDate}
                 </Text>
