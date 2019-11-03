@@ -9,7 +9,9 @@ type Props = {
   label: string,
   color: string,
   subBehaviours: Array<string>,
-  onBehaviourChecked: (string, boolean, Set<string>) => void
+  onBehaviourChecked: (string, boolean, Set<string>) => void,
+  originallyChecked?: boolean,
+  originallyCheckedSubBehaviours?: Set<string>
 };
 
 type State = {
@@ -28,7 +30,11 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
   handleSubBehaviourChecked = (subBehaviour: string) => {
     const { checkedSubBehaviours } = this.state;
-    const { onBehaviourChecked, label } = this.props;
+    const { onBehaviourChecked, label, originallyChecked } = this.props;
+
+    if (originallyChecked !== null) {
+      return;
+    }
     const currentlyChecked = checkedSubBehaviours.has(subBehaviour);
 
     if (currentlyChecked) {
@@ -46,8 +52,11 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
   handleBehaviourChecked = () => {
     const { checked, checkedSubBehaviours } = this.state;
-    const { onBehaviourChecked, label } = this.props;
+    const { onBehaviourChecked, label, originallyChecked } = this.props;
 
+    if (originallyChecked !== null) {
+      return;
+    }
     if (checked) {
       onBehaviourChecked(label, false, new Set());
     } else {
@@ -59,13 +68,23 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
   render() {
     const { checked, checkedSubBehaviours } = this.state;
-    const { label, subBehaviours, color } = this.props;
+    const {
+      label,
+      subBehaviours,
+      color,
+      originallyChecked,
+      originallyCheckedSubBehaviours
+    } = this.props;
+    const isChecked = checked || originallyChecked;
+    const allCheckedSubBehaviours = originallyChecked
+      ? originallyCheckedSubBehaviours
+      : checkedSubBehaviours;
 
     return (
       <View>
         <CheckBox
           title={label}
-          checked={checked}
+          checked={isChecked}
           onPress={this.handleBehaviourChecked}
           containerStyle={styles.checkBoxContainer}
           textStyle={styles.checkBoxLabel}
@@ -75,13 +94,13 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
           checkedColor={color}
           uncheckedColor={color}
         />
-        {subBehaviours.length >= 1 && checked ? (
+        {subBehaviours.length >= 1 && isChecked ? (
           <View style={styles.checkBoxRow}>
             {subBehaviours.map(subBehaviour => (
               <View key={subBehaviour} style={{ width: "50%" }}>
                 <CheckBox
                   title={subBehaviour}
-                  checked={checkedSubBehaviours.has(subBehaviour)}
+                  checked={allCheckedSubBehaviours.has(subBehaviour)}
                   onPress={() => this.handleSubBehaviourChecked(subBehaviour)}
                   containerStyle={styles.checkBoxContainer}
                   textStyle={styles.innerCheckboxText}
@@ -99,3 +118,8 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
     );
   }
 }
+
+BehaviourCheckbox.defaultProps = {
+  originallyChecked: null,
+  originallyCheckedSubBehaviours: new Set()
+};
