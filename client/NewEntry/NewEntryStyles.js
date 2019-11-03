@@ -5,11 +5,12 @@ import colours from "../Colours";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
+    padding: 10,
+    backgroundColor: colours.backgroundGrey,
     paddingBottom: 16
   },
   checkBoxContainer: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colours.white,
     borderWidth: 0,
     padding: 0
   },
@@ -21,10 +22,10 @@ export default StyleSheet.create({
     margin: 4,
     padding: 8,
     height: 64,
-    borderColor: "#393939",
+    borderColor: colours.primaryGrey,
     borderWidth: 1,
     borderRadius: 4,
-    backgroundColor: "#ffffff",
+    backgroundColor: colours.white,
     textAlignVertical: "top",
     fontSize: RFValue(14)
   },
@@ -34,12 +35,12 @@ export default StyleSheet.create({
     alignItems: "flex-end"
   },
   submitButton: {
-    backgroundColor: "#393939",
+    backgroundColor: colours.primaryGrey,
     paddingVertical: 8,
     paddingHorizontal: 16
   },
   submitButtonTitle: {
-    color: "#ffffff",
+    color: colours.white,
     fontWeight: "normal",
     fontSize: RFValue(18)
   },
@@ -61,5 +62,13 @@ export default StyleSheet.create({
   innerCheckboxText: {
     fontSize: RFValue(14),
     fontWeight: "normal"
+  },
+  warning: {
+    color: colours.white,
+    fontWeight: "normal",
+    fontSize: RFValue(18),
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    textAlign: "center"
   }
 });

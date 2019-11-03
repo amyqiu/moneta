@@ -1,11 +1,12 @@
 // @flow
 import React from "react";
-import { View, ScrollView, Animated } from "react-native";
+import { FlatList, View, ScrollView, TouchableOpacity } from "react-native";
 import { Button, Card, Text, Avatar } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
 import CalendarPicker from "react-native-calendar-picker";
 import { format } from "date-fns";
+import moment from "moment";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
@@ -17,10 +18,7 @@ type Props = NavigationScreenProps & {};
 type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
-  selectedStartDate: ?Date,
-  animation: any,
-  maxHeight: number,
-  minHeight: number
+  selectedStartDate: ?Date
 };
 
 export default class PatientPage extends React.Component<Props, State> {
@@ -29,10 +27,7 @@ export default class PatientPage extends React.Component<Props, State> {
     this.state = {
       inObservation: true,
       isExpandedRecentActivity: false,
-      selectedStartDate: null,
-      animation: new Animated.Value(42),
-      maxHeight: 317,
-      minHeight: 42
+      selectedStartDate: null
     };
   }
 
@@ -58,6 +53,11 @@ export default class PatientPage extends React.Component<Props, State> {
     navigation.navigate("NewEntry", { patientID });
   };
 
+  navigateOldEntry = (entryID: number) => {
+    const { navigation } = this.props;
+    navigation.navigate("OldEntry", { entryID });
+  };
+
   handleStartObservation = () => {
     this.setState({ inObservation: true });
     // TODO: Refresh page and submit to server
@@ -73,27 +73,9 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   toggleRecentActivity = () => {
-    const {
-      isExpandedRecentActivity,
-      minHeight,
-      maxHeight,
-      animation
-    } = this.state;
-    const initialValue = isExpandedRecentActivity
-      ? maxHeight + minHeight
-      : minHeight;
-    const finalValue = isExpandedRecentActivity
-      ? minHeight
-      : maxHeight + minHeight;
-
     this.setState(previousState => ({
       isExpandedRecentActivity: !previousState.isExpandedRecentActivity
     }));
-
-    animation.setValue(initialValue);
-    Animated.spring(animation, {
-      toValue: finalValue
-    }).start();
   };
 
   static navigationOptions = {
@@ -102,7 +84,7 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   renderCalender = () => {
-    const { isExpandedRecentActivity } = this.state;
+    const { isExpandedRecentActivity, selectedStartDate } = this.state;
     if (isExpandedRecentActivity) {
       // TODO: replace with entries within month
       const today = new Date();
@@ -119,20 +101,61 @@ export default class PatientPage extends React.Component<Props, State> {
         });
       });
 
+      let existingTimesList = null;
+      if (selectedStartDate) {
+        // TODO: replace with query for available times on this day
+        const timelist = [moment(), moment(), moment()];
+        timelist[0].add(5, "hours");
+        timelist[1].add(3, "hours");
+
+        const formattedDay = selectedStartDate.format("LL");
+        const data = [];
+        timelist.forEach(timestamp => {
+          const formattedTime = timestamp.format("HH:mm A");
+          data.push({ key: formattedTime, entryID: 12345 });
+        });
+
+        existingTimesList = (
+          <FlatList
+            key="data"
+            data={data}
+            ItemSeparatorComponent={() => (
+              <View style={styles.entrySeparator} />
+            )}
+            ListHeaderComponent={() => (
+              <Text style={styles.entryHeader} key={formattedDay}>
+                {formattedDay}
+              </Text>
+            )}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => this.navigateOldEntry(item.entryID)}
+              >
+                <Text style={styles.entryLink}>{item.key}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        );
+      }
+
       return (
-        <CalendarPicker
-          onDateChange={this.onDateChange}
-          customDatesStyles={customDatesStyles}
-        />
+        <View>
+          <CalendarPicker
+            onDateChange={this.onDateChange}
+            customDatesStyles={customDatesStyles}
+          />
+          <View style={{ maxHeight: "50%" }}>
+            <ScrollView style={{ flexGrow: 0 }}>{existingTimesList}</ScrollView>
+          </View>
+        </View>
       );
-      // TODO: component to show existing entries when selectedStartDate
     }
     return null;
   };
 
   render() {
     const { navigation } = this.props;
-    const { inObservation, isExpandedRecentActivity, animation } = this.state;
+    const { inObservation, isExpandedRecentActivity } = this.state;
     const patientID = navigation.getParam("patientID", "NO-ID");
     const patientName = navigation.getParam("patientName", "Jane Doe");
     const patientRoom = "E5 6004";
@@ -203,25 +226,25 @@ export default class PatientPage extends React.Component<Props, State> {
           </View>
         </Card>
         <Card containerStyle={{ borderRadius: 4 }}>
-          <Animated.View style={{ height: animation }}>
-            <View style={{ flexDirection: "row" }}>
-              <Text h3 style={{ paddingBottom: 4 }}>
-                Recent Activity
-              </Text>
-              <Icon
-                name={
-                  isExpandedRecentActivity === false
-                    ? "md-arrow-dropdown"
-                    : "md-arrow-dropup"
-                }
-                color={colours.primaryGrey}
-                size={35}
-                style={{ marginLeft: "auto" }}
-                onPress={() => this.toggleRecentActivity()}
-              />
-            </View>
-            <View>{this.renderCalender()}</View>
-          </Animated.View>
+          <TouchableOpacity
+            style={{ flexDirection: "row" }}
+            onPress={() => this.toggleRecentActivity()}
+          >
+            <Text h3 style={{ paddingBottom: 4 }}>
+              Recent Activity
+            </Text>
+            <Icon
+              name={
+                isExpandedRecentActivity === false
+                  ? "md-arrow-dropdown"
+                  : "md-arrow-dropup"
+              }
+              color={colours.primaryGrey}
+              size={35}
+              style={{ marginLeft: "auto" }}
+            />
+          </TouchableOpacity>
+          {this.renderCalender()}
         </Card>
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
