@@ -1,12 +1,14 @@
 var Observation = require('../models/observation');
 
+// Change to create empty list of entries
 exports.observation_create = function (req, res) {
     console.log(req.body)
     var observation = new Observation(
         {
           patient_ID: req.body.patient_ID,
           start_time: req.body.start_time,
-          end_time: req.body.end_time
+          end_time: req.body.end_time,
+          entries: req.body.entries
         }
     );
 
