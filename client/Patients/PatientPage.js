@@ -11,6 +11,7 @@ import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import ColumnChart from "../Trends/ColumnChart";
+import PieChart from "../Trends/PieChart";
 
 type Props = NavigationScreenProps & {};
 
@@ -252,6 +253,7 @@ export default class PatientPage extends React.Component<Props, State> {
               Trends/Patterns
             </Text>
             <ColumnChart />
+            <PieChart />
           </View>
         </Card>
       </ScrollView>
