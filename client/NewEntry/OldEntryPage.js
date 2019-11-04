@@ -35,7 +35,7 @@ export default class NewEntryPage extends React.Component<Props, {}> {
     const date = new Date();
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
 
-    // TODO: refactor BehaviourCheckbox and make this list a shared component with NewEntryPage
+    // TODO: refactor BehaviourCheckbox and make this list a shared component with NewEntry
     const behavourCheckboxes = [];
     BEHAVIOURS.forEach(behaviour => {
       behavourCheckboxes.push(
