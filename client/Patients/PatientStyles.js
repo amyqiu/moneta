@@ -6,7 +6,7 @@ import { isTablet } from "../Helpers";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: colours.secondaryGrey,
+    backgroundColor: colours.backgroundGrey,
     paddingBottom: 16
   },
   buttonContainer: {
@@ -44,5 +44,22 @@ export default StyleSheet.create({
   },
   patientDetailsText: {
     fontSize: RFValue(14)
+  },
+  entryLink: {
+    fontSize: RFValue(14),
+    color: colours.link,
+    textAlign: "center",
+    paddingBottom: 2
+  },
+  entryHeader: {
+    fontSize: RFValue(16),
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingBottom: 4
+  },
+  entrySeparator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: colours.secondaryGrey
   }
 });
