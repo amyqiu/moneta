@@ -10,24 +10,24 @@ exports.observation_create = function (req, res) {
     }
   );
 
-  observation.save(function (err) {
-    if (err) {
-      res.send(err);
+  Patient.findById(req.body.patient_ID, function (patientErr, patient) {
+    if (patientErr) {
+      return res.status(500).send(patientErr);
     }
-    Patient.findById(req.body.patient_ID, function (patientErr, patient) {
-      if (patientErr) {
-        res.send(patientErr);
+    patient.observation_periods.push(observation.id);
+    const patientUpdate = {
+      in_observation: true,
+      observation_periods: patient.observation_periods,
+    }
+    Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
+      if (updateErr) {
+        return res.status(500).send(updateErr);
       }
-      patient.observation_periods.push(observation.id);
-      const patientUpdate = {
-        in_observation: true,
-        observation_periods: patient.observation_periods,
-      }
-      Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
-        if (updateErr) {
-          res.send(updateErr);
+      observation.save(function (err) {
+        if (err) {
+          return res.status(500).send(err);
         }
-        res.send('Observation created successfully');
+        return res.status(200).send('Observation created successfully');
       });
     });
   });
@@ -40,16 +40,16 @@ exports.observation_end = function (req, res) {
 
   Observation.findByIdAndUpdate(req.body.id, {$set: update}, function (err, obs) {
     if (err) {
-      res.send(err);
+      return res.status(500).send(err);
     }
     const patientUpdate = {
       in_observation: false,
     }
     Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
       if (updateErr) {
-        res.send(updateErr);
+        return res.status(500).send(updateErr);
       }
-      res.send('Observation ended successfully');
+      return res.status(200).send('Observation ended successfully');
     });
   });
 };
@@ -57,30 +57,40 @@ exports.observation_end = function (req, res) {
 exports.observation_find_all = function (req, res) {
   Observation.find(function (err, observations) {
     if (err) {
-      res.send(err);
+      return res.status(500).send(err);
     };
-    res.send(observations);
+    return res.status(200).send(observations);
   });
 }
 
 exports.observation_details = function (req, res) {
   Observation.
     findById(req.params.id).
-    // populate('observation_periods', 'start_time end_time').
     exec(function (err, obs) {
-    if (err) {
-      res.send(err);
-    }
-    res.send(obs);
-  });
+      if (err) {
+        return res.status(500).send(err);
+      }
+      return res.status(200).send(obs);
+    });
 };
 
-// Note: this doesn't delete the observation ID in the patient array
 exports.observation_delete = function (req, res) {
-  Observation.findByIdAndRemove(req.params.id, function (err) {
+  Observation.findById(req.params.id, function (err, obs) {
     if (err) {
-      res.send(err);
+      return res.status(500).send(err);
+    } else if (obs == null) {
+      return res.status(500).send('No such object');
     }
-    res.send('Observation deleted successfully');
+    Patient.findByIdAndUpdate(obs.patient_ID, { $pullAll: { observation_periods: [obs.id] } }, {}, function(patientErr){
+      if(patientErr) {
+        return res.status(500).send(patientErr);
+      }
+      obs.remove(function (delErr) {
+        if (delErr) {
+          return res.status(500).send(delErr);
+        }
+        return res.status(200).send('Observation deleted successfully');
+      });
+    });
   });
 };
