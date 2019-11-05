@@ -15,7 +15,9 @@ router.delete('/patient/:id/delete', patient_controller.patient_delete);
 
 // Observation routes
 router.post('/observation/create', observation_controller.observation_create);
+router.post('/observation/end', observation_controller.observation_end);
 router.get('/observation/findall', observation_controller.observation_find_all);
+router.delete('/observation/:id/delete', observation_controller.observation_delete);
 
 // Entry routes
 router.get('/entry/test', entry_controller.entry_test);

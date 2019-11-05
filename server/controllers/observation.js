@@ -1,28 +1,74 @@
 var Observation = require('../models/observation');
+var Patient = require('../models/patient');
 
-// Change to create empty list of entries
 exports.observation_create = function (req, res) {
-    console.log(req.body)
-    var observation = new Observation(
-        {
-          patient_ID: req.body.patient_ID,
-          start_time: req.body.start_time,
-          end_time: req.body.end_time,
-          entries: req.body.entries
-        }
-    );
+  var observation = new Observation(
+    {
+      patient_ID: req.body.patient_ID,
+      start_time: new Date(req.body.start_time * 1000),
+      entries: [],
+    }
+  );
 
-    observation.save(function (err) {
-        if (err) {
-            return next(err);
+  observation.save(function (err) {
+    if (err) {
+      res.send(err);
+    }
+    Patient.findById(req.body.patient_ID, function (patientErr, patient) {
+      if (patientErr) {
+        res.send(patientErr);
+      }
+      patient.observation_periods.push(observation.id);
+      const patientUpdate = {
+        in_observation: true,
+        observation_periods: patient.observation_periods,
+      }
+      Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
+        if (updateErr) {
+          res.send(updateErr);
         }
-        res.send('Observation created successfully')
-    })
+        res.send('Observation created successfully');
+      });
+    });
+  });
+};
+
+exports.observation_end = function (req, res) {
+  const update = {
+    end_time: new Date(req.body.end_time * 1000),
+  }
+
+  Observation.findByIdAndUpdate(req.body.id, {$set: update}, function (err, obs) {
+    if (err) {
+      res.send(err);
+    }
+    const patientUpdate = {
+      in_observation: false,
+    }
+    Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
+      if (updateErr) {
+        res.send(updateErr);
+      }
+      res.send('Observation ended successfully');
+    });
+  });
 };
 
 exports.observation_find_all = function (req, res) {
-    Observation.find(function (err, observations) {
-        if (err) return next(err);
-        res.send(observations);
-    })
+  Observation.find(function (err, observations) {
+    if (err) {
+      res.send(err);
+    };
+    res.send(observations);
+  });
 }
+
+// Note: this doesn't delete the observation ID in the patient array
+exports.observation_delete = function (req, res) {
+  Observation.findByIdAndRemove(req.params.id, function (err) {
+    if (err) {
+      res.send(err);
+    }
+    res.send('Observation deleted successfully');
+  });
+};
