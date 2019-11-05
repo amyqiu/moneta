@@ -1,6 +1,6 @@
 const BEHAVIOURS = new Map([
   [
-    "b1",
+    "Sleeping in Bed",
     {
       label: "Sleeping in Bed",
       subBehaviours: [],
@@ -8,7 +8,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b2",
+    "Sleeping in Chair",
     {
       label: "Sleeping in Chair",
       subBehaviours: [],
@@ -16,7 +16,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b3",
+    "Awake/Calm",
     {
       label: "Awake/Calm",
       subBehaviours: [],
@@ -24,7 +24,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b4",
+    "Positively Engaged",
     {
       label: "Positively Engaged",
       subBehaviours: ["Conversing/Singing", "Hugging/Hand Holding", "Smiling"],
@@ -32,7 +32,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b5",
+    "Noisy",
     {
       label: "Noisy",
       subBehaviours: [
@@ -45,7 +45,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b6",
+    "Restless",
     {
       label: "Restless",
       subBehaviours: [
@@ -57,7 +57,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b7",
+    "Exit Seeking",
     {
       label: "Exit Seeking",
       subBehaviours: [],
@@ -65,7 +65,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b8",
+    "Aggressive - Verbal",
     {
       label: "Aggressive - Verbal",
       subBehaviours: ["Insults", "Swearing", "Screaming"],
@@ -73,7 +73,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b9",
+    "Aggressive - Physical",
     {
       label: "Aggressive - Physical",
       subBehaviours: [
@@ -88,7 +88,7 @@ const BEHAVIOURS = new Map([
     }
   ],
   [
-    "b10",
+    "Aggressive - Sexual",
     {
       label: "Aggressive - Sexual",
       subBehaviours: [

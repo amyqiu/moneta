@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var patient_controller = require('../controllers/patient');
-var observation_controller = require('../controllers/observation')
-var entry_controller = require('../controllers/entry');
+const patient_controller = require('../controllers/patient');
+const observation_controller = require('../controllers/observation')
+const entry_controller = require('../controllers/entry');
 
 // Patient routes
 router.get('/patient/test', patient_controller.patient_test);
@@ -17,6 +17,7 @@ router.delete('/patient/:id/delete', patient_controller.patient_delete);
 router.post('/observation/create', observation_controller.observation_create);
 router.post('/observation/end', observation_controller.observation_end);
 router.get('/observation/findall', observation_controller.observation_find_all);
+router.get('/observation/:id', observation_controller.observation_details);
 router.delete('/observation/:id/delete', observation_controller.observation_delete);
 
 // Entry routes

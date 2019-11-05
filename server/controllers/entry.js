@@ -1,4 +1,5 @@
-var Entry = require('../models/entry');
+const Entry = require('../models/entry');
+const Observation = require('../models/observation');
 
 // Test url
 exports.entry_test = function (req, res) {
@@ -6,11 +7,11 @@ exports.entry_test = function (req, res) {
 };
 
 exports.entry_create = function (req, res) {
-  var entry = new Entry(
+  const entry = new Entry(
     {
       patient_ID: req.body.patient_ID,
       observation_ID: req.body.observation_ID,
-      behaviors: req.body.behaviors,
+      behaviours: req.body.behaviours,
       locations: req.body.locations,
       context: req.body.context,
       comments: req.body.comments,
@@ -22,7 +23,25 @@ exports.entry_create = function (req, res) {
     if (err) {
       res.send(err);
     }
-    res.send('Entry created successfully');
+    Observation.findById(req.body.observation_ID, function (obsErr, obs) {
+      if (obsErr) {
+        res.send(obsErr);
+      } else if (obs.patient_ID !== req.body.patient_ID) {
+        res.send("Invalid patient ID for the observation ID.");
+      } else if (obs.end_time != null) {
+        res.send("Observation period has ended.");
+      }
+      obs.entries.push(entry.id);
+      const obsUpdate = {
+        entries: obs.entries,
+      };
+      Observation.findByIdAndUpdate(req.body.observation_ID, {$set: obsUpdate}, function (updateErr, updatedObs) {
+        if (updateErr) {
+          res.send(updateErr);
+        }
+        res.send('Entry created successfully');
+      });
+    });
   });
 };
 

@@ -1,8 +1,8 @@
-var Observation = require('../models/observation');
-var Patient = require('../models/patient');
+const Observation = require('../models/observation');
+const Patient = require('../models/patient');
 
 exports.observation_create = function (req, res) {
-  var observation = new Observation(
+  const observation = new Observation(
     {
       patient_ID: req.body.patient_ID,
       start_time: new Date(req.body.start_time * 1000),
@@ -62,6 +62,18 @@ exports.observation_find_all = function (req, res) {
     res.send(observations);
   });
 }
+
+exports.observation_details = function (req, res) {
+  Observation.
+    findById(req.params.id).
+    // populate('observation_periods', 'start_time end_time').
+    exec(function (err, obs) {
+    if (err) {
+      res.send(err);
+    }
+    res.send(obs);
+  });
+};
 
 // Note: this doesn't delete the observation ID in the patient array
 exports.observation_delete = function (req, res) {
