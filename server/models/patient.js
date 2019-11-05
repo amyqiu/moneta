@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Observation = require('../models/observation');
+var ObservationSchema = require('../models/observation').schema;
 
 // Define PatientSchema
 var PatientSchema = new Schema({
@@ -8,9 +8,9 @@ var PatientSchema = new Schema({
     age: {type: Number, required: true},
     room: {type: String, required: true},
     profile_picture: {type: String, required: true},
-    observation_periods: [Observation],
-    in_observation: {type: Boolean, required: true}
-
+    observation_periods: [ObservationSchema],
+    in_observation: {type: Boolean, required: true},
+    patient_ID: {type: String, required: true, max: 100},
 });
 
 module.exports = mongoose.model('Patient', PatientSchema);

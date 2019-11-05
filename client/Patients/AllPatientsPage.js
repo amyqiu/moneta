@@ -1,31 +1,80 @@
 // @flow
 import React from "react";
-import { View } from "react-native";
+import { View, ScrollView, ActivityIndicator } from "react-native";
 import { Button, Card, Text, Avatar, SearchBar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
+import { format } from "date-fns";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import colours from "../Colours";
 
 type Props = NavigationScreenProps & {};
 
-type State = { search: string };
+type State = {
+  search: string,
+  patients: Array<Patient>,
+  isLoading: boolean,
+  isError: boolean
+};
 
-type Patient = {
+export type Patient = {
   name: string,
   id: string,
   room: string,
   imageUri: string,
-  date: string
+  date: string,
+  inObservation: boolean
 };
 
 export default class AllPatientsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      search: ""
+      search: "",
+      patients: [],
+      isLoading: true,
+      isError: false
     };
   }
+
+  async componentDidMount() {
+    try {
+      // NOTE: need to use your IP address for now, until server is hosted
+      const response = await fetch("http://192.168.0.104:1234/patient/findall");
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      const json = await response.json();
+      const parsedPatients = json.map(rawPatient => {
+        return {
+          name: rawPatient.name,
+          id: rawPatient.patient_ID,
+          room: rawPatient.room,
+          imageUri: rawPatient.profile_picture,
+          date: this.getNextEntry(),
+          inObservation: rawPatient.in_observation
+        };
+      });
+      this.setState({
+        patients: parsedPatients,
+        isLoading: false,
+        isError: false
+      });
+    } catch (error) {
+      this.setState({ isError: true });
+      // console.log(error);
+    }
+  }
+
+  getNextEntry = () => {
+    const time = 1000 * 60 * 30;
+    const fifteen = 1000 * 60 * 15;
+    const date = new Date();
+    const rounded = new Date(
+      Math.round((date.getTime() + fifteen) / time) * time
+    );
+    return format(rounded, "H:mm MMM d, yyyy");
+  };
 
   updateSearch = (search: string) => {
     this.setState({ search });
@@ -38,7 +87,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
   navigatePatient = (patient: Patient) => {
     const { navigation } = this.props;
-    navigation.navigate("Patient", { patientID: patient.id });
+    navigation.navigate("Patient", { patient });
   };
 
   renderRows = (patients: Array<Patient>) => {
@@ -46,7 +95,11 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     const patientBubbles = [];
 
     patients.forEach(patient => {
-      if (search && !patient.name.includes(search)) {
+      if (
+        search &&
+        !patient.name.includes(search) &&
+        !patient.id.includes(search)
+      ) {
         return;
       }
       patientBubbles.push(
@@ -122,27 +175,15 @@ export default class AllPatientsPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { search } = this.state;
-    // replace this with loaded data
-    const patients: Array<Patient> = [];
-    patients.push({
-      name: "Ivysaur Bulbasaur",
-      id: "test",
-      room: "E5 6004",
-      imageUri:
-        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-      date: "14:30 Oct 19, 2019"
-    });
-    patients.push({
-      name: "Squirtle Wartortle",
-      id: "test2",
-      room: "E5 6004",
-      imageUri:
-        "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-      date: "14:30 Oct 19, 2019"
-    });
-
+    const { search, patients, isLoading, isError } = this.state;
     const patientRows = this.renderRows(patients);
+    const spinner = (
+      <ActivityIndicator size="large" color={colours.primaryGrey} />
+    );
+    const error = (
+      <Text style={styles.errorText}>Could not retrieve patients.</Text>
+    );
+    const content = isLoading ? spinner : patientRows;
 
     return (
       <View style={styles.background}>
@@ -154,7 +195,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           containerStyle={{ backgroundColor: colours.primaryGrey }}
           inputStyle={styles.searchInput}
         />
-        {patientRows}
+        <ScrollView>{isError ? error : content}</ScrollView>
       </View>
     );
   }

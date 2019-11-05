@@ -61,5 +61,9 @@ export default StyleSheet.create({
     height: 1,
     width: "100%",
     backgroundColor: colours.secondaryGrey
+  },
+  errorText: {
+    padding: 16,
+    fontSize: RFValue(16)
   }
 });
