@@ -6,8 +6,8 @@ const EntrySchema = new Schema({
   patient_ID: {type: String, required: true, max: 100},
   observation_ID: {type: String, required: true, max: 100},
   behaviours: {type: Map, of: [String]},
-  locations: [String],
-  context: [String],
+  locations: {type: [String], default: []},
+  contexts: {type: [String], default: []},
   comments: {type: String, default: ""},
   time: {type: Date, required: true}
 });
