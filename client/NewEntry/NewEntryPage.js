@@ -149,6 +149,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     title: "New Entry"
   };
 
+  // TODO: Do not allow timestamps before the start of the current observation period
   render() {
     const {
       comments,

@@ -1,4 +1,4 @@
-var Patient = require('../models/patient');
+const Patient = require('../models/patient');
 
 // Test url
 exports.patient_test = function (req, res) {
@@ -6,7 +6,7 @@ exports.patient_test = function (req, res) {
 };
 
 exports.patient_create = function (req, res) {
-  var patient = new Patient(
+  const patient = new Patient(
     {
       name: req.body.name,
       age: req.body.age,
@@ -26,16 +26,22 @@ exports.patient_create = function (req, res) {
 };
 
 exports.patient_find_all = function (req, res) {
-  Patient.find(function (err, patients) {
-    if (err) {
-      res.send(err);
-    }
-    res.send(patients);
-  });
+  Patient.
+    find().
+    populate('observation_periods', 'start_time end_time').
+    exec(function (err, patients) {
+      if (err) {
+        res.send(err);
+      }
+      res.send(patients);
+    });
 }
 
 exports.patient_details = function (req, res) {
-  Patient.findById(req.params.id, function (err, patient) {
+  Patient.
+    findById(req.params.id).
+    populate('observation_periods', 'start_time end_time').
+    exec(function (err, patient) {
     if (err) {
       res.send(err);
     }
