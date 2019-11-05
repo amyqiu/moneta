@@ -5,28 +5,32 @@ import { Button, Card, Text, Avatar } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
 import CalendarPicker from "react-native-calendar-picker";
-import { format } from "date-fns";
 import moment from "moment";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import ColumnChart from "../Trends/ColumnChart";
 import PieChart from "../Trends/PieChart";
+import type { Patient } from "./AllPatientsPage";
 
-type Props = NavigationScreenProps & {};
+type Props = NavigationScreenProps & {
+  patient: Patient
+};
 
 // TODO: Show how many days since observation?
 type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
-  selectedStartDate: ?Date
+  selectedStartDate: ?moment
 };
 
 export default class PatientPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = props;
+    const patient = navigation.getParam("patient");
     this.state = {
-      inObservation: true,
+      inObservation: patient.inObservation,
       isExpandedRecentActivity: false,
       selectedStartDate: null
     };
@@ -36,16 +40,6 @@ export default class PatientPage extends React.Component<Props, State> {
     this.setState({
       selectedStartDate: date
     });
-  };
-
-  getNextEntry = () => {
-    const time = 1000 * 60 * 30;
-    const fifteen = 1000 * 60 * 15;
-    const date = new Date();
-    const rounded = new Date(
-      Math.round((date.getTime() + fifteen) / time) * time
-    );
-    return format(rounded, "H:mm MMM d, yyyy");
   };
 
   handleNewEntry = () => {
@@ -157,11 +151,8 @@ export default class PatientPage extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const { inObservation, isExpandedRecentActivity } = this.state;
-    const patientID = navigation.getParam("patientID", "NO-ID");
-    const patientName = navigation.getParam("patientName", "Jane Doe");
-    const patientRoom = "E5 6004";
+    const patient = navigation.getParam("patient");
 
-    const formattedDate = this.getNextEntry();
     const observationTitle = inObservation
       ? "End Observation"
       : "Start Observation";
@@ -174,30 +165,27 @@ export default class PatientPage extends React.Component<Props, State> {
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
             <Text h3 style={{ paddingBottom: 4 }}>
-              {patientName}
+              {patient.name}
             </Text>
             <View style={{ flexDirection: "row" }}>
               <Avatar
                 size={100}
                 rounded
-                source={{
-                  uri:
-                    "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg"
-                }}
+                source={{ uri: patient.imageUri }}
                 containerStyle={{ marginRight: 16 }}
               />
               <View>
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>ID: </Text>
-                  {patientID}
+                  {patient.id}
                 </Text>
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Room #: </Text>
-                  {patientRoom}
+                  {patient.room}
                 </Text>
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
-                  {formattedDate}
+                  {patient.date}
                 </Text>
                 <View style={{ flexDirection: "row" }}>
                   <Button

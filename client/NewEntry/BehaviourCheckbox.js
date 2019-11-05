@@ -100,6 +100,7 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
               <View key={subBehaviour} style={{ width: "50%" }}>
                 <CheckBox
                   title={subBehaviour}
+                  // $FlowFixMe: set is defined in defaultprops
                   checked={allCheckedSubBehaviours.has(subBehaviour)}
                   onPress={() => this.handleSubBehaviourChecked(subBehaviour)}
                   containerStyle={styles.checkBoxContainer}
@@ -119,7 +120,8 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
   }
 }
 
+// $FlowFixMe: suppressing this error because flow doesn't understand defaultprops
 BehaviourCheckbox.defaultProps = {
-  originallyChecked: null,
+  originallyChecked: false,
   originallyCheckedSubBehaviours: new Set()
 };

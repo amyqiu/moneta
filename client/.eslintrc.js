@@ -12,6 +12,7 @@ module.exports = {
     'react/prop-types': 'off',
     'comma-dangle': 'off',
     'prettier/prettier': 'error',
+    'no-underscore-dangle': 'off',
   },
   'globals': {
     "fetch": false
