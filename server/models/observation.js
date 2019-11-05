@@ -1,13 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var EntrySchema = require('../models/entry').schema;
 
 // Define ObservationSchema
 var ObservationSchema = new Schema({
-    patient_ID: {type: String, required: true, max: 100},
-    start_time: {type: Date, required: true},
-    end_time: {type: Date, required: true},
-    entries: [EntrySchema]
+  patient_ID: {type: String, required: true, max: 100},
+  start_time: {type: Date, required: true},
+  end_time: {type: Date, required: false},
+  entries: [mongoose.Schema.Types.ObjectId]
 });
 
 module.exports = mongoose.model('Observation', ObservationSchema);
