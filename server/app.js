@@ -11,7 +11,6 @@ app.use('', routes);
 // Set up mongoose connection
 var mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
-var dbConfig = require('./config');
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true
 })
