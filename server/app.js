@@ -12,7 +12,7 @@ app.use('', routes);
 var mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
 var dbConfig = require('./config');
-mongoose.connect(dbConfig.url, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true
 })
 mongoose.Promise = global.Promise;
