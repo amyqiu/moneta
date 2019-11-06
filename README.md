@@ -14,13 +14,12 @@ Database hosted at: https://cloud.mongodb.com
 Server deployed to: https://vast-savannah-47684.herokuapp.com/
 
 * Install heroku at https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
-* To deploy, run `git subtree push --prefix server heroku master` from the root directory
+* To deploy, run `git subtree push --prefix server heroku master` from the root directory (do this after each PR)
 * Can see logs with `heroku logs --tail`
 
 
 ## Setup Instructions for Client
-See https://facebook.github.io/react-native/docs/getting-started
-Run `npm install`
+See https://facebook.github.io/react-native/docs/getting-started and run `npm install`
 
 ### For Atom
  * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
