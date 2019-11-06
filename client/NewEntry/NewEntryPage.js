@@ -114,7 +114,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
       date
     } = this.state;
     const { navigation } = this.props;
-    fetch("https://moneta-cd128.firebaseio.com/entries", {
+    fetch("https://vast-savannah-47684.herokuapp.com/entry/create", {
       method: "POST",
       headers: {
         Accept: "application/json",

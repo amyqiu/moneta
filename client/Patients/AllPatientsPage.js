@@ -40,7 +40,9 @@ export default class AllPatientsPage extends React.Component<Props, State> {
   async componentDidMount() {
     try {
       // NOTE: need to use your IP address for now, until server is hosted
-      const response = await fetch("http://192.168.0.104:1234/patient/findall");
+      const response = await fetch(
+        "https://vast-savannah-47684.herokuapp.com/patient/findall"
+      );
       if (!response.ok) {
         throw Error(response.statusText);
       }
