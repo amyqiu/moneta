@@ -104,8 +104,15 @@ export default class NewEntryPage extends React.Component<Props, State> {
     });
   };
 
+  mapToObject = (map: Map<string, Set<string>>) => {
+    const obj = Object.create(null);
+    map.forEach((entry, key) => {
+      obj[key] = Array.from(entry);
+    });
+    return obj;
+  };
+
   handleSubmit = () => {
-    // TODO: fill this out
     const {
       checkedBehaviours,
       checkedLocations,
@@ -114,33 +121,31 @@ export default class NewEntryPage extends React.Component<Props, State> {
       date
     } = this.state;
     const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const data = JSON.stringify({
+      behaviours: this.mapToObject(checkedBehaviours),
+      locations: Array.from(checkedLocations),
+      contexts: Array.from(checkedContexts),
+      comments,
+      time: Math.floor(date.getTime() / 1000),
+      patient_ID: patient.id,
+      observation_ID: patient.observations[patient.observations.length - 1]._id
+    });
     fetch("https://vast-savannah-47684.herokuapp.com/entry/create", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        checkedBehaviours,
-        checkedLocations,
-        checkedContexts,
-        comments,
-        date,
-        patientID: navigation.getParam("patientID", "NO-ID")
-      })
+      body: data
+    }).then(response => {
+      if (response.ok) {
+        navigation.navigate("Patient", { patient });
+      }
     });
-    // .then(response => {
-    //   console.log("param:", navigation.getParam("patientID", "NO-ID"));
-    //   console.log("response");
-    //   console.log(response);
-    //   if (response.ok) {
-    //     console.log("success");
-    //     navigation.navigate("Patient");
-    //   }
-    // })
+    // TODO: handle error better
     // .catch(error => {
-    //   console.log("erorr");
-    //   console.error(error);
+    //   // console.log("erorr", error);
     // });
   };
 
@@ -169,6 +174,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
           color={behaviour.color}
           subBehaviours={behaviour.subBehaviours}
           onBehaviourChecked={this.onBehaviourChecked}
+          originallyChecked={null}
         />
       );
     });
