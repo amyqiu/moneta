@@ -59,7 +59,6 @@ function updateAggregatedData(req, res, obs, entry) {
 }
 
 exports.entry_create = function (req, res) {
-  console.log(req.body.behaviours);
   const entry = new Entry(
     {
       patient_ID: req.body.patient_ID,
