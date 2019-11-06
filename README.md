@@ -11,6 +11,12 @@ Database hosted at: https://cloud.mongodb.com
 * Username and Password are same as shared FYFP account
 * If a 'MongoNetworkError' is encountered, go to Network Access and click `+ ADD IP ADDRESS` to IP Whitelist
 
+Server deployed to: https://vast-savannah-47684.herokuapp.com/
+
+* Install heroku at https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
+* To deploy, run `git subtree push --prefix server heroku master` from the root directory
+
+
 ## Setup Instructions for Client
 See https://facebook.github.io/react-native/docs/getting-started
 
