@@ -127,7 +127,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
               <View>
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>ID: </Text>
-                  {patient.id}
+                  {patient.displayId}
                 </Text>
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>Room #: </Text>
