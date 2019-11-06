@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { FlatList, View, ScrollView, TouchableOpacity } from "react-native";
-import { Button, Card, Text, Avatar } from "react-native-elements";
+import { Button, Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
 import CalendarPicker from "react-native-calendar-picker";
@@ -11,7 +11,8 @@ import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import ColumnChart from "../Trends/ColumnChart";
 import PieChart from "../Trends/PieChart";
-import type { Patient } from "./AllPatientsPage";
+import type { Patient } from "./Patient";
+import PatientInfo from "./PatientInfo";
 
 type Props = NavigationScreenProps & {
   patient: Patient
@@ -169,58 +170,37 @@ export default class PatientPage extends React.Component<Props, State> {
 
     const calendar = this.renderCalender();
 
+    const exportButton = (
+      <Button
+        onPress={this.handleExport}
+        title="Export"
+        buttonStyle={styles.smallButton}
+        containerStyle={styles.buttonContainer}
+        titleProps={{ style: styles.smallButtonTitle }}
+      />
+    );
+
+    const observationButton = (
+      <Button
+        onPress={observationAction}
+        title={observationTitle}
+        buttonStyle={styles.smallButton}
+        containerStyle={styles.observationButtonContainer}
+        titleProps={{ style: styles.smallButtonTitle }}
+      />
+    );
+
     return (
       <ScrollView style={styles.background}>
         <Card containerStyle={{ borderRadius: 4 }}>
           <View>
-            <Text h3 style={{ paddingBottom: 4 }}>
-              {patient.name}
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                size={100}
-                rounded
-                source={{ uri: patient.imageUri }}
-                containerStyle={{ marginRight: 16 }}
-              />
-              <View>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>ID: </Text>
-                  {patient.displayId}
-                </Text>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>Room #: </Text>
-                  {patient.room}
-                </Text>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
-                  {patient.date}
-                </Text>
-                <View style={{ flexDirection: "row" }}>
-                  <Button
-                    onPress={this.handleNewEntry}
-                    title="+ Add Entry"
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    titleProps={{ style: styles.smallButtonTitle }}
-                  />
-                  <Button
-                    onPress={this.handleExport}
-                    title="Export"
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    titleProps={{ style: styles.smallButtonTitle }}
-                  />
-                </View>
-                <Button
-                  onPress={observationAction}
-                  title={observationTitle}
-                  buttonStyle={styles.smallButton}
-                  containerStyle={styles.buttonContainer}
-                  titleProps={{ style: styles.smallButtonTitle }}
-                />
-              </View>
-            </View>
+            <PatientInfo
+              patient={patient}
+              onNavigatePatient={null}
+              extraButton={exportButton}
+              onAddEntry={this.handleNewEntry}
+              observationButton={observationButton}
+            />
           </View>
         </Card>
         <Card containerStyle={{ borderRadius: 4 }}>
