@@ -21,6 +21,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var port = 1234;
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log('Server is up and running on port number ' + port);
 });
