@@ -45,16 +45,37 @@ export default class ColumnChart extends React.Component<Props, State> {
 
   render() {
     const exampleData = {
-      b1: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
-      b2: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
-      b3: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
-      b4: [{ time: today, value: 1 }, { time: yesterday, value: 0 }],
-      b5: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
-      b6: [{ time: today, value: 1 }, { time: yesterday, value: 0 }],
-      b7: [{ time: today, value: 1 }, { time: yesterday, value: 0 }],
-      b8: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
-      b9: [{ time: today, value: 1 }, { time: yesterday, value: 0 }],
-      b10: [{ time: today, value: 1 }, { time: yesterday, value: 1 }]
+      "Sleeping in Bed": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 1 }
+      ],
+      "Sleeping in Chair": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 1 }
+      ],
+      "Awake/Calm": [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
+      "Positively Engaged": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 0 }
+      ],
+      Noisy: [{ time: today, value: 1 }, { time: yesterday, value: 1 }],
+      Restless: [{ time: today, value: 1 }, { time: yesterday, value: 0 }],
+      "Exit Seeking": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 0 }
+      ],
+      "Aggressive - Verbal": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 1 }
+      ],
+      "Aggressive - Physical": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 0 }
+      ],
+      "Aggressive - Sexual": [
+        { time: today, value: 1 },
+        { time: yesterday, value: 1 }
+      ]
     };
     const parsedData = this.parseData(exampleData);
 
