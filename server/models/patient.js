@@ -9,7 +9,7 @@ const PatientSchema = new Schema({
   profile_picture: {type: String, required: true},
   observation_periods: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Observation'}], default: []},
   in_observation: {type: Boolean, required: true},
-  patient_ID: {type: String, required: true, max: 100},
+  display_ID: {type: String, required: true, max: 100},
 });
 
 module.exports = mongoose.model('Patient', PatientSchema);

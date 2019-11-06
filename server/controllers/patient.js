@@ -15,7 +15,8 @@ exports.patient_create = function (req, res) {
       room: req.body.room,
       profile_picture: req.body.profile_picture,
       observation_periods: req.body.observation_periods,
-      in_observation: req.body.in_observation
+      in_observation: req.body.in_observation,
+      display_ID: req.body.display_ID,
     }
   );
 
