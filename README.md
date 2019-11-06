@@ -3,7 +3,7 @@
 ## Setup Instructions for Server
 Run `npm install`
 
-* To run server: `node app.js`
+* To run server: `heroku local web -p 1234`
 * To test connection: http://localhost:1234/patient/test
 
 Database hosted at: https://cloud.mongodb.com
@@ -15,10 +15,12 @@ Server deployed to: https://vast-savannah-47684.herokuapp.com/
 
 * Install heroku at https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
 * To deploy, run `git subtree push --prefix server heroku master` from the root directory
+* Can see logs with `heroku logs --tail`
 
 
 ## Setup Instructions for Client
 See https://facebook.github.io/react-native/docs/getting-started
+Run `npm install`
 
 ### For Atom
  * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`
