@@ -1,12 +1,19 @@
 // @flow
 import React from "react";
-import { View, ScrollView, ActivityIndicator } from "react-native";
-import { Button, Card, Text, Avatar, SearchBar } from "react-native-elements";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity
+} from "react-native";
+import { Button, Card, Text, SearchBar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import { format } from "date-fns";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import colours from "../Colours";
+import PatientInfo from "./PatientInfo";
+import type { Patient } from "./Patient";
 
 type Props = NavigationScreenProps & {};
 
@@ -15,17 +22,6 @@ type State = {
   patients: Array<Patient>,
   isLoading: boolean,
   isError: boolean
-};
-
-export type Patient = {
-  name: string,
-  id: string,
-  displayId: string,
-  room: string,
-  imageUri: string,
-  date: string,
-  inObservation: boolean,
-  observations: [string]
 };
 
 export default class AllPatientsPage extends React.Component<Props, State> {
@@ -102,61 +98,34 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       if (
         search &&
         !patient.name.includes(search) &&
-        !patient.id.includes(search)
+        !patient.displayId.includes(search)
       ) {
         return;
       }
+      const extraButton = (
+        <Button
+          buttonStyle={styles.smallButton}
+          containerStyle={styles.buttonContainer}
+          onPress={() => this.navigatePatient(patient)}
+          title="Overview"
+          titleProps={{ style: styles.smallButtonTitle }}
+        />
+      );
       patientBubbles.push(
-        <Card key={patient.id} containerStyle={{ borderRadius: 4 }}>
-          <View>
-            <Text
-              h4
-              style={{ paddingBottom: 4 }}
-              onPress={() => this.navigatePatient(patient)}
-            >
-              {patient.name}
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                size={100}
-                rounded
-                source={{ uri: patient.imageUri }}
-                containerStyle={{ marginRight: 16 }}
-                onPress={() => this.navigatePatient(patient)}
-              />
-              <View>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>ID: </Text>
-                  {patient.displayId}
-                </Text>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>Room #: </Text>
-                  {patient.room}
-                </Text>
-                <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
-                  {patient.date}
-                </Text>
-                <View style={{ flexDirection: "row" }}>
-                  <Button
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    onPress={() => this.navigateEntry(patient)}
-                    title="+ Add Entry"
-                    titleProps={{ style: styles.smallButtonTitle }}
-                  />
-                  <Button
-                    buttonStyle={styles.smallButton}
-                    containerStyle={styles.buttonContainer}
-                    onPress={() => this.navigatePatient(patient)}
-                    title="Overview"
-                    titleProps={{ style: styles.smallButtonTitle }}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </Card>
+        <TouchableOpacity
+          key={patient.id}
+          onPress={() => this.navigatePatient(patient)}
+        >
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <PatientInfo
+              patient={patient}
+              onNavigatePatient={() => this.navigatePatient(patient)}
+              extraButton={extraButton}
+              onAddEntry={() => this.navigateEntry(patient)}
+              observationButton={null}
+            />
+          </Card>
+        </TouchableOpacity>
       );
     });
 

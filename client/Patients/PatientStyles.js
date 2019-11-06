@@ -65,5 +65,9 @@ export default StyleSheet.create({
   errorText: {
     padding: 16,
     fontSize: RFValue(16)
+  },
+  observationButtonContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: isTablet() ? 0 : 16
   }
 });
