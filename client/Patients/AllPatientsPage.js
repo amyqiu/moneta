@@ -20,10 +20,12 @@ type State = {
 export type Patient = {
   name: string,
   id: string,
+  displayId: string,
   room: string,
   imageUri: string,
   date: string,
-  inObservation: boolean
+  inObservation: boolean,
+  observations: [string]
 };
 
 export default class AllPatientsPage extends React.Component<Props, State> {
@@ -49,11 +51,13 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       const parsedPatients = json.map(rawPatient => {
         return {
           name: rawPatient.name,
-          id: rawPatient.patient_ID,
+          id: rawPatient._id,
+          displayId: rawPatient.patient_ID,
           room: rawPatient.room,
           imageUri: rawPatient.profile_picture,
           date: this.getNextEntry(),
-          inObservation: rawPatient.in_observation
+          inObservation: rawPatient.in_observation,
+          observations: rawPatient.observation_periods
         };
       });
       this.setState({
@@ -82,7 +86,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
   navigateEntry = (patient: Patient) => {
     const { navigation } = this.props;
-    navigation.navigate("NewEntry", { patientID: patient.id });
+    navigation.navigate("NewEntry", { patient });
   };
 
   navigatePatient = (patient: Patient) => {

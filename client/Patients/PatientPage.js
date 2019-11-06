@@ -46,8 +46,8 @@ export default class PatientPage extends React.Component<Props, State> {
 
   handleNewEntry = () => {
     const { navigation } = this.props;
-    const patientID = navigation.getParam("patientID", "NO-ID");
-    navigation.navigate("NewEntry", { patientID });
+    const patient = navigation.getParam("patient");
+    navigation.navigate("NewEntry", { patient });
   };
 
   navigateOldEntry = (entryID: number) => {

@@ -10,7 +10,7 @@ type Props = {
   color: string,
   subBehaviours: Array<string>,
   onBehaviourChecked: (string, boolean, Set<string>) => void,
-  originallyChecked?: boolean,
+  originallyChecked: ?boolean,
   originallyCheckedSubBehaviours?: Set<string>
 };
 
@@ -122,6 +122,5 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
 // $FlowFixMe: suppressing this error because flow doesn't understand defaultprops
 BehaviourCheckbox.defaultProps = {
-  originallyChecked: false,
   originallyCheckedSubBehaviours: new Set()
 };
