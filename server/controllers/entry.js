@@ -8,18 +8,10 @@ exports.validate = (method) => {
      return [
         body('patient_ID').exists().isString(),
         body('observation_ID').exists().isString(),
-        body('behaviours').exists(),
-        body('locations').exists().custom(locations => {
-          if (!Array.isArray(locations)) {
-            throw new Error('locations must be array');
-          }
-        }),
-        body('contexts').exists().custom(contexts => {
-          if (!Array.isArray(contexts)) {
-            throw new Error('contexts must be array');
-          }
-        }),
-        body('comments').exists().isString(),
+        body('behaviours').optional(),
+        body('locations').optional(),
+        body('contexts').optional(),
+        body('comments').optional().isString(),
         body('time').exists().isInt(),
       ]
     }

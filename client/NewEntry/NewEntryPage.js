@@ -138,15 +138,17 @@ export default class NewEntryPage extends React.Component<Props, State> {
         "Content-Type": "application/json"
       },
       body: data
-    }).then(response => {
-      if (response.ok) {
-        navigation.navigate("Patient", { patient });
-      }
-    });
-    // TODO: handle error better
-    // .catch(error => {
-    //   // console.log("erorr", error);
-    // });
+    })
+      .then(response => {
+        if (response.ok) {
+          navigation.navigate("Patient", { patient });
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(error => {
+        console.log("erorr", error);
+      });
   };
 
   static navigationOptions = {
