@@ -20,6 +20,7 @@ router.post('/observation/create', observation_controller.validate('observation_
 router.post('/observation/end', observation_controller.validate('observation_end'), observation_controller.observation_end);
 router.get('/observation/findall', observation_controller.observation_find_all);
 router.get('/observation/:id', observation_controller.observation_details);
+router.put('/observation/:id/update', observation_controller.observation_update);
 router.delete('/observation/:id/delete', observation_controller.observation_delete);
 
 // Entry routes

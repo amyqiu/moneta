@@ -115,6 +115,17 @@ exports.observation_details = function (req, res) {
     });
 };
 
+exports.observation_update = function (req, res) {
+  Observation.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, obs) {
+    if (err) {
+      return res.status(500).send(err);
+    } else if (!obs) {
+      return res.status(500).send('Observation does not exist');
+    }
+    return res.status(200).send('Observation updated');
+  });
+};
+
 exports.observation_delete = function (req, res) {
   Observation.findById(req.params.id, function (err, obs) {
     if (err) {

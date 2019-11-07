@@ -131,22 +131,24 @@ export default class NewEntryPage extends React.Component<Props, State> {
       patient_ID: patient.id,
       observation_ID: patient.observations[patient.observations.length - 1]._id
     });
-    fetch("https://vast-savannah-47684.herokuapp.com/entry/create", {
+    fetch("http://192.168.0.104:1234/entry/create", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
       body: data
-    }).then(response => {
-      if (response.ok) {
-        navigation.navigate("Patient", { patient });
-      }
-    });
-    // TODO: handle error better
-    // .catch(error => {
-    //   // console.log("erorr", error);
-    // });
+    })
+      .then(response => {
+        if (response.ok) {
+          navigation.navigate("Patient", { patient });
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(error => {
+        console.log("erorr", error);
+      });
   };
 
   static navigationOptions = {
