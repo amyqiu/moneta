@@ -1,5 +1,30 @@
 const Entry = require('../models/entry');
 const Observation = require('../models/observation');
+const { validationResult, body } = require('express-validator/check');
+
+exports.validate = (method) => {
+  switch (method) {
+    case 'entry_create': {
+     return [
+        body('patient_ID').exists().isString(),
+        body('observation_ID').exists().isString(),
+        body('behaviours').exists(),
+        body('locations').exists().custom(locations => {
+          if (!Array.isArray(locations)) {
+            throw new Error('locations must be array');
+          }
+        }),
+        body('contexts').exists().custom(contexts => {
+          if (!Array.isArray(contexts)) {
+            throw new Error('contexts must be array');
+          }
+        }),
+        body('comments').exists().isString(),
+        body('time').exists().isInt(),
+      ]
+    }
+  }
+}
 
 // Test url
 exports.entry_test = function (req, res) {
@@ -7,69 +32,83 @@ exports.entry_test = function (req, res) {
 };
 
 function updateAggregatedData(req, res, obs, entry) {
-  // Populate aggregated behaviour data
-  for (behaviour of Object.keys(req.body.behaviours)) {
-    if (!obs.aggregated_behaviours.has(behaviour)){
-      return res.status(500).send("Invalid behaviour specified: " + behaviour);
-    }
-    obs.aggregated_behaviours.get(behaviour).push(1);
-    for (subbehaviour of req.body.behaviours[behaviour]) {
-      if (!obs.aggregated_behaviours.has(subbehaviour)){
-        return res.status(500).send("Invalid sub-behaviour specified");
+  try {
+    // Populate aggregated behaviour data
+    for (behaviour of Object.keys(req.body.behaviours)) {
+      if (!obs.aggregated_behaviours.has(behaviour)){
+        return res.status(500).send("Invalid behaviour specified: " + behaviour);
       }
-      obs.aggregated_behaviours.get(subbehaviour).push(1);
+      obs.aggregated_behaviours.get(behaviour).push(1);
+      for (subbehaviour of req.body.behaviours[behaviour]) {
+        if (!obs.aggregated_behaviours.has(subbehaviour)){
+          return res.status(500).send("Invalid sub-behaviour specified");
+        }
+        obs.aggregated_behaviours.get(subbehaviour).push(1);
+      }
     }
+
+    // Populate aggregated contexts data
+    for (context of req.body.contexts) {
+      if (!obs.aggregated_contexts.has(context)){
+        return res.status(500).send("Invalid context specified");
+      }
+      obs.aggregated_contexts.get(context).push(1);
+    }
+
+    // Populate aggregated locations data
+    for (location of req.body.locations) {
+      if (!obs.aggregated_locations.has(location)){
+        return res.status(500).send("Invalid location specified");
+      }
+      obs.aggregated_locations.get(location).push(1);
+    }
+
+    obs.entries.push(entry.id);
+    obs.entry_times.push(new Date(req.body.time * 1000));
+
+    // Add zeroes for all unchecked options
+    obs.aggregated_behaviours.forEach(a => {
+      if (a.length < obs.entry_times.length) {
+        a.push(0);
+      }
+    });
+    obs.aggregated_locations.forEach(a => {
+      if (a.length < obs.entry_times.length) {
+        a.push(0);
+      }
+    });
+    obs.aggregated_contexts.forEach(a => {
+      if (a.length < obs.entry_times.length) {
+        a.push(0);
+      }
+    });
+  } catch (e) {
+    return res.status(500).send("An error occurred while aggregating data");
   }
-
-  // Populate aggregated contexts data
-  for (context of req.body.contexts) {
-    if (!obs.aggregated_contexts.has(context)){
-      return res.status(500).send("Invalid context specified");
-    }
-    obs.aggregated_contexts.get(context).push(1);
-  }
-
-  // Populate aggregated locations data
-  for (location of req.body.locations) {
-    if (!obs.aggregated_locations.has(location)){
-      return res.status(500).send("Invalid location specified");
-    }
-    obs.aggregated_locations.get(location).push(1);
-  }
-
-  obs.entries.push(entry.id);
-  obs.entry_times.push(new Date(req.body.time * 1000));
-
-  // Add zeroes for all unchecked options
-  obs.aggregated_behaviours.forEach(a => {
-    if (a.length < obs.entry_times.length) {
-      a.push(0);
-    }
-  });
-  obs.aggregated_locations.forEach(a => {
-    if (a.length < obs.entry_times.length) {
-      a.push(0);
-    }
-  });
-  obs.aggregated_contexts.forEach(a => {
-    if (a.length < obs.entry_times.length) {
-      a.push(0);
-    }
-  });
 }
 
 exports.entry_create = function (req, res) {
-  const entry = new Entry(
-    {
-      patient_ID: req.body.patient_ID,
-      observation_ID: req.body.observation_ID,
-      behaviours: req.body.behaviours,
-      locations: req.body.locations,
-      contexts: req.body.contexts,
-      comments: req.body.comments,
-      time: new Date(req.body.time * 1000),
-    }
-  );
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let entry;
+  try {
+    entry = new Entry(
+      {
+        patient_ID: req.body.patient_ID,
+        observation_ID: req.body.observation_ID,
+        behaviours: req.body.behaviours,
+        locations: req.body.locations,
+        contexts: req.body.contexts,
+        comments: req.body.comments,
+        time: new Date(req.body.time * 1000),
+      }
+    );
+  } catch (createErr) {
+    return res.status(500).send(createErr);
+  }
 
   Observation.findById(req.body.observation_ID, function (obsErr, obs) {
     if (obsErr) {
@@ -130,7 +169,7 @@ exports.entry_update = function (req, res) {
   });
 };
 
-//TODO: delete associate data in aggregated data
+//TODO: delete associated data in aggregated data?
 exports.entry_delete = function (req, res) {
   Entry.findById(req.params.id, function (err, entry) {
     if (err) {

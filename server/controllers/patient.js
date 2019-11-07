@@ -1,6 +1,21 @@
 const Patient = require('../models/patient');
+const { validationResult, body } = require('express-validator/check');
 
 //TODO: Add endpoints for getting entries for a day + days with entries
+
+exports.validate = (method) => {
+  switch (method) {
+    case 'patient_create': {
+     return [
+        body('name').exists().isString(),
+        body('age').exists().isInt(),
+        body('room').exists().isString(),
+        body('profile_picture').exists().isString(),
+        body('display_ID').exists().isString(),
+       ]
+    }
+  }
+}
 
 // Test url
 exports.patient_test = function (req, res) {
@@ -8,17 +23,27 @@ exports.patient_test = function (req, res) {
 };
 
 exports.patient_create = function (req, res) {
-  const patient = new Patient(
-    {
-      name: req.body.name,
-      age: req.body.age,
-      room: req.body.room,
-      profile_picture: req.body.profile_picture,
-      observation_periods: req.body.observation_periods,
-      in_observation: req.body.in_observation,
-      display_ID: req.body.display_ID,
-    }
-  );
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let patient;
+  try {
+    patient = new Patient(
+      {
+        name: req.body.name,
+        age: req.body.age,
+        room: req.body.room,
+        profile_picture: req.body.profile_picture,
+        observation_periods: [],
+        in_observation: false,
+        display_ID: req.body.display_ID,
+      }
+    );
+  } catch (createErr) {
+    return res.status(500).send(createErr);
+  }
 
   patient.save(function (err) {
     if (err) {

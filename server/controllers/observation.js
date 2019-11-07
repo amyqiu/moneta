@@ -1,14 +1,41 @@
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
+const { validationResult, body } = require('express-validator/check');
+
+exports.validate = (method) => {
+  switch (method) {
+    case 'observation_create': {
+     return [
+        body('patient_ID').exists().isString(),
+        body('start_time').exists().isInt(),
+      ]
+    }
+    case 'observation_end': {
+     return [
+        body('end_time').exists().isInt(),
+      ]
+    }
+  }
+}
 
 exports.observation_create = function (req, res) {
-  const observation = new Observation(
-    {
-      patient_ID: req.body.patient_ID,
-      start_time: new Date(req.body.start_time * 1000),
-      entries: [],
-    }
-  );
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let observation;
+  try {
+    observation = new Observation(
+      {
+        patient_ID: req.body.patient_ID,
+        start_time: new Date(req.body.start_time * 1000),
+        entries: [],
+      }
+    );
+  } catch (createErr) {
+    return res.status(500).send(createErr);
+  }
 
   Patient.findById(req.body.patient_ID, function (patientErr, patient) {
     if (patientErr) {
@@ -34,6 +61,11 @@ exports.observation_create = function (req, res) {
 };
 
 exports.observation_end = function (req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const update = {
     end_time: new Date(req.body.end_time * 1000),
   }
