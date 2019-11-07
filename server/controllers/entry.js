@@ -113,10 +113,12 @@ exports.entry_create = function (req, res) {
   Observation.findById(req.body.observation_ID, function (obsErr, obs) {
     if (obsErr) {
       return res.status(500).send(obsErr);
+    } else if (!obs) {
+      return res.status(500).send("Observation does not exist");
     } else if (obs.patient_ID !== req.body.patient_ID) {
-      return res.status(500).send("Invalid patient ID for the observation ID.");
+      return res.status(500).send("Invalid patient ID for the observation ID");
     } else if (obs.end_time != null) {
-      return res.status(500).send("Observation period has ended.");
+      return res.status(500).send("Observation period has ended");
     }
 
     updateAggregatedData(req, res, obs, entry);
@@ -128,7 +130,7 @@ exports.entry_create = function (req, res) {
       aggregated_locations: obs.aggregated_locations,
       entry_times: obs.entry_times,
     };
-    Observation.findByIdAndUpdate(req.body.observation_ID, {$set: obsUpdate}, function (updateErr, updatedObs) {
+    Observation.findByIdAndUpdate(req.body.observation_ID, {$set: obsUpdate}, function (updateErr) {
       if (updateErr) {
         return res.status(500).send(updateErr);
       }
@@ -147,16 +149,20 @@ exports.entry_create = function (req, res) {
 exports.entry_find_all = function (req, res) {
   Entry.find(function (err, entries) {
     if (err) {
-      return res.send(err);
+      return res.status(500).send(err);
     }
-    return res.send(entries);
+    return res.status(200).send(entries);
   });
 }
 
 exports.entry_details = function (req, res) {
   Entry.findById(req.params.id, function (err, entry) {
-    if (err) return next(err);
-    return res.send(entry);
+    if (err) {
+      return res.status(500).send(err);
+    } else if (!entry) {
+      return res.status(500).send('Entry does not exist');
+    }
+    return res.status(200).send(entry);
   });
 };
 
@@ -164,6 +170,8 @@ exports.entry_update = function (req, res) {
   Entry.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, entry) {
     if (err) {
       return res.status(500).send(err);
+    } else if (!entry) {
+      return res.status(500).send('Entry does not exist');
     }
     return res.status(200).send('Entry updated');
   });
@@ -174,8 +182,8 @@ exports.entry_delete = function (req, res) {
   Entry.findById(req.params.id, function (err, entry) {
     if (err) {
       return res.status(500).send(err);
-    } else if (entry == null) {
-      return res.status(500).send('No such object');
+    } else if (!entry) {
+      return res.status(500).send('Entry does not exist');
     }
     Observation.findByIdAndUpdate(entry.observation_ID, { $pullAll: { entries: [entry.id] } }, function (obsErr){
       if (obsErr) {

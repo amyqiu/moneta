@@ -12,6 +12,8 @@ exports.validate = (method) => {
     }
     case 'observation_end': {
      return [
+        body('id').exists().isString(),
+        body('patient_ID').exists().isString(),
         body('end_time').exists().isInt(),
       ]
     }
@@ -69,10 +71,13 @@ exports.observation_end = function (req, res) {
   const update = {
     end_time: new Date(req.body.end_time * 1000),
   }
-
   Observation.findByIdAndUpdate(req.body.id, {$set: update}, function (err, obs) {
     if (err) {
       return res.status(500).send(err);
+    } else if (!obs) {
+      return res.status(500).send("Could not find observation");
+    } else if (obs.patient_ID !== req.body.patient_ID){
+      return res.status(500).send("Incorrect patient ID for the observation");
     }
     const patientUpdate = {
       in_observation: false,
@@ -80,6 +85,8 @@ exports.observation_end = function (req, res) {
     Patient.findByIdAndUpdate(req.body.patient_ID, {$set: patientUpdate}, function (updateErr, updatedPatient) {
       if (updateErr) {
         return res.status(500).send(updateErr);
+      } else if (!updatedPatient) {
+        return res.status(500).send("Could not find patient");
       }
       return res.status(200).send('Observation ended successfully');
     });
@@ -101,6 +108,8 @@ exports.observation_details = function (req, res) {
     exec(function (err, obs) {
       if (err) {
         return res.status(500).send(err);
+      } else if (!obs) {
+        return res.status(500).send("Could not find observation");
       }
       return res.status(200).send(obs);
     });
@@ -110,11 +119,11 @@ exports.observation_delete = function (req, res) {
   Observation.findById(req.params.id, function (err, obs) {
     if (err) {
       return res.status(500).send(err);
-    } else if (obs == null) {
-      return res.status(500).send('No such object');
+    } else if (!obs) {
+      return res.status(500).send('Could not find observation');
     }
     Patient.findByIdAndUpdate(obs.patient_ID, { $pullAll: { observation_periods: [obs.id] } }, {}, function(patientErr){
-      if(patientErr) {
+      if (patientErr) {
         return res.status(500).send(patientErr);
       }
       obs.remove(function (delErr) {
