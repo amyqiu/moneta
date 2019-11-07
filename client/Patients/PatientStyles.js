@@ -7,7 +7,7 @@ export default StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: colours.backgroundGrey,
-    paddingBottom: 16
+    paddingBottom: 8
   },
   buttonContainer: {
     paddingVertical: 8,
@@ -53,7 +53,6 @@ export default StyleSheet.create({
   },
   entryHeader: {
     fontSize: RFValue(16),
-    fontWeight: "bold",
     textAlign: "center",
     paddingBottom: 4
   },
@@ -69,5 +68,19 @@ export default StyleSheet.create({
   observationButtonContainer: {
     paddingVertical: 8,
     paddingHorizontal: isTablet() ? 0 : 16
+  },
+  toast: {
+    backgroundColor: colours.successGreen,
+    opacity: 0.9,
+    borderRadius: 5,
+    padding: 16
+  },
+  toastText: {
+    color: colours.white,
+    fontSize: RFValue(14)
+  },
+  tabletCalendar: {
+    flexDirection: "row",
+    justifyContent: "space-between"
   }
 });

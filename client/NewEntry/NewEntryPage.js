@@ -8,7 +8,11 @@ import {
 } from "react-native";
 import { Card, Text, CheckBox, Button } from "react-native-elements";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { NavigationScreenProps } from "react-navigation";
+import {
+  NavigationScreenProps,
+  StackActions,
+  NavigationActions
+} from "react-navigation";
 import { format } from "date-fns";
 import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
@@ -26,7 +30,8 @@ type State = {
   checkedContexts: Set<string>,
   comments: string,
   date: Date,
-  showDatePicker: boolean
+  showDatePicker: boolean,
+  isSubmitting: boolean
 };
 
 export default class NewEntryPage extends React.Component<Props, State> {
@@ -38,7 +43,8 @@ export default class NewEntryPage extends React.Component<Props, State> {
       checkedContexts: new Set(),
       comments: "",
       date: new Date(),
-      showDatePicker: false
+      showDatePicker: false,
+      isSubmitting: false
     };
   }
 
@@ -120,6 +126,9 @@ export default class NewEntryPage extends React.Component<Props, State> {
       comments,
       date
     } = this.state;
+    this.setState({
+      isSubmitting: true
+    });
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
     const data = JSON.stringify({
@@ -141,7 +150,20 @@ export default class NewEntryPage extends React.Component<Props, State> {
     })
       .then(response => {
         if (response.ok) {
-          navigation.navigate("Patient", { patient });
+          this.setState({
+            isSubmitting: false
+          });
+          const resetAction = StackActions.reset({
+            index: 1,
+            actions: [
+              NavigationActions.navigate({ routeName: "AllPatients" }),
+              NavigationActions.navigate({
+                routeName: "Patient",
+                params: { patient, showSubmitEntryToast: true }
+              })
+            ]
+          });
+          navigation.dispatch(resetAction);
         } else {
           console.log(response);
         }
@@ -156,15 +178,18 @@ export default class NewEntryPage extends React.Component<Props, State> {
     title: "New Entry"
   };
 
-  // TODO: Do not allow timestamps before the start of the current observation period
   render() {
     const {
       comments,
       checkedLocations,
       checkedContexts,
       showDatePicker,
-      date
+      date,
+      isSubmitting
     } = this.state;
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
 
     const behavourCheckboxes = [];
@@ -180,6 +205,10 @@ export default class NewEntryPage extends React.Component<Props, State> {
         />
       );
     });
+
+    // TODO: Should really be last entry time, with fallback to observation start
+    const observationStart =
+      patient.observations[patient.observations.length - 1].start_time;
 
     return (
       <KeyboardAvoidingView behavior="position">
@@ -263,6 +292,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
                   onCancel={this.handleCloseDatePicker}
                   mode="datetime"
                   is24Hour={false}
+                  minimumDate={new Date(observationStart)}
                 />
               </View>
             </Card>
@@ -272,6 +302,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
                 title="Submit"
                 buttonStyle={styles.submitButton}
                 titleProps={{ style: styles.submitButtonTitle }}
+                loading={isSubmitting}
               />
             </View>
           </View>

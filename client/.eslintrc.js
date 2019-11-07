@@ -13,6 +13,7 @@ module.exports = {
     'comma-dangle': 'off',
     'prettier/prettier': 'error',
     'no-underscore-dangle': 'off',
+    'react/no-string-refs': 'off',
   },
   'globals': {
     "fetch": false
