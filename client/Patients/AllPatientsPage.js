@@ -48,7 +48,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         return {
           name: rawPatient.name,
           id: rawPatient._id,
-          displayId: rawPatient.patient_ID,
+          displayId: rawPatient.display_ID,
           room: rawPatient.room,
           imageUri: rawPatient.profile_picture,
           date: this.getNextEntry(),
