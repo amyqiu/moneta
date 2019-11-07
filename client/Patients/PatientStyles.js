@@ -73,7 +73,7 @@ export default StyleSheet.create({
     backgroundColor: colours.successGreen,
     opacity: 0.9,
     borderRadius: 5,
-    padding: 16
+    padding: 8
   },
   toastText: {
     color: colours.white,
