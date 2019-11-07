@@ -5,6 +5,7 @@ import { Button, Text, Avatar } from "react-native-elements";
 import styles from "./PatientStyles";
 import type { Patient } from "./Patient";
 import { isTablet } from "../Helpers";
+import colours from "../Colours";
 
 type Props = {
   patient: Patient,
@@ -31,6 +32,9 @@ const PatientInfo = (props: Props) => {
         onPress={onAddEntry}
         title="+ Add Entry"
         titleProps={{ style: styles.smallButtonTitle }}
+        underlayColor="white"
+        disabled={!patient.inObservation || patient.observations.length < 1}
+        disabledStyle={{ backgroundColor: colours.disabled }}
       />
       {extraButton}
     </View>
