@@ -1,4 +1,5 @@
 # moneta
+https://expo.io/@bmefydpgroup/client
 
 ## Setup Instructions for Server
 Run `npm install`
@@ -32,3 +33,6 @@ See https://facebook.github.io/react-native/docs/getting-started and run `npm in
   * May need to run `sudo npm install -g expo-cli`
   * If on public wifi, use `expo start --tunnel`
   * Expo is on React version 59.0: https://facebook.github.io/react-native/docs/0.59/getting-started
+
+### Icons
+Logo icon is provided by Tilda Publishing: https://tilda.cc.
