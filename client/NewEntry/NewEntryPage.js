@@ -131,7 +131,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
       patient_ID: patient.id,
       observation_ID: patient.observations[patient.observations.length - 1]._id
     });
-    fetch("http://192.168.0.104:1234/entry/create", {
+    fetch("https://vast-savannah-47684.herokuapp.com/entry/create", {
       method: "POST",
       headers: {
         Accept: "application/json",
