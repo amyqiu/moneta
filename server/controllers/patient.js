@@ -72,6 +72,8 @@ exports.patient_details = function (req, res) {
     exec(function (err, patient) {
       if (err) {
         return res.status(500).send(err);
+      } else if (!patient) {
+        return res.status(500).send("Patient does not exist");
       }
       return res.status(200).send(patient);
     });
@@ -81,6 +83,8 @@ exports.patient_update = function (req, res) {
   Patient.findByIdAndUpdate(req.params.id, {$set: req.body}, function (err, patient) {
     if (err) {
       return res.status(500).send(err);
+    } else if (!patient) {
+      return res.status(500).send("Patient does not exist");
     }
     return res.status(200).send('Patient updated');
   });
