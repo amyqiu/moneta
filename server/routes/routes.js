@@ -14,7 +14,7 @@ router.get('/patient/findall', patient_controller.patient_find_all);
 router.get('/patient/:id', patient_controller.patient_details);
 router.put('/patient/:id/update', patient_controller.patient_update);
 router.delete('/patient/:id/delete', patient_controller.patient_delete);
-router.get('/patient/:id/:month/get_days_with_entries', patient_controller.get_days_with_entries);
+router.get('/patient/:id/:month/:year/get_days_with_entries', patient_controller.get_days_with_entries);
 
 // Observation routes
 router.post('/observation/create', observation_controller.validate('observation_create'), observation_controller.observation_create);
