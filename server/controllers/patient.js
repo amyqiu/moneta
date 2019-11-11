@@ -101,16 +101,17 @@ exports.patient_delete = function (req, res) {
 };
 
 // Get days with entries from an observation period
-function get_days_from_period (id, month) {
+function get_days_from_period (id, month, year) {
   return new Promise ((resolve, reject) => {
     Observation.
       findById(id).
       exec(function (err, obs) {
         var days = [];
-        // TODO: check if there are no entries in observation period
-        for (time of obs.entry_times) {
-          if (time.getMonth() + 1 == month){
-            days.push(time.getDate())
+        if (obs.entry_times.length >=  1) {
+          for (time of obs.entry_times) {
+            if (time.getMonth() + 1 == month && time.getFullYear() == year){
+              days.push(time.getDate())
+            }
           }
         }
         setTimeout(() => resolve(days), 300)
@@ -120,8 +121,8 @@ function get_days_from_period (id, month) {
 
 // Get days with entries given month
 exports.get_days_with_entries = function (req, res) {
-  if(isNaN(req.params.month)){
-    return res.status(500).send("Month is not a number");
+  if(isNaN(req.params.month) || isNaN(req.params.year)){
+    return res.status(500).send("Month/Year is not a number");
   }
   Patient.
     findById(req.params.id).
@@ -137,9 +138,9 @@ exports.get_days_with_entries = function (req, res) {
       // Loop through each observation period, check if start_time is in same month
       var date_array = [];
       for (period of patient.observation_periods) {
-        if (period.start_time.getMonth() + 1 == req.params.month) {
+        if (period.start_time.getMonth() + 1 == req.params.month && period.start_time.getFullYear() == req.params.year) {
           try {
-            var days = await get_days_from_period(period.id, req.params.month);
+            var days = await get_days_from_period(period.id, req.params.month, req.params.year);
             date_array.push(days)
           } catch (err) {
             return res.status(500).send("Error getting entry days from observation");
