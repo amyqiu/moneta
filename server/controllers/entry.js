@@ -1,5 +1,6 @@
 const Entry = require('../models/entry');
 const Observation = require('../models/observation');
+const Patient = require('../models/patient');
 const { validationResult, body } = require('express-validator/check');
 
 exports.validate = (method) => {
@@ -136,15 +137,48 @@ exports.entry_create = function (req, res) {
   });
 };
 
-// TODO: find all entries based on patient ID + observation period ID
+// TODO: find all entries based on the time period
+// We know the
 
 exports.entry_find_all = function (req, res) {
   Entry.find(function (err, entries) {
     if (err) {
       return res.status(500).send(err);
     }
+
     return res.status(200).send(entries);
   });
+}
+
+exports.entry_find_day = function (req, res) {
+  if(isNaN(req.body.month) || isNaN(req.body.day) || isNaN(req.body.year)){
+  return res.status(500).send("Month/Day/Year is not a number");
+  }
+  console.log("here");
+  // use ID of patient to find all of the entries associated with that patient
+  Entry.find({patient_ID: req.body.patient_ID}).
+  exec(function(err,entries){
+    if (err) {
+      return res.status(500).send(err);
+    } else if (!entries) {
+      return res.status(500).send("Entries does not exist");
+    }
+    // loop through all of the elements to see if they end up being the thing.
+    console.log(entries);
+    entry_day_array = [];
+    for(entry of entries){
+      console.log(entry.time);
+      if (entry.time.getMonth() + 1 == req.body.month && entry.time.getDate() == req.body.day && entry.time.getFullYear() == req.body.year){
+        try{
+        entry_day_array.push(entry)
+      } catch(err){
+        return res.status(500).send("Error getting entry days from observation");
+      }
+      }
+    };
+    return res.status(200).send(entry_day_array);
+  });
+
 }
 
 exports.entry_details = function (req, res) {
