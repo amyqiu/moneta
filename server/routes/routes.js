@@ -27,6 +27,7 @@ router.delete('/observation/:id/delete', observation_controller.observation_dele
 router.get('/entry/test', entry_controller.entry_test);
 router.post('/entry/create', entry_controller.validate('entry_create'), entry_controller.entry_create);
 router.get('/entry/findall', entry_controller.entry_find_all);
+router.get('/entry/findday', entry_controller.entry_find_day);
 router.get('/entry/:id', entry_controller.entry_details);
 router.put('/entry/:id/update', entry_controller.entry_update);
 router.delete('/entry/:id/delete', entry_controller.entry_delete);
