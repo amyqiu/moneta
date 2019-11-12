@@ -4,7 +4,8 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from "react-native";
 import { Button, Card, Text, SearchBar } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
@@ -21,7 +22,8 @@ type State = {
   search: string,
   patients: Array<Patient>,
   isLoading: boolean,
-  isError: boolean
+  isError: boolean,
+  isRefreshing: boolean
 };
 
 export default class AllPatientsPage extends React.Component<Props, State> {
@@ -31,11 +33,21 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       search: "",
       patients: [],
       isLoading: true,
-      isError: false
+      isError: false,
+      isRefreshing: false
     };
   }
 
   async componentDidMount() {
+    this.getPatients();
+  }
+
+  onRefresh = () => {
+    this.setState({ isRefreshing: true });
+    this.getPatients();
+  };
+
+  getPatients = async () => {
     try {
       const response = await fetch(
         "https://vast-savannah-47684.herokuapp.com/patient/findall"
@@ -59,12 +71,13 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       this.setState({
         patients: parsedPatients,
         isLoading: false,
+        isRefreshing: false,
         isError: false
       });
     } catch (error) {
-      this.setState({ isError: true });
+      this.setState({ isError: true, isRefreshing: false, isLoading: false });
     }
-  }
+  };
 
   getNextEntry = () => {
     const time = 1000 * 60 * 30;
@@ -148,7 +161,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { search, patients, isLoading, isError } = this.state;
+    const { search, patients, isLoading, isError, isRefreshing } = this.state;
     const patientRows = this.renderRows(patients);
     const spinner = (
       <ActivityIndicator size="large" color={colours.primaryGrey} />
@@ -168,7 +181,14 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           containerStyle={{ backgroundColor: colours.primaryGrey }}
           inputStyle={styles.searchInput}
         />
-        <ScrollView>{isError ? error : content}</ScrollView>
+        <ScrollView>
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={this.onRefresh}
+            enabled
+          />
+          {isError ? error : content}
+        </ScrollView>
       </View>
     );
   }

@@ -22,7 +22,9 @@ type Props = NavigationScreenProps & {
 type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
-  isExpandedTrends: boolean
+  isExpandedTrends: boolean,
+  observationID: ?string,
+  loadingObservation: boolean
 };
 
 export default class PatientPage extends React.Component<Props, State> {
@@ -33,7 +35,11 @@ export default class PatientPage extends React.Component<Props, State> {
     this.state = {
       inObservation: patient.inObservation,
       isExpandedRecentActivity: false,
-      isExpandedTrends: false
+      isExpandedTrends: false,
+      observationID: patient.inObservation
+        ? patient.observations[patient.observations.length - 1]._id
+        : null,
+      loadingObservation: false
     };
   }
 
@@ -57,13 +63,69 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   handleStartObservation = () => {
-    this.setState({ inObservation: true });
-    // TODO: Refresh page and submit to server
+    this.setState({ loadingObservation: true });
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const data = JSON.stringify({
+      patient_ID: patient.id,
+      start_time: Math.round(new Date().getTime() / 1000)
+    });
+    fetch("https://vast-savannah-47684.herokuapp.com/observation/create", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: data
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(responseData => {
+        if (responseData.observation) {
+          this.setState({
+            inObservation: true,
+            observationID: responseData.observation,
+            loadingObservation: false
+          });
+        } else {
+          console.log(responseData);
+        }
+      })
+      .catch(error => {
+        console.log("erorr", error);
+      });
   };
 
   handleEndObservation = () => {
-    this.setState({ inObservation: false });
-    // TODO: Show summary screen? Refresh / submit
+    // TODO: Show summary screen with graphs?
+    this.setState({ loadingObservation: true });
+    const { navigation } = this.props;
+    const { observationID } = this.state;
+    const patient = navigation.getParam("patient");
+    const data = JSON.stringify({
+      id: observationID,
+      patient_ID: patient.id,
+      end_time: Math.round(new Date().getTime() / 1000)
+    });
+    fetch("https://vast-savannah-47684.herokuapp.com/observation/end", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: data
+    })
+      .then(response => {
+        if (response.ok) {
+          this.setState({ inObservation: false, loadingObservation: false });
+        } else {
+          console.log(response);
+        }
+      })
+      .catch(error => {
+        console.log("erorr", error);
+      });
   };
 
   handleExport = () => {
@@ -92,7 +154,8 @@ export default class PatientPage extends React.Component<Props, State> {
     const {
       inObservation,
       isExpandedRecentActivity,
-      isExpandedTrends
+      isExpandedTrends,
+      loadingObservation
     } = this.state;
     const patient = navigation.getParam("patient");
 
@@ -120,6 +183,7 @@ export default class PatientPage extends React.Component<Props, State> {
         buttonStyle={styles.smallButton}
         containerStyle={styles.observationButtonContainer}
         titleProps={{ style: styles.smallButtonTitle }}
+        loading={loadingObservation}
       />
     );
     return (

@@ -58,7 +58,10 @@ exports.observation_create = (req, res) => {
         if (err) {
           return res.status(500).send(err);
         }
-        return res.status(200).send('Observation created successfully');
+        return res.status(200).send({
+          message: 'Observation created successfully',
+          observation: observation.id
+        });
       });
     });
   });
