@@ -3,7 +3,7 @@ import * as React from "react";
 import { View, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Card, Text, CheckBox } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
-import { format } from "date-fns";
+import moment from "moment";
 import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
 import CONTEXTS from "./Contexts";
@@ -21,19 +21,15 @@ export default class NewEntryPage extends React.Component<Props, {}> {
   };
 
   render() {
-    // TODO: retreive variables using entryID in props
-    const checkedLocations = new Set(["Cafeteria"]);
-    const checkedContexts = new Set([
-      "Loud/Busy Environment",
-      "Eating/Drinking"
-    ]);
+    const { navigation } = this.props;
+    const entry = navigation.getParam("entry");
+    // TODO: replace checkedBehaviours with entry.behaviours
     const checkedBehaviours = new Map([
       ["Awake/Calm", new Set()],
       ["Restless", new Set(["Exploring/Searching"])]
     ]);
     const comment = "previously entered comment";
-    const date = new Date();
-    const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
+    const formattedDate = moment(entry.time).format("MMMM d, YYYY H:mm:ss a");
 
     // TODO: refactor BehaviourCheckbox and make this list a shared component with NewEntry
     const behavourCheckboxes = [];
@@ -77,7 +73,7 @@ export default class NewEntryPage extends React.Component<Props, {}> {
                   <CheckBox
                     title={location}
                     key={location}
-                    checked={checkedLocations.has(location)}
+                    checked={entry.locations.includes(location)}
                     containerStyle={styles.checkBoxContainer}
                     textStyle={styles.checkBoxLabel}
                     iconType="feather"
@@ -96,7 +92,7 @@ export default class NewEntryPage extends React.Component<Props, {}> {
                   <CheckBox
                     title={context}
                     key={context}
-                    checked={checkedContexts.has(context)}
+                    checked={entry.contexts.includes(context)}
                     containerStyle={styles.checkBoxContainer}
                     textStyle={styles.checkBoxLabel}
                     iconType="feather"
