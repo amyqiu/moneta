@@ -13,6 +13,7 @@ import PieChart from "../Trends/PieChart";
 import type { Patient } from "./Patient";
 import PatientInfo from "./PatientInfo";
 import Calendar from "./Calendar";
+import type { Entry } from "../NewEntry/Entry";
 
 type Props = NavigationScreenProps & {
   patient: Patient
@@ -57,9 +58,9 @@ export default class PatientPage extends React.Component<Props, State> {
     navigation.navigate("NewEntry", { patient });
   };
 
-  handleNavigateOldEntry = (entryID: string) => {
+  handleNavigateOldEntry = (entry: Entry) => {
     const { navigation } = this.props;
-    navigation.navigate("OldEntry", { entryID });
+    navigation.navigate("OldEntry", { entry });
   };
 
   handleStartObservation = () => {

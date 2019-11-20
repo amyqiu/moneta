@@ -6,92 +6,164 @@ import CalendarPicker from "react-native-calendar-picker";
 import moment from "moment";
 import styles from "./PatientStyles";
 import type { Patient } from "./Patient";
+import type { Entry } from "../NewEntry/Entry";
 import { scaleWidth, isTablet } from "../Helpers";
 
 type Props = {
   patient: Patient,
-  onNavigateOldEntry: (entryID: string) => void
+  onNavigateOldEntry: (entry: Entry) => void
 };
 
 type State = {
-  selectedStartDate: ?moment
+  selectedStartDate: moment,
+  entryDates: Array<moment>,
+  entryTimes: Array<Entry>,
+  isError: boolean
 };
 
 export default class Calendar extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const today = moment();
     this.state = {
-      selectedStartDate: null
+      selectedStartDate: today,
+      entryDates: [],
+      entryTimes: [],
+      isError: false
     };
   }
 
-  onDateChange = (date: Date) => {
-    this.setState({
-      selectedStartDate: date
-    });
+  async componentDidMount() {
+    this.setObservationDaysWithinMonth(moment());
+    this.setObservationTimesWithinDay(moment());
+  }
+
+  setObservationDaysWithinMonth = async (date: moment) => {
+    try {
+      const { patient } = this.props;
+      const response = await fetch(
+        `https://vast-savannah-47684.herokuapp.com/patient/find-days-with-entries?id=${
+          patient.id
+        }&month=${date.month() + 1}&year=${date.year()}`
+      );
+      if (!response.ok) {
+        this.setState({
+          isError: true,
+          entryDates: [],
+          selectedStartDate: date
+        });
+      }
+      const json = await response.json();
+      this.setState({
+        isError: false,
+        entryDates: json,
+        selectedStartDate: date
+      });
+    } catch (error) {
+      this.setState({ isError: true, entryDates: [], selectedStartDate: date });
+    }
   };
 
-  navigateOldEntry = (entryID: string) => {
+  setObservationTimesWithinDay = async (date: moment) => {
+    try {
+      const { patient } = this.props;
+      const response = await fetch(
+        `https://vast-savannah-47684.herokuapp.com/entry/find-entries-on-day?patient_ID=${
+          patient.id
+        }&month=${date.month() + 1}&year=${date.year()}&day=${date.date()}`
+      );
+      if (!response.ok) {
+        this.setState({
+          isError: true,
+          entryTimes: [],
+          selectedStartDate: date
+        });
+      }
+      const json = await response.json();
+      const parsedEntries = json.map(rawEntry => {
+        return {
+          locations: rawEntry.locations,
+          contexts: rawEntry.contexts,
+          behaviours: rawEntry.behaviours,
+          time: rawEntry.time
+        };
+      });
+      this.setState({
+        isError: false,
+        entryTimes: parsedEntries, // this needs to be a map from date to id
+        selectedStartDate: date
+      });
+    } catch (error) {
+      this.setState({ isError: true, entryTimes: [], selectedStartDate: date });
+    }
+  };
+
+  onDateChange = (date: moment) => {
+    this.setObservationTimesWithinDay(date);
+  };
+
+  onMonthChange = (date: moment) => {
+    this.setObservationDaysWithinMonth(date);
+    this.setObservationTimesWithinDay(date); // select first day in month
+  };
+
+  navigateOldEntry = (entry: Entry) => {
     const { onNavigateOldEntry } = this.props;
-    onNavigateOldEntry(entryID);
+    onNavigateOldEntry(entry);
   };
 
   render() {
-    const { selectedStartDate } = this.state;
-    // TODO: replace with entries within month
-    const today = new Date();
-    const existingDates = [
-      new Date(today.setDate(today.getDate() - 1)),
-      new Date(today.setDate(today.getDate() - 6)),
-      new Date(today.setDate(today.getDate() + 5))
-    ];
+    const { selectedStartDate, entryDates, entryTimes, isError } = this.state;
     const customDatesStyles = [];
-    existingDates.forEach(day => {
+    entryDates.forEach(day => {
+      const date = moment();
       customDatesStyles.push({
-        date: day,
+        date: date.set({
+          year: selectedStartDate.year(),
+          month: selectedStartDate.month(),
+          date: day
+        }),
         style: { backgroundColor: "#ccffee" }
       });
     });
 
+    const error = (
+      <Text style={styles.errorText}>Could not retrieve old entries.</Text>
+    );
+
+    const data = [];
+    const formattedDay = selectedStartDate.format("LL");
+    entryTimes.forEach(entry => {
+      const time = moment(entry.time).format("HH:mm A");
+      data.push({ key: time, entryData: entry });
+    });
+
     let existingTimesList = null;
-    if (selectedStartDate) {
-      // TODO: replace with query for available times on this day
-      const timelist = [moment(), moment(), moment()];
-      timelist[0].add(5, "hours");
-      timelist[1].add(3, "hours");
-
-      const formattedDay = selectedStartDate.format("LL");
-      const data = [];
-      timelist.forEach(timestamp => {
-        const formattedTime = timestamp.format("HH:mm A");
-        data.push({ key: formattedTime, entryID: 12345 });
-      });
-
-      existingTimesList = (
-        <FlatList
-          key="data"
-          data={data}
-          ItemSeparatorComponent={() => <View style={styles.entrySeparator} />}
-          ListHeaderComponent={() => (
-            <Text style={styles.entryHeader} key={formattedDay}>
-              {formattedDay}
-            </Text>
-          )}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => this.navigateOldEntry(item.entryID)}
-            >
-              <Text style={styles.entryLink}>{item.key}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      );
-    }
+    existingTimesList = (
+      <FlatList
+        key="data"
+        data={data}
+        ItemSeparatorComponent={() => <View style={styles.entrySeparator} />}
+        ListHeaderComponent={() => (
+          <Text style={styles.entryHeader} key={formattedDay}>
+            {formattedDay}
+          </Text>
+        )}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => this.navigateOldEntry(item.entryData)}
+          >
+            <Text style={styles.entryLink}>{item.key}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    );
 
     const calendar = (
       <View style={{ marginBottom: -32 }}>
         <CalendarPicker
           onDateChange={this.onDateChange}
+          onMonthChange={this.onMonthChange}
           customDatesStyles={customDatesStyles}
           width={scaleWidth(isTablet() ? 0.64 : 0.9)}
         />
@@ -106,7 +178,7 @@ export default class Calendar extends React.Component<Props, State> {
 
     return (
       <View style={isTablet() ? styles.tabletCalendar : {}}>
-        {calendar}
+        {isError ? error : calendar}
         {entries}
       </View>
     );
