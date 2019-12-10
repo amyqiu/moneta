@@ -12,7 +12,8 @@ type Props = {
   onNavigatePatient: ?() => void,
   extraButton: React.Node,
   onAddEntry: () => void,
-  observationButton: ?React.Node
+  observationButton: ?React.Node,
+  inObservation: boolean
 };
 
 const PatientInfo = (props: Props) => {
@@ -21,7 +22,8 @@ const PatientInfo = (props: Props) => {
     onNavigatePatient,
     extraButton,
     onAddEntry,
-    observationButton
+    observationButton,
+    inObservation
   } = props;
 
   const buttons = (
@@ -33,7 +35,7 @@ const PatientInfo = (props: Props) => {
         title="+ Add Entry"
         titleProps={{ style: styles.smallButtonTitle }}
         underlayColor="white"
-        disabled={!patient.inObservation || patient.observations.length < 1}
+        disabled={!inObservation}
         disabledStyle={{ backgroundColor: colours.disabled }}
       />
       {extraButton}

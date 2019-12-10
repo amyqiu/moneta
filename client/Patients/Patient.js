@@ -8,5 +8,5 @@ export type Patient = {
   imageUri: string,
   date: string,
   inObservation: boolean,
-  observations: [string]
+  observations: [Object]
 };

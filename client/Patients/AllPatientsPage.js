@@ -8,7 +8,7 @@ import {
   RefreshControl
 } from "react-native";
 import { Button, Card, Text, SearchBar } from "react-native-elements";
-import { NavigationScreenProps } from "react-navigation";
+import { NavigationScreenProps, NavigationEvents } from "react-navigation";
 import { format } from "date-fns";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
@@ -95,12 +95,22 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
   navigateEntry = (patient: Patient) => {
     const { navigation } = this.props;
-    navigation.navigate("NewEntry", { patient });
+    navigation.navigate("NewEntry", {
+      patient,
+      observationID: patient.inObservation
+        ? patient.observations[patient.observations.length - 1]._id
+        : null
+    });
   };
 
   navigatePatient = (patient: Patient) => {
     const { navigation } = this.props;
-    navigation.navigate("Patient", { patient });
+    navigation.navigate("Patient", {
+      patient,
+      observationID: patient.inObservation
+        ? patient.observations[patient.observations.length - 1]._id
+        : null
+    });
   };
 
   renderRows = (patients: Array<Patient>) => {
@@ -136,6 +146,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
               extraButton={extraButton}
               onAddEntry={() => this.navigateEntry(patient)}
               observationButton={null}
+              inObservation={patient.inObservation}
             />
           </Card>
         </TouchableOpacity>
@@ -173,6 +184,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
     return (
       <View style={styles.background}>
+        <NavigationEvents onDidFocus={this.getPatients} />
         <SearchBar
           lightTheme
           placeholder="Search..."

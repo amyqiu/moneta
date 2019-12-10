@@ -131,6 +131,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     });
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
+    const observationID = navigation.getParam("observationID");
     const data = JSON.stringify({
       behaviours: this.mapToObject(checkedBehaviours),
       locations: Array.from(checkedLocations),
@@ -138,7 +139,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
       comments,
       time: Math.floor(date.getTime() / 1000),
       patient_ID: patient.id,
-      observation_ID: patient.observations[patient.observations.length - 1]._id
+      observation_ID: observationID
     });
     fetch("https://vast-savannah-47684.herokuapp.com/entry/create", {
       method: "POST",
@@ -159,7 +160,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
               NavigationActions.navigate({ routeName: "AllPatients" }),
               NavigationActions.navigate({
                 routeName: "Patient",
-                params: { patient, showSubmitEntryToast: true }
+                params: { patient, showSubmitEntryToast: true, observationID }
               })
             ]
           });
@@ -169,7 +170,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
         }
       })
       .catch(error => {
-        console.log("erorr", error);
+        console.log("error", error);
       });
   };
 
@@ -206,7 +207,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
       );
     });
 
-    // TODO: Should really be last entry time, with fallback to observation start
+    // TODO: Fix! Should be last entry time, with fallback to observation start
     const observationStart =
       patient.observations[patient.observations.length - 1].start_time;
 
