@@ -5,14 +5,15 @@ import { Button, Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
 import Toast from "react-native-easy-toast";
+import moment from "moment";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import ColumnChart from "../Trends/ColumnChart";
-import PieChart from "../Trends/PieChart";
 import type { Patient } from "./Patient";
 import PatientInfo from "./PatientInfo";
 import Calendar from "./Calendar";
+import BEHAVIOURS from "../NewEntry/Behaviours";
 import type { Entry } from "../NewEntry/Entry";
 
 type Props = NavigationScreenProps & {
@@ -25,37 +26,46 @@ type State = {
   isExpandedRecentActivity: boolean,
   isExpandedTrends: boolean,
   observationID: ?string,
-  loadingObservation: boolean
+  loadingObservation: boolean,
+  loadingTrends: boolean,
+  aggregatedBehaviours: ?Map<string, Array<number>>,
+  entryTimes: ?Array<moment>
 };
 
 export default class PatientPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = props;
-    const patient = navigation.getParam("patient");
+    const observationID = navigation.getParam("observationID");
     this.state = {
-      inObservation: patient.inObservation,
+      inObservation: observationID != null,
       isExpandedRecentActivity: false,
       isExpandedTrends: false,
-      observationID: patient.inObservation
-        ? patient.observations[patient.observations.length - 1]._id
-        : null,
-      loadingObservation: false
+      observationID,
+      loadingObservation: false,
+      loadingTrends: true,
+      aggregatedBehaviours: null,
+      entryTimes: null
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { navigation } = this.props;
     const showToast = navigation.getParam("showSubmitEntryToast");
     if (showToast) {
       this.refs.toast.show("Succesfully submitted!");
     }
+    this.getTrendData();
   }
 
   handleNewEntry = () => {
     const { navigation } = this.props;
+    const { observationID } = this.state;
     const patient = navigation.getParam("patient");
-    navigation.navigate("NewEntry", { patient });
+    navigation.navigate("NewEntry", {
+      patient,
+      observationID
+    });
   };
 
   handleNavigateOldEntry = (entry: Entry) => {
@@ -94,7 +104,7 @@ export default class PatientPage extends React.Component<Props, State> {
         }
       })
       .catch(error => {
-        console.log("erorr", error);
+        console.log("error", error);
       });
   };
 
@@ -129,6 +139,47 @@ export default class PatientPage extends React.Component<Props, State> {
       });
   };
 
+  getTrendData = async () => {
+    const { navigation } = this.props;
+    const { observationID } = this.state;
+    const patient = navigation.getParam("patient");
+
+    // No observations for patient
+    if (observationID == null && patient.observations.length === 0) {
+      return;
+    }
+
+    // If not currently in observation, show stats from last observation period
+    const observation =
+      observationID ||
+      patient.observations[patient.observations.length - 1]._id;
+
+    try {
+      const response = await fetch(
+        `https://vast-savannah-47684.herokuapp.com/observation/${observation}`
+      );
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      const json = await response.json();
+      const aggregatedBehaviours = new Map<string, Array<number>>();
+      Object.keys(json.aggregated_behaviours).forEach(behaviour => {
+        aggregatedBehaviours.set(
+          behaviour,
+          json.aggregated_behaviours[behaviour]
+        );
+      });
+      const entryTimes = json.entry_times.map(entryTime => moment(entryTime));
+      this.setState({
+        loadingTrends: false,
+        aggregatedBehaviours,
+        entryTimes
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   handleExport = () => {
     // TODO: Navigate to export page
   };
@@ -143,6 +194,39 @@ export default class PatientPage extends React.Component<Props, State> {
     this.setState(previousState => ({
       isExpandedTrends: !previousState.isExpandedTrends
     }));
+  };
+
+  processHourlyTrends = () => {
+    const { aggregatedBehaviours, entryTimes } = this.state;
+    if (
+      aggregatedBehaviours == null ||
+      entryTimes == null ||
+      entryTimes.length === 0
+    ) {
+      return [];
+    }
+
+    const processedData = [];
+    aggregatedBehaviours.forEach((data, behaviour) => {
+      if (BEHAVIOURS.has(behaviour)) {
+        const hourlyData = new Array(24).fill(0);
+        for (let i = 0; i < entryTimes.length; i += 1) {
+          const hour = entryTimes[i].hour();
+          hourlyData[hour] += data[i];
+        }
+
+        const dataPoints = [];
+        for (let i = 0; i < 24; i += 1) {
+          dataPoints.push({
+            x: `${i}:00`,
+            y: hourlyData[i],
+            color: BEHAVIOURS.get(behaviour).color
+          });
+        }
+        processedData.push(dataPoints);
+      }
+    });
+    return processedData;
   };
 
   static navigationOptions = {
@@ -166,6 +250,8 @@ export default class PatientPage extends React.Component<Props, State> {
     const observationAction = inObservation
       ? this.handleEndObservation
       : this.handleStartObservation;
+
+    const processedData = this.processHourlyTrends();
 
     const exportButton = (
       <Button
@@ -198,6 +284,7 @@ export default class PatientPage extends React.Component<Props, State> {
                 extraButton={exportButton}
                 onAddEntry={this.handleNewEntry}
                 observationButton={observationButton}
+                inObservation={inObservation}
               />
             </View>
           </Card>
@@ -247,8 +334,11 @@ export default class PatientPage extends React.Component<Props, State> {
               />
             </TouchableOpacity>
             <View style={isExpandedTrends ? {} : { display: "none" }}>
-              <ColumnChart />
-              <PieChart />
+              {processedData.length === 0 ? (
+                <Text h4>No data available</Text>
+              ) : (
+                <ColumnChart graphData={processedData} />
+              )}
             </View>
           </Card>
         </ScrollView>
