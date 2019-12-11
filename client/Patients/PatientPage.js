@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
 import Toast from "react-native-easy-toast";
 import moment from "moment";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
@@ -29,7 +30,8 @@ type State = {
   loadingObservation: boolean,
   loadingTrends: boolean,
   aggregatedBehaviours: ?Map<string, Array<number>>,
-  entryTimes: ?Array<moment>
+  entryTimes: ?Array<moment>,
+  selectedBehaviours: Array<Object>
 };
 
 export default class PatientPage extends React.Component<Props, State> {
@@ -45,7 +47,8 @@ export default class PatientPage extends React.Component<Props, State> {
       loadingObservation: false,
       loadingTrends: true,
       aggregatedBehaviours: null,
-      entryTimes: null
+      entryTimes: null,
+      selectedBehaviours: [...BEHAVIOURS.keys()] // All are selected at first
     };
   }
 
@@ -184,6 +187,21 @@ export default class PatientPage extends React.Component<Props, State> {
     // TODO: Navigate to export page
   };
 
+  handleSelectedBehavioursChange = (selectedBehaviours: Array<Object>) => {
+    this.setState({ selectedBehaviours });
+  };
+
+  createDropdownItems = () => {
+    const dropdownItems = [];
+    BEHAVIOURS.forEach((_, behaviour) => {
+      dropdownItems.push({
+        name: behaviour,
+        id: behaviour
+      });
+    });
+    return dropdownItems;
+  };
+
   toggleRecentActivity = () => {
     this.setState(previousState => ({
       isExpandedRecentActivity: !previousState.isExpandedRecentActivity
@@ -197,7 +215,7 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   processHourlyTrends = () => {
-    const { aggregatedBehaviours, entryTimes } = this.state;
+    const { aggregatedBehaviours, entryTimes, selectedBehaviours } = this.state;
     if (
       aggregatedBehaviours == null ||
       entryTimes == null ||
@@ -206,9 +224,11 @@ export default class PatientPage extends React.Component<Props, State> {
       return [];
     }
 
+    const filteredBehaviours = new Set(selectedBehaviours);
+
     const processedData = [];
     aggregatedBehaviours.forEach((data, behaviour) => {
-      if (BEHAVIOURS.has(behaviour)) {
+      if (filteredBehaviours.has(behaviour)) {
         const hourlyData = new Array(24).fill(0);
         for (let i = 0; i < entryTimes.length; i += 1) {
           const hour = entryTimes[i].hour();
@@ -218,7 +238,7 @@ export default class PatientPage extends React.Component<Props, State> {
         const dataPoints = [];
         for (let i = 0; i < 24; i += 1) {
           dataPoints.push({
-            x: `${i}:00`,
+            x: `${i}h`,
             y: hourlyData[i],
             color: BEHAVIOURS.get(behaviour).color
           });
@@ -240,7 +260,8 @@ export default class PatientPage extends React.Component<Props, State> {
       inObservation,
       isExpandedRecentActivity,
       isExpandedTrends,
-      loadingObservation
+      loadingObservation,
+      selectedBehaviours
     } = this.state;
     const patient = navigation.getParam("patient");
 
@@ -250,8 +271,6 @@ export default class PatientPage extends React.Component<Props, State> {
     const observationAction = inObservation
       ? this.handleEndObservation
       : this.handleStartObservation;
-
-    const processedData = this.processHourlyTrends();
 
     const exportButton = (
       <Button
@@ -273,6 +292,17 @@ export default class PatientPage extends React.Component<Props, State> {
         loading={loadingObservation}
       />
     );
+
+    const processedData = this.processHourlyTrends();
+    const dropdownItems = this.createDropdownItems();
+    const selectedIcon = (
+      <Icon
+        size={48}
+        name="ios-checkmark"
+        style={{ color: colours.successGreen, marginRight: 16 }}
+      />
+    );
+
     return (
       <View style={styles.background}>
         <ScrollView style={styles.background}>
@@ -337,7 +367,28 @@ export default class PatientPage extends React.Component<Props, State> {
               {processedData.length === 0 ? (
                 <Text h4>No data available</Text>
               ) : (
-                <ColumnChart graphData={processedData} />
+                <View>
+                  <SectionedMultiSelect
+                    items={dropdownItems}
+                    uniqueKey="id"
+                    selectText="Select behaviours"
+                    onSelectedItemsChange={this.handleSelectedBehavioursChange}
+                    selectedItems={selectedBehaviours}
+                    hideSearch
+                    styles={{
+                      selectToggleText: styles.dropdownToggleText,
+                      chipText: styles.dropdownChipText,
+                      confirmText: styles.dropdownConfirmText,
+                      itemText: styles.dropdownItemText
+                    }}
+                    colors={{ primary: colours.primaryGrey }}
+                    selectedIconComponent={selectedIcon}
+                  />
+                  <ColumnChart
+                    graphData={processedData}
+                    selectedBehaviours={new Set(selectedBehaviours)}
+                  />
+                </View>
               )}
             </View>
           </Card>
