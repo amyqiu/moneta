@@ -82,5 +82,17 @@ export default StyleSheet.create({
   tabletCalendar: {
     flexDirection: "row",
     justifyContent: "space-between"
+  },
+  dropdownToggleText: {
+    fontSize: RFValue(16)
+  },
+  dropdownChipText: {
+    fontSize: RFValue(12)
+  },
+  dropdownConfirmText: {
+    fontSize: RFValue(16)
+  },
+  dropdownItemText: {
+    fontSize: RFValue(14)
   }
 });

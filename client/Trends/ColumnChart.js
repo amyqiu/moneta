@@ -14,7 +14,8 @@ import BEHAVIOURS from "../NewEntry/Behaviours";
 import { scaleWidth, isTablet } from "../Helpers";
 
 type Props = {
-  graphData: Array<Array<Object>>
+  graphData: Array<Array<Object>>,
+  selectedBehaviours: Set<string>
 };
 
 type State = {
@@ -30,14 +31,16 @@ export default class ColumnChart extends React.Component<Props, State> {
   }
 
   render() {
-    const { graphData } = this.props;
+    const { graphData, selectedBehaviours } = this.props;
 
     const legendData = [];
     BEHAVIOURS.forEach(behaviour => {
-      legendData.push({
-        name: behaviour.label,
-        symbol: { fill: behaviour.color }
-      });
+      if (selectedBehaviours.has(behaviour.label)) {
+        legendData.push({
+          name: behaviour.label,
+          symbol: { fill: behaviour.color }
+        });
+      }
     });
 
     const width = scaleWidth(0.95);
@@ -92,13 +95,14 @@ export default class ColumnChart extends React.Component<Props, State> {
             x={4}
             y={height - 150}
             data={legendData}
-            itemsPerRow={isTablet() ? 4 : 5}
+            itemsPerRow={isTablet() ? 3 : 2}
             gutter={isTablet() ? 20 : 12}
             symbolSpacer={isTablet() ? 12 : 8}
             padding={{ bottom: 0 }}
             style={{
               labels: { fontSize: RFValue(14) }
             }}
+            orientation="horizontal"
           />
         </VictoryChart>
       </View>
