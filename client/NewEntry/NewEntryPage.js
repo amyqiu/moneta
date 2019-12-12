@@ -189,7 +189,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
       isSubmitting
     } = this.state;
     const { navigation } = this.props;
-    const patient = navigation.getParam("patient");
+    const lastEntryTime = navigation.getParam("lastEntryTime");
 
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
 
@@ -206,10 +206,6 @@ export default class NewEntryPage extends React.Component<Props, State> {
         />
       );
     });
-
-    // TODO: Fix! Should be last entry time, with fallback to observation start
-    const observationStart =
-      patient.observations[patient.observations.length - 1].start_time;
 
     return (
       <KeyboardAvoidingView behavior="position">
@@ -293,7 +289,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
                   onCancel={this.handleCloseDatePicker}
                   mode="datetime"
                   is24Hour={false}
-                  minimumDate={new Date(observationStart)}
+                  minimumDate={new Date(lastEntryTime)}
                 />
               </View>
             </Card>

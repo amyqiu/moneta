@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
@@ -11,17 +11,14 @@ import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import ColumnChart from "../Trends/ColumnChart";
-import type { Patient } from "./Patient";
 import PatientInfo from "./PatientInfo";
 import Calendar from "./Calendar";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import type { Entry } from "../NewEntry/Entry";
+import { isTablet } from "../Helpers";
 
-type Props = NavigationScreenProps & {
-  patient: Patient
-};
+type Props = NavigationScreenProps & {};
 
-// TODO: Show how many days since observation?
 type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
@@ -61,19 +58,29 @@ export default class PatientPage extends React.Component<Props, State> {
     this.getTrendData();
   }
 
-  handleNewEntry = () => {
+  handleNewEntry = (params: Object) => {
     const { navigation } = this.props;
-    const { observationID } = this.state;
-    const patient = navigation.getParam("patient");
-    navigation.navigate("NewEntry", {
-      patient,
-      observationID
-    });
+    navigation.navigate("NewEntry", params);
   };
 
   handleNavigateOldEntry = (entry: Entry) => {
     const { navigation } = this.props;
     navigation.navigate("OldEntry", { entry });
+  };
+
+  confirmStartObservation = () => {
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const message = `Start observation for ${patient.name}?`;
+    Alert.alert(
+      isTablet() ? message : "",
+      isTablet() ? "" : message,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "OK", onPress: this.handleStartObservation }
+      ],
+      { cancelable: true }
+    );
   };
 
   handleStartObservation = () => {
@@ -109,6 +116,21 @@ export default class PatientPage extends React.Component<Props, State> {
       .catch(error => {
         console.log("error", error);
       });
+  };
+
+  confirmEndObservation = () => {
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const message = `End observation for ${patient.name}?`;
+    Alert.alert(
+      isTablet() ? message : "",
+      isTablet() ? "" : message,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "OK", onPress: this.handleEndObservation }
+      ],
+      { cancelable: true }
+    );
   };
 
   handleEndObservation = () => {
@@ -238,7 +260,7 @@ export default class PatientPage extends React.Component<Props, State> {
         const dataPoints = [];
         for (let i = 0; i < 24; i += 1) {
           dataPoints.push({
-            x: `${i}h`,
+            x: isTablet() ? `${i}h` : i,
             y: hourlyData[i],
             color: BEHAVIOURS.get(behaviour).color
           });
@@ -261,7 +283,8 @@ export default class PatientPage extends React.Component<Props, State> {
       isExpandedRecentActivity,
       isExpandedTrends,
       loadingObservation,
-      selectedBehaviours
+      selectedBehaviours,
+      observationID
     } = this.state;
     const patient = navigation.getParam("patient");
 
@@ -269,8 +292,8 @@ export default class PatientPage extends React.Component<Props, State> {
       ? "End Observation"
       : "Start Observation";
     const observationAction = inObservation
-      ? this.handleEndObservation
-      : this.handleStartObservation;
+      ? this.confirmEndObservation
+      : this.confirmStartObservation;
 
     const exportButton = (
       <Button
@@ -308,6 +331,7 @@ export default class PatientPage extends React.Component<Props, State> {
         <ScrollView style={styles.background}>
           <PatientInfo
             patient={patient}
+            observationID={observationID}
             onNavigatePatient={null}
             extraButton={exportButton}
             onAddEntry={this.handleNewEntry}

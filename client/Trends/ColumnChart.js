@@ -52,7 +52,12 @@ export default class ColumnChart extends React.Component<Props, State> {
           height={height} // 560
           width={width} // 330
           domainPadding={{ x: 32, y: 16 }}
-          padding={{ left: 56, top: 64, right: 32, bottom: 220 }}
+          padding={{
+            left: isTablet() ? 56 : 24,
+            top: 64,
+            right: 32,
+            bottom: 220
+          }}
           style={{
             parent: {
               border: "1px solid black"
@@ -60,7 +65,7 @@ export default class ColumnChart extends React.Component<Props, State> {
           }}
         >
           <VictoryLabel
-            text="Observation Period Hourly Behaviour Overview"
+            text="Observation Period Hourly Behaviour"
             x={scaleWidth(0.45)}
             y={32}
             textAnchor="middle"
@@ -73,6 +78,7 @@ export default class ColumnChart extends React.Component<Props, State> {
                   style={{ data: { fill: data[0].color } }}
                   data={data}
                   key={data[0].color}
+                  alignment="start"
                 />
               );
             })}
@@ -82,21 +88,25 @@ export default class ColumnChart extends React.Component<Props, State> {
             label="Count"
             style={{
               tickLabels: { fontSize: RFValue(14) },
-              axisLabel: { fontSize: RFValue(14), padding: 24 }
+              axisLabel: { fontSize: RFValue(14), padding: isTablet() ? 24 : 4 }
             }}
             tickFormat={t => (Math.round(t) !== t ? undefined : t)}
           />
           <VictoryAxis
-            tickLabelComponent={<VictoryLabel angle={45} dx={16} />}
-            padding={{ right: 32 }}
+            tickLabelComponent={
+              <VictoryLabel angle={-45} dx={isTablet() ? -8 : -1} />
+            }
+            padding={{ right: isTablet() ? 32 : 8 }}
             style={{ tickLabels: { fontSize: RFValue(12) } }}
+            tickCount={isTablet() ? 24 : 12}
+            label={isTablet() ? null : "Hour"}
           />
           <VictoryLegend
             x={4}
             y={height - 150}
             data={legendData}
             itemsPerRow={isTablet() ? 3 : 2}
-            gutter={isTablet() ? 20 : 12}
+            gutter={isTablet() ? 20 : 4}
             symbolSpacer={isTablet() ? 12 : 8}
             padding={{ bottom: 0 }}
             style={{

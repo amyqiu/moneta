@@ -67,7 +67,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         };
       });
       this.setState({
-        patients: parsedPatients,
+        patients: parsedPatients.sort((a, b) => (a.name > b.name ? 1 : -1)),
         isLoading: false,
         isRefreshing: false,
         isError: false
@@ -81,14 +81,9 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     this.setState({ search });
   };
 
-  navigateEntry = (patient: Patient) => {
+  navigateEntry = (params: Object) => {
     const { navigation } = this.props;
-    navigation.navigate("NewEntry", {
-      patient,
-      observationID: patient.inObservation
-        ? patient.observations[patient.observations.length - 1]._id
-        : null
-    });
+    navigation.navigate("NewEntry", params);
   };
 
   navigatePatient = (patient: Patient) => {
@@ -129,9 +124,14 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         >
           <PatientInfo
             patient={patient}
+            observationID={
+              patient.inObservation
+                ? patient.observations[patient.observations.length - 1]._id
+                : null
+            }
             onNavigatePatient={() => this.navigatePatient(patient)}
             extraButton={extraButton}
-            onAddEntry={() => this.navigateEntry(patient)}
+            onAddEntry={this.navigateEntry}
             observationButton={null}
             inObservation={patient.inObservation}
           />
