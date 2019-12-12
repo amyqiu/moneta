@@ -165,7 +165,7 @@ exports.find_days_with_entries = (req, res) => {
 exports.last_entry_time = (req, res) => {
   Patient
     .findById(req.query.id)
-    .populate('observation_periods', 'entry_times')
+    .populate('observation_periods', 'entry_times start_time')
     .exec(async (err, patient) => {
       if (err) {
         return res.status(500).send(err);
@@ -180,7 +180,7 @@ exports.last_entry_time = (req, res) => {
       const numEntries = lastObservationPeriod.entry_times.length;
 
       if (numEntries === 0) {
-        return res.status(200).send(null);
+        return res.status(200).send(lastObservationPeriod.start_time);
       }
       return res.status(200).send(lastObservationPeriod.entry_times[numEntries - 1]);
     });
