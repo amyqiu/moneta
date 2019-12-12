@@ -6,12 +6,12 @@ const patientController = require('../controllers/patient');
 const observationController = require('../controllers/observation');
 const entryController = require('../controllers/entry');
 
-
 // Patient routes
 router.get('/patient/test', patientController.patient_test);
 router.post('/patient/create', patientController.validate('patient_create'), patientController.patient_create);
 router.get('/patient/findall', patientController.patient_find_all);
 router.get('/patient/find-days-with-entries', patientController.find_days_with_entries);
+router.get('/patient/last-entry-time', patientController.last_entry_time);
 router.get('/patient/:id', patientController.patient_details);
 router.put('/patient/:id/update', patientController.patient_update);
 router.delete('/patient/:id/delete', patientController.patient_delete);

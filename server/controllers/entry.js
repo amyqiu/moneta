@@ -166,7 +166,6 @@ exports.entry_find_day = (req, res) => {
         return res.status(500).send('Entries do not exist');
       }
 
-      console.log(entries);
       const month = parseInt(req.query.month, 10);
       const day = parseInt(req.query.day, 10);
       const year = parseInt(req.query.year, 10);
@@ -175,7 +174,6 @@ exports.entry_find_day = (req, res) => {
       const entryDayArray = [];
       for (let i = 0; i < entries.length; i += 1) {
         const entry = entries[i];
-        console.log(entry.time);
         if (entry.time.getMonth() + 1 === month
           && entry.time.getDate() === day
           && entry.time.getFullYear() === year) {

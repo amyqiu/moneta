@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
   RefreshControl
 } from "react-native";
-import { Button, Card, Text, SearchBar } from "react-native-elements";
+import { Button, Text, SearchBar } from "react-native-elements";
 import { NavigationScreenProps, NavigationEvents } from "react-navigation";
-import { format } from "date-fns";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import colours from "../Colours";
@@ -63,7 +62,6 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           displayId: rawPatient.display_ID,
           room: rawPatient.room,
           imageUri: rawPatient.profile_picture,
-          date: this.getNextEntry(),
           inObservation: rawPatient.in_observation,
           observations: rawPatient.observation_periods
         };
@@ -77,16 +75,6 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     } catch (error) {
       this.setState({ isError: true, isRefreshing: false, isLoading: false });
     }
-  };
-
-  getNextEntry = () => {
-    const time = 1000 * 60 * 30;
-    const fifteen = 1000 * 60 * 15;
-    const date = new Date();
-    const rounded = new Date(
-      Math.round((date.getTime() + fifteen) / time) * time
-    );
-    return format(rounded, "H:mm MMM d, yyyy");
   };
 
   updateSearch = (search: string) => {
@@ -139,16 +127,14 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           key={patient.id}
           onPress={() => this.navigatePatient(patient)}
         >
-          <Card containerStyle={{ borderRadius: 4 }}>
-            <PatientInfo
-              patient={patient}
-              onNavigatePatient={() => this.navigatePatient(patient)}
-              extraButton={extraButton}
-              onAddEntry={() => this.navigateEntry(patient)}
-              observationButton={null}
-              inObservation={patient.inObservation}
-            />
-          </Card>
+          <PatientInfo
+            patient={patient}
+            onNavigatePatient={() => this.navigatePatient(patient)}
+            extraButton={extraButton}
+            onAddEntry={() => this.navigateEntry(patient)}
+            observationButton={null}
+            inObservation={patient.inObservation}
+          />
         </TouchableOpacity>
       );
     });

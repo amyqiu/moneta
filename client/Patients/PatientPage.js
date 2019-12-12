@@ -306,18 +306,14 @@ export default class PatientPage extends React.Component<Props, State> {
     return (
       <View style={styles.background}>
         <ScrollView style={styles.background}>
-          <Card containerStyle={{ borderRadius: 4 }}>
-            <View>
-              <PatientInfo
-                patient={patient}
-                onNavigatePatient={null}
-                extraButton={exportButton}
-                onAddEntry={this.handleNewEntry}
-                observationButton={observationButton}
-                inObservation={inObservation}
-              />
-            </View>
-          </Card>
+          <PatientInfo
+            patient={patient}
+            onNavigatePatient={null}
+            extraButton={exportButton}
+            onAddEntry={this.handleNewEntry}
+            observationButton={observationButton}
+            inObservation={inObservation}
+          />
           <Card containerStyle={{ borderRadius: 4 }}>
             <TouchableOpacity
               style={{ flexDirection: "row" }}
@@ -381,7 +377,10 @@ export default class PatientPage extends React.Component<Props, State> {
                       confirmText: styles.dropdownConfirmText,
                       itemText: styles.dropdownItemText
                     }}
-                    colors={{ primary: colours.primaryGrey }}
+                    colors={{
+                      primary: colours.primaryGrey,
+                      chipColor: colours.primaryGrey
+                    }}
                     selectedIconComponent={selectedIcon}
                   />
                   <ColumnChart
