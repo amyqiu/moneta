@@ -10,9 +10,10 @@ import colours from "../Colours";
 
 type Props = {
   patient: Patient,
+  observationID: ?string,
   onNavigatePatient: ?() => void,
   extraButton: React.Node,
-  onAddEntry: () => void,
+  onAddEntry: Object => void,
   observationButton: ?React.Node,
   inObservation: boolean
 };
@@ -21,6 +22,8 @@ type State = {
   lastEntryTime: ?string,
   loadingEntryTime: boolean
 };
+
+const DATE_FORMAT = isTablet() ? "h:mmA - MMM Do, YYYY" : "hh:mm MMM D, YYYY";
 
 export default class PatientInfo extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -36,9 +39,26 @@ export default class PatientInfo extends React.Component<Props, State> {
     this.getPatientLastEntry(patient.id);
   }
 
+  async componentDidUpdate(prevProps: Props, prevState: State) {
+    const { inObservation, patient } = this.props;
+    if (inObservation && prevState.lastEntryTime === "") {
+      this.getPatientLastEntry(patient.id);
+    }
+  }
+
+  handleNavigateNewEntry = () => {
+    const { patient, observationID, onAddEntry } = this.props;
+    const { lastEntryTime } = this.state;
+    onAddEntry({
+      patient,
+      observationID,
+      lastEntryTime
+    });
+  };
+
   getPatientLastEntry = async (patientID: string) => {
-    const { patient } = this.props;
-    if (!patient.inObservation) {
+    const { inObservation } = this.props;
+    if (!inObservation) {
       this.setState({ lastEntryTime: "", loadingEntryTime: false });
       return;
     }
@@ -61,9 +81,12 @@ export default class PatientInfo extends React.Component<Props, State> {
 
   calculateNextEntry = () => {
     const { lastEntryTime } = this.state;
-    const { patient } = this.props;
-    if (!patient.inObservation) {
-      return { colour: colours.white, text: "Not in observation period" };
+    const { inObservation } = this.props;
+    if (!inObservation) {
+      return {
+        colour: colours.white,
+        text: isTablet() ? "Not in observation period" : "Not in observation"
+      };
     }
     if (lastEntryTime == null || lastEntryTime === "") {
       return { colour: colours.white, text: "Unavailable" };
@@ -80,7 +103,7 @@ export default class PatientInfo extends React.Component<Props, State> {
     );
 
     const nextEntry = lastInterval.clone().add(30, "minutes");
-    const nextEntryText = nextEntry.format("h:mmA - MMM Do, YYYY");
+    const nextEntryText = nextEntry.format(DATE_FORMAT);
 
     if (currentInterval.isSame(lastInterval)) {
       // Last entry is still within the current interval, no need for another entry yet
@@ -103,7 +126,6 @@ export default class PatientInfo extends React.Component<Props, State> {
       patient,
       onNavigatePatient,
       extraButton,
-      onAddEntry,
       observationButton,
       inObservation
     } = this.props;
@@ -119,7 +141,7 @@ export default class PatientInfo extends React.Component<Props, State> {
         <Button
           buttonStyle={styles.smallButton}
           containerStyle={styles.buttonContainer}
-          onPress={onAddEntry}
+          onPress={this.handleNavigateNewEntry}
           title="+ Add Entry"
           titleProps={{ style: styles.smallButtonTitle }}
           underlayColor="white"
@@ -153,6 +175,14 @@ export default class PatientInfo extends React.Component<Props, State> {
       </View>
     );
 
+    const observationStartTime =
+      patient.observations.length > 0
+        ? patient.observations[patient.observations.length - 1].start_time
+        : null;
+    const observationStartText = observationStartTime
+      ? moment(observationStartTime).format(DATE_FORMAT)
+      : "";
+
     return (
       <Card
         containerStyle={{
@@ -168,7 +198,7 @@ export default class PatientInfo extends React.Component<Props, State> {
               size={isTablet() ? 150 : 100}
               rounded
               source={{ uri: patient.imageUri }}
-              containerStyle={{ marginRight: isTablet() ? 32 : 16 }}
+              containerStyle={{ marginRight: isTablet() ? 32 : 12 }}
               onPress={onNavigatePatient}
             />
             <View>
@@ -188,6 +218,14 @@ export default class PatientInfo extends React.Component<Props, State> {
                   {nextEntry.text}
                 </Text>
               )}
+              {inObservation ? (
+                <Text style={styles.patientDetailsText}>
+                  <Text style={{ fontWeight: "bold" }}>
+                    {isTablet() ? "Observation Started: " : "Started: "}
+                  </Text>
+                  {observationStartText}
+                </Text>
+              ) : null}
               {isTablet() ? observationButton : buttons}
             </View>
           </View>
