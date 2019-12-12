@@ -2,8 +2,6 @@ const { validationResult, body } = require('express-validator/check');
 const Patient = require('../models/patient');
 const Observation = require('../models/observation');
 
-// TODO: Add endpoints for getting entries for a day + days with entries
-
 exports.validate = (method) => {
   switch (method) {
     case 'patient_create': {
@@ -160,5 +158,30 @@ exports.find_days_with_entries = (req, res) => {
       }
       const uniqueDates = date1D.filter((elem, index, self) => index === self.indexOf(elem));
       return res.status(200).send(uniqueDates);
+    });
+};
+
+// Get most recent entry time for a patient in an observation period
+exports.last_entry_time = (req, res) => {
+  Patient
+    .findById(req.query.id)
+    .populate('observation_periods', 'entry_times')
+    .exec(async (err, patient) => {
+      if (err) {
+        return res.status(500).send(err);
+      } if (!patient) {
+        return res.status(500).send('Patient does not exist');
+      } if (!patient.in_observation || patient.observation_periods.length === 0) {
+        return res.status(500).send('Patient is not in observation');
+      }
+
+      const numObservations = patient.observation_periods.length;
+      const lastObservationPeriod = patient.observation_periods[numObservations - 1];
+      const numEntries = lastObservationPeriod.entry_times.length;
+
+      if (numEntries === 0) {
+        return res.status(200).send(null);
+      }
+      return res.status(200).send(lastObservationPeriod.entry_times[numEntries - 1]);
     });
 };
