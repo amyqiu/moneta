@@ -6,7 +6,6 @@ export type Patient = {
   displayId: string,
   room: string,
   imageUri: string,
-  date: string,
   inObservation: boolean,
   observations: [Object]
 };
