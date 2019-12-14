@@ -15,14 +15,16 @@ import { scaleWidth, isTablet } from "../Helpers";
 
 type Props = {
   graphData: Array<Array<Object>>,
-  selectedBehaviours: Set<string>
+  selectedBehaviours: Set<string>,
+  periodStart: ?string,
+  periodEnd: ?string
 };
 
 type State = {
   // checked: boolean,
 };
 
-export default class ColumnChart extends React.Component<Props, State> {
+export default class HourlyColumnChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -31,7 +33,12 @@ export default class ColumnChart extends React.Component<Props, State> {
   }
 
   render() {
-    const { graphData, selectedBehaviours } = this.props;
+    const {
+      graphData,
+      selectedBehaviours,
+      periodStart,
+      periodEnd
+    } = this.props;
 
     const legendData = [];
     BEHAVIOURS.forEach(behaviour => {
@@ -71,6 +78,15 @@ export default class ColumnChart extends React.Component<Props, State> {
             textAnchor="middle"
             style={{ fontSize: RFValue(16) }}
           />
+          <VictoryLabel
+            text={
+              periodStart && periodEnd ? `(${periodStart} - ${periodEnd})` : ""
+            }
+            x={scaleWidth(0.45)}
+            y={isTablet() ? 56 : 48}
+            textAnchor="middle"
+            style={{ fontSize: RFValue(14) }}
+          />
           <VictoryStack>
             {graphData.map(data => {
               return (
@@ -87,8 +103,14 @@ export default class ColumnChart extends React.Component<Props, State> {
             dependentAxis
             label="Count"
             style={{
-              tickLabels: { fontSize: RFValue(14) },
-              axisLabel: { fontSize: RFValue(14), padding: isTablet() ? 24 : 4 }
+              tickLabels: {
+                fontSize: RFValue(isTablet() ? 14 : 12),
+                padding: isTablet() ? 6 : 2
+              },
+              axisLabel: {
+                fontSize: RFValue(isTablet() ? 14 : 12),
+                padding: isTablet() ? 24 : 12
+              }
             }}
             tickFormat={t => (Math.round(t) !== t ? undefined : t)}
           />

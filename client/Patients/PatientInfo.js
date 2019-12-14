@@ -84,12 +84,12 @@ export default class PatientInfo extends React.Component<Props, State> {
     const { inObservation } = this.props;
     if (!inObservation) {
       return {
-        colour: colours.white,
+        colour: colours.secondaryGrey,
         text: isTablet() ? "Not in observation period" : "Not in observation"
       };
     }
     if (lastEntryTime == null || lastEntryTime === "") {
-      return { colour: colours.white, text: "Unavailable" };
+      return { colour: colours.secondaryGrey, text: "Unavailable" };
     }
 
     const duration = moment.duration(30, "minutes");
@@ -188,7 +188,7 @@ export default class PatientInfo extends React.Component<Props, State> {
         containerStyle={{
           borderRadius: 4,
           borderColor: nextEntry.colour,
-          borderWidth: 4
+          borderWidth: 2
         }}
       >
         <View>

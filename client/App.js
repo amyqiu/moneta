@@ -6,12 +6,14 @@ import NewEntryPage from "./NewEntry/NewEntryPage";
 import OldEntryPage from "./NewEntry/OldEntryPage";
 import PatientPage from "./Patients/PatientPage";
 import AllPatientsPage from "./Patients/AllPatientsPage";
+import TrendsDetailsPage from "./Trends/TrendsDetailsPage";
 
 const MainNavigator = createStackNavigator({
   AllPatients: { screen: AllPatientsPage },
   Patient: { screen: PatientPage },
   NewEntry: { screen: NewEntryPage },
-  OldEntry: { screen: OldEntryPage }
+  OldEntry: { screen: OldEntryPage },
+  TrendsDetails: { screen: TrendsDetailsPage }
 });
 
 const Apps = createAppContainer(MainNavigator);

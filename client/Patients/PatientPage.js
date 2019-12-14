@@ -10,7 +10,7 @@ import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import colours from "../Colours";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
-import ColumnChart from "../Trends/ColumnChart";
+import HourlyColumnChart from "../Trends/HourlyColumnChart";
 import PatientInfo from "./PatientInfo";
 import Calendar from "./Calendar";
 import BEHAVIOURS from "../NewEntry/Behaviours";
@@ -23,6 +23,7 @@ type State = {
   inObservation: boolean,
   isExpandedRecentActivity: boolean,
   isExpandedTrends: boolean,
+  observationStart: ?moment,
   observationID: ?string,
   loadingObservation: boolean,
   loadingTrends: boolean,
@@ -40,6 +41,7 @@ export default class PatientPage extends React.Component<Props, State> {
       inObservation: observationID != null,
       isExpandedRecentActivity: false,
       isExpandedTrends: false,
+      observationStart: null,
       observationID,
       loadingObservation: false,
       loadingTrends: true,
@@ -68,6 +70,12 @@ export default class PatientPage extends React.Component<Props, State> {
     navigation.navigate("OldEntry", { entry });
   };
 
+  handleNavigateMoreTrends = () => {
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    navigation.navigate("TrendsDetails", { patient });
+  };
+
   confirmStartObservation = () => {
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
@@ -87,9 +95,10 @@ export default class PatientPage extends React.Component<Props, State> {
     this.setState({ loadingObservation: true });
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
+    const start = new Date();
     const data = JSON.stringify({
       patient_ID: patient.id,
-      start_time: Math.round(new Date().getTime() / 1000)
+      start_time: Math.round(start.getTime() / 1000)
     });
     fetch("https://vast-savannah-47684.herokuapp.com/observation/create", {
       method: "POST",
@@ -105,6 +114,7 @@ export default class PatientPage extends React.Component<Props, State> {
       .then(responseData => {
         if (responseData.observation) {
           this.setState({
+            observationStart: moment(start),
             inObservation: true,
             observationID: responseData.observation,
             loadingObservation: false
@@ -279,6 +289,7 @@ export default class PatientPage extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const {
+      observationStart,
       inObservation,
       isExpandedRecentActivity,
       isExpandedTrends,
@@ -326,6 +337,18 @@ export default class PatientPage extends React.Component<Props, State> {
       />
     );
 
+    let periodStart = null;
+    let periodEnd = null;
+    if (inObservation && observationStart) {
+      periodStart = observationStart.format("MMM Do, YYYY");
+      periodEnd = moment().format("MMM Do, YYYY");
+    } else if (patient.observations.length > 0) {
+      const lastObservation =
+        patient.observations[patient.observations.length - 1];
+      periodStart = moment(lastObservation.start_time).format("MMM Do, YYYY");
+      periodEnd = moment(lastObservation.end_time).format("MMM Do, YYYY");
+    }
+
     return (
       <View style={styles.background}>
         <ScrollView style={styles.background}>
@@ -338,7 +361,13 @@ export default class PatientPage extends React.Component<Props, State> {
             observationButton={observationButton}
             inObservation={inObservation}
           />
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card
+            containerStyle={{
+              borderRadius: 4,
+              borderColor: colours.secondaryGrey,
+              borderWidth: 2
+            }}
+          >
             <TouchableOpacity
               style={{ flexDirection: "row" }}
               onPress={this.toggleRecentActivity}
@@ -364,7 +393,14 @@ export default class PatientPage extends React.Component<Props, State> {
               />
             </View>
           </Card>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card
+            containerStyle={{
+              borderRadius: 4,
+              marginBottom: 8,
+              borderColor: colours.secondaryGrey,
+              borderWidth: 2
+            }}
+          >
             <TouchableOpacity
               style={{ flexDirection: "row" }}
               onPress={this.toggleTrends}
@@ -385,7 +421,11 @@ export default class PatientPage extends React.Component<Props, State> {
             </TouchableOpacity>
             <View style={isExpandedTrends ? {} : { display: "none" }}>
               {processedData.length === 0 ? (
-                <Text h4>No data available</Text>
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>
+                    No entries available for current observation period.
+                  </Text>
+                </View>
               ) : (
                 <View>
                   <SectionedMultiSelect
@@ -407,12 +447,23 @@ export default class PatientPage extends React.Component<Props, State> {
                     }}
                     selectedIconComponent={selectedIcon}
                   />
-                  <ColumnChart
+                  <HourlyColumnChart
                     graphData={processedData}
                     selectedBehaviours={new Set(selectedBehaviours)}
+                    periodStart={periodStart}
+                    periodEnd={periodEnd}
                   />
                 </View>
               )}
+              <View style={styles.centerContainer}>
+                <Button
+                  onPress={this.handleNavigateMoreTrends}
+                  title="View More Trends"
+                  buttonStyle={styles.smallButton}
+                  containerStyle={styles.viewMoreButtonContainer}
+                  titleProps={{ style: styles.smallButtonTitle }}
+                />
+              </View>
             </View>
           </Card>
         </ScrollView>
