@@ -40,7 +40,7 @@ export default class PatientPage extends React.Component<Props, State> {
     this.state = {
       inObservation: observationID != null,
       isExpandedRecentActivity: false,
-      isExpandedTrends: false,
+      isExpandedTrends: true,
       observationStart: null,
       observationID,
       loadingObservation: false,

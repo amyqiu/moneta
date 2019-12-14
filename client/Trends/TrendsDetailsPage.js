@@ -87,6 +87,42 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
     return processedData;
   };
 
+  calculateTrendChanges = () => {
+    const { firstObservationData, secondObservationData } = this.state;
+    if (firstObservationData == null || secondObservationData == null) {
+      return null;
+    }
+
+    const trends = [];
+    BEHAVIOURS.forEach((_, behaviour) => {
+      if (!behaviour.includes("Sleeping") && !behaviour.includes("Calm")) {
+        const firstCount = firstObservationData.find(d => d.x === behaviour).y;
+        const secondCount = secondObservationData.find(d => d.x === behaviour)
+          .y;
+
+        let text;
+        if (firstCount === secondCount) {
+          text = `○ ${behaviour}: No change`;
+        } else if (firstCount === 0) {
+          text = `○ ${behaviour}: ${secondCount} new occurences`;
+        } else {
+          const diff = (secondCount - firstCount) / (firstCount * 1.0);
+          const displayDiff = Math.abs(diff * 100).toFixed(0);
+          text = `○ ${behaviour}: ${displayDiff}% ${
+            diff > 0 ? "increase" : "decrease"
+          }`;
+        }
+
+        trends.push(
+          <Text style={{ paddingBottom: 4, fontSize: RFValue(14) }} key={text}>
+            {text}
+          </Text>
+        );
+      }
+    });
+    return trends;
+  };
+
   formatObservationDates = (observation: Object) => {
     if (observation == null) {
       return "";
@@ -183,6 +219,8 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
       <VictoryLabel dx={isTablet() ? 0 : -20} dy={isTablet() ? 0 : -12} />
     );
 
+    const trendChanges = this.calculateTrendChanges();
+
     return (
       <View style={styles.background}>
         <ScrollView>
@@ -224,7 +262,7 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                     left: isTablet() ? 56 : 24,
                     top: 12,
                     right: 32,
-                    bottom: 220
+                    bottom: 120
                   }}
                   style={{ parent: { border: "1px solid black" } }}
                 >
@@ -270,7 +308,7 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                   />
                   <VictoryLegend
                     x={16}
-                    y={height - 150}
+                    y={height - 50}
                     gutter={64}
                     data={legendData}
                     itemsPerRow={isTablet() ? 2 : 1}
@@ -280,6 +318,12 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                     orientation="horizontal"
                   />
                 </VictoryChart>
+                <Text h4 style={{ paddingBottom: isTablet() ? 16 : 8 }}>
+                  Behaviour Trends
+                </Text>
+                <View style={{ paddingLeft: isTablet() ? 16 : 4 }}>
+                  {trendChanges}
+                </View>
               </View>
             ) : null}
           </Card>
