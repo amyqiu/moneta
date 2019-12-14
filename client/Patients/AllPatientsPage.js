@@ -179,7 +179,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           containerStyle={{ backgroundColor: colours.primaryGrey }}
           inputStyle={styles.searchInput}
         />
-        <ScrollView>
+        <ScrollView style={{ marginBottom: 8 }}>
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={this.onRefresh}

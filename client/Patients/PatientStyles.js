@@ -6,8 +6,7 @@ import { isTablet } from "../Helpers";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: colours.backgroundGrey,
-    paddingBottom: 8
+    backgroundColor: colours.backgroundGrey
   },
   buttonContainer: {
     paddingVertical: 8,
@@ -67,7 +66,8 @@ export default StyleSheet.create({
   },
   observationButtonContainer: {
     paddingVertical: 8,
-    paddingHorizontal: isTablet() ? 0 : 16
+    paddingHorizontal: isTablet() ? 0 : 32,
+    width: isTablet() ? 200 : "100%"
   },
   toast: {
     backgroundColor: colours.successGreen,
@@ -84,7 +84,7 @@ export default StyleSheet.create({
     justifyContent: "space-between"
   },
   dropdownToggleText: {
-    fontSize: RFValue(16)
+    fontSize: RFValue(14)
   },
   dropdownChipText: {
     fontSize: RFValue(12)
@@ -94,5 +94,28 @@ export default StyleSheet.create({
   },
   dropdownItemText: {
     fontSize: RFValue(14)
+  },
+  centerContainer: {
+    flexDirection: "row",
+    justifyContent: "center"
+  },
+  viewMoreButtonContainer: {
+    paddingVertical: 8,
+    width: "50%"
+  },
+  errorContainer: {
+    flexDirection: "row",
+    justifyContent: "center"
+  },
+  observationSelect: {
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  observationToggle: {
+    width: isTablet() ? 320 : 142,
+    backgroundColor: colours.secondaryGrey,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginVertical: 12
   }
 });
