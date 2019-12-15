@@ -68,6 +68,14 @@ const ObservationSchema = new Schema({
   aggregated_contexts: { type: Map, of: [Number], default: defaultContexts },
   aggregated_locations: { type: Map, of: [Number], default: defaultLocations },
   entry_times: { type: [Date], default: [] },
+  reasons: {
+    type: Array, of: String, required: true, default: [],
+  },
+  starting_notes: { type: String, required: true, default: '' },
+  ending_notes: { type: String, required: false, default: '' },
+  next_steps: {
+    type: Array, of: String, required: false, default: [],
+  },
 });
 
 module.exports = mongoose.model('Observation', ObservationSchema);
