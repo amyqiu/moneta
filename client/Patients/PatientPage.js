@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { View, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
@@ -12,6 +12,8 @@ import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
 import HourlyColumnChart from "../Trends/HourlyColumnChart";
 import PatientInfo from "./PatientInfo";
+import StartObservationModal from "./StartObservationModal";
+import EndObservationModal from "./EndObservationModal";
 import Calendar from "./Calendar";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import type { Entry } from "../NewEntry/Entry";
@@ -29,7 +31,9 @@ type State = {
   loadingTrends: boolean,
   aggregatedBehaviours: ?Map<string, Array<number>>,
   entryTimes: ?Array<moment>,
-  selectedBehaviours: Array<Object>
+  selectedBehaviours: Array<Object>,
+  startObservationModal: boolean,
+  endObservationModal: boolean
 };
 
 export default class PatientPage extends React.Component<Props, State> {
@@ -47,7 +51,9 @@ export default class PatientPage extends React.Component<Props, State> {
       loadingTrends: true,
       aggregatedBehaviours: null,
       entryTimes: null,
-      selectedBehaviours: [...BEHAVIOURS.keys()] // All are selected at first
+      selectedBehaviours: [...BEHAVIOURS.keys()], // All are selected at first
+      startObservationModal: false,
+      endObservationModal: false
     };
   }
 
@@ -77,28 +83,22 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   confirmStartObservation = () => {
-    const { navigation } = this.props;
-    const patient = navigation.getParam("patient");
-    const message = `Start observation for ${patient.name}?`;
-    Alert.alert(
-      isTablet() ? message : "",
-      isTablet() ? "" : message,
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "OK", onPress: this.handleStartObservation }
-      ],
-      { cancelable: true }
-    );
+    this.setState({ startObservationModal: true });
   };
 
-  handleStartObservation = () => {
+  handleStartObservation = (
+    checkedReasons: Set<string>,
+    startingNotes: string
+  ) => {
     this.setState({ loadingObservation: true });
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
     const start = new Date();
     const data = JSON.stringify({
       patient_ID: patient.id,
-      start_time: Math.round(start.getTime() / 1000)
+      start_time: Math.round(start.getTime() / 1000),
+      reasons: Array.from(checkedReasons),
+      starting_notes: startingNotes
     });
     fetch("https://vast-savannah-47684.herokuapp.com/observation/create", {
       method: "POST",
@@ -117,7 +117,8 @@ export default class PatientPage extends React.Component<Props, State> {
             observationStart: moment(start),
             inObservation: true,
             observationID: responseData.observation,
-            loadingObservation: false
+            loadingObservation: false,
+            startObservationModal: false
           });
         } else {
           console.log(responseData);
@@ -129,21 +130,10 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   confirmEndObservation = () => {
-    const { navigation } = this.props;
-    const patient = navigation.getParam("patient");
-    const message = `End observation for ${patient.name}?`;
-    Alert.alert(
-      isTablet() ? message : "",
-      isTablet() ? "" : message,
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "OK", onPress: this.handleEndObservation }
-      ],
-      { cancelable: true }
-    );
+    this.setState({ endObservationModal: true });
   };
 
-  handleEndObservation = () => {
+  handleEndObservation = (nextSteps: Set<string>, endingNotes: string) => {
     // TODO: Show summary screen with graphs?
     this.setState({ loadingObservation: true });
     const { navigation } = this.props;
@@ -152,7 +142,9 @@ export default class PatientPage extends React.Component<Props, State> {
     const data = JSON.stringify({
       id: observationID,
       patient_ID: patient.id,
-      end_time: Math.round(new Date().getTime() / 1000)
+      end_time: Math.round(new Date().getTime() / 1000),
+      next_steps: Array.from(nextSteps),
+      ending_notes: endingNotes
     });
     fetch("https://vast-savannah-47684.herokuapp.com/observation/end", {
       method: "POST",
@@ -164,7 +156,11 @@ export default class PatientPage extends React.Component<Props, State> {
     })
       .then(response => {
         if (response.ok) {
-          this.setState({ inObservation: false, loadingObservation: false });
+          this.setState({
+            inObservation: false,
+            loadingObservation: false,
+            endObservationModal: false
+          });
         } else {
           console.log(response);
         }
@@ -295,7 +291,9 @@ export default class PatientPage extends React.Component<Props, State> {
       isExpandedTrends,
       loadingObservation,
       selectedBehaviours,
-      observationID
+      observationID,
+      startObservationModal,
+      endObservationModal
     } = this.state;
     const patient = navigation.getParam("patient");
 
@@ -351,6 +349,18 @@ export default class PatientPage extends React.Component<Props, State> {
 
     return (
       <View style={styles.background}>
+        <StartObservationModal
+          patientName={patient.name}
+          isVisible={startObservationModal}
+          closeModal={() => this.setState({ startObservationModal: false })}
+          startObservation={this.handleStartObservation}
+        />
+        <EndObservationModal
+          patientName={patient.name}
+          isVisible={endObservationModal}
+          closeModal={() => this.setState({ endObservationModal: false })}
+          endObservation={this.handleEndObservation}
+        />
         <ScrollView style={styles.background}>
           <PatientInfo
             patient={patient}
