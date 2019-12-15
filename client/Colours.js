@@ -7,7 +7,8 @@ const colours = {
   disabled: "#919191",
   successGreen: "#28A144",
   warningOrange: "#CF7911",
-  errorRed: "#B80D0D"
+  errorRed: "#B80D0D",
+  actionBlue: "#3272D9"
 };
 
 export default colours;

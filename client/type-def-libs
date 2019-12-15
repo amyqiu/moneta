@@ -49,3 +49,7 @@ declare module 'react-native-easy-toast' {
 declare module 'react-native-sectioned-multi-select' {
   declare module.exports: any
 }
+
+declare module 'react-native-modal' {
+  declare module.exports: any
+}

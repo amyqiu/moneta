@@ -2,12 +2,36 @@ const { validationResult, body } = require('express-validator/check');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
 
+const STARTING_REASONS = new Set([
+  'Baseline/Admission',
+  'Transition/Move',
+  'New Behaviour',
+  'Behaviour Change',
+  'New Intervention',
+  'Medication Adjustment',
+  'Urgent Referral/Transfer',
+]);
+
+const NEXT_STEPS = new Set([
+  'Repeat DOS in 4-6 weeks',
+  'No further DOS',
+  'ABC charting for behaviour',
+  'Clinical huddle/meeting',
+  'Progress note written',
+  'Consult with substitute decision maker (SDM)',
+  'Medication adjustment/review',
+  'Non-pharmacological interventions',
+  'Care plan updated',
+  'Referral',
+]);
+
 exports.validate = (method) => {
   switch (method) {
     case 'observation_create': {
       return [
         body('patient_ID').exists().isString(),
         body('start_time').exists().isInt(),
+        body('starting_notes').exists().isString(),
       ];
     }
     case 'observation_end': {
@@ -15,6 +39,7 @@ exports.validate = (method) => {
         body('id').exists().isString(),
         body('patient_ID').exists().isString(),
         body('end_time').exists().isInt(),
+        body('ending_notes').exists().isString(),
       ];
     } default: {
       return [];
@@ -30,11 +55,23 @@ exports.observation_create = (req, res) => {
 
   let observation;
   try {
+    if (!Array.isArray(req.body.reasons)) {
+      return res.status(500).send('Unable to parse reasons for starting observation');
+    }
+
+    for (let i = 0; i < req.body.reasons.length; i += 1) {
+      if (!STARTING_REASONS.has(req.body.reasons[i])) {
+        return res.status(500).send('Invalid reasons for starting observation');
+      }
+    }
+
     observation = new Observation(
       {
         patient_ID: req.body.patient_ID,
         start_time: new Date(req.body.start_time * 1000),
         entries: [],
+        starting_notes: req.body.starting_notes,
+        reasons: req.body.reasons,
       },
     );
   } catch (createErr) {
@@ -73,8 +110,20 @@ exports.observation_end = (req, res) => {
     return res.status(422).json({ errors: errors.array() });
   }
 
+  if (!Array.isArray(req.body.next_steps)) {
+    return res.status(500).send('Unable to parse next steps for observation');
+  }
+
+  for (let i = 0; i < req.body.next_steps.length; i += 1) {
+    if (!NEXT_STEPS.has(req.body.next_steps[i])) {
+      return res.status(500).send('Invalid next steps for observation');
+    }
+  }
+
   const update = {
     end_time: new Date(req.body.end_time * 1000),
+    ending_notes: req.body.ending_notes,
+    next_steps: req.body.next_steps,
   };
   Observation.findByIdAndUpdate(req.body.id, { $set: update }, (err, obs) => {
     if (err) {

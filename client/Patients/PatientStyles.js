@@ -117,5 +117,58 @@ export default StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginVertical: 12
+  },
+  observationModalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 16
+  },
+  checkBoxContainer: {
+    backgroundColor: colours.white,
+    borderWidth: 0,
+    padding: 0
+  },
+  checkBoxLabel: {
+    fontSize: RFValue(isTablet() ? 16 : 14),
+    fontWeight: "normal"
+  },
+  comments: {
+    margin: 4,
+    padding: 8,
+    borderColor: colours.primaryGrey,
+    borderWidth: 1,
+    borderRadius: 4,
+    backgroundColor: colours.white,
+    textAlignVertical: "top",
+    fontSize: RFValue(14)
+  },
+  modalButton: {
+    backgroundColor: colours.actionBlue,
+    paddingVertical: 8,
+    paddingHorizontal: 14
+  },
+  modalButtonTitle: {
+    color: colours.white,
+    fontWeight: "normal",
+    fontSize: RFValue(isTablet() ? 16 : 14)
+  },
+  modalCancelButton: {
+    backgroundColor: colours.primaryGrey,
+    paddingVertical: 8,
+    paddingHorizontal: 14
+  },
+  modalSubHeading: {
+    fontSize: RFValue(16),
+    fontWeight: "bold"
+  },
+  modalHeading: {
+    fontSize: RFValue(20),
+    fontWeight: "bold",
+    paddingBottom: 12
+  },
+  modalContainer: {
+    borderRadius: 4,
+    backgroundColor: colours.white,
+    padding: isTablet() ? 24 : 8
   }
 });
