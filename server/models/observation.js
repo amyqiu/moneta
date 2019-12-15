@@ -69,9 +69,9 @@ const ObservationSchema = new Schema({
   aggregated_locations: { type: Map, of: [Number], default: defaultLocations },
   entry_times: { type: [Date], default: [] },
   reasons: {
-    type: Array, of: String, required: true, default: [],
+    type: Array, of: String, required: false, default: [],
   },
-  starting_notes: { type: String, required: true, default: '' },
+  starting_notes: { type: String, required: false, default: '' },
   ending_notes: { type: String, required: false, default: '' },
   next_steps: {
     type: Array, of: String, required: false, default: [],
