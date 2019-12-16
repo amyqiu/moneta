@@ -50,7 +50,7 @@ exports.validate = (method) => {
 exports.observation_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.list() });
   }
 
   let observation;
@@ -107,7 +107,7 @@ exports.observation_create = (req, res) => {
 exports.observation_end = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.list() });
   }
 
   if (!Array.isArray(req.body.next_steps)) {
@@ -204,4 +204,63 @@ exports.observation_delete = (req, res) => {
         });
       });
   });
+};
+
+// Find Pearson Correlation Coefficient
+function getPearsonCoefficient(x, y) {
+  const n = x.length;
+  const d = new Array(n);
+  for (let i = 0; i < n; i += 1) {
+    d[i] = x[i] * y[i];
+  }
+  const sum = d.reduce((a, b) => a + b, 0);
+  return sum / (n - 1);
+}
+
+// Return top 3 correlations for each negavtive behaviour in observation period
+exports.observation_get_correlations = (req, res) => {
+  Observation
+    .findById(req.query.id)
+    .exec((err, obs) => {
+      if (err) {
+        return res.status(500).send(err);
+      } if (!obs) {
+        return res.status(500).send('Could not find observation');
+      }
+      const correlations = [];
+      const negativeBehaviours = ['Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
+      for (let i = 0; i < negativeBehaviours.length; i += 1) {
+        const behaviour = obs.aggregated_behaviours.get(negativeBehaviours[i]);
+        const sum = behaviour.reduce((a, b) => a + b, 0);
+        // Find behaviour categories that occurred over 5 times, if none, will return empty list
+        if (sum >= 5) {
+          const list = [];
+          // Check against all locations
+          const it = obs.aggregated_locations.keys();
+          for (let j = 0; j < obs.aggregated_locations.size; j += 1) {
+            const temp = {};
+            temp.trigger = it.next().value;
+            temp.coeff = getPearsonCoefficient(behaviour,
+              obs.aggregated_locations.get(temp.trigger));
+            list.push(temp);
+          }
+          // Check against all contexts
+          const it2 = obs.aggregated_contexts.keys();
+          for (let k = 0; k < obs.aggregated_contexts.size; k += 1) {
+            const temp = {};
+            temp.trigger = it2.next().value;
+            temp.coeff = getPearsonCoefficient(behaviour,
+              obs.aggregated_contexts.get(temp.trigger));
+            list.push(temp);
+          }
+          // Sort and find top 3 triggers
+          list.sort((a, b) => b.coeff - a.coeff);
+          const b = {};
+          b.behaviour = negativeBehaviours[i];
+          b.results = list.slice(0, 3);
+          correlations.push(b);
+        }
+      }
+      return res.status(200).send(correlations);
+    });
 };
