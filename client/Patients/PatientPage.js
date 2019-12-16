@@ -360,6 +360,7 @@ export default class PatientPage extends React.Component<Props, State> {
           isVisible={endObservationModal}
           closeModal={() => this.setState({ endObservationModal: false })}
           endObservation={this.handleEndObservation}
+          observationID={observationID}
         />
         <ScrollView style={styles.background}>
           <PatientInfo

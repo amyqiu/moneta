@@ -1,8 +1,9 @@
 // @flow
 import * as React from "react";
-import { View, TextInput } from "react-native";
+import { View, TextInput, ScrollView } from "react-native";
 import { Button, Text, CheckBox } from "react-native-elements";
 import Modal from "react-native-modal";
+import ObservationSummaryTable from "./ObservationSummaryTable";
 import styles from "./PatientStyles";
 import colours from "../Colours";
 import { isTablet } from "../Helpers";
@@ -11,7 +12,8 @@ type Props = {
   patientName: string,
   isVisible: boolean,
   closeModal: () => void,
-  endObservation: (nextSteps: Set<string>, endingNotes: string) => void
+  endObservation: (nextSteps: Set<string>, endingNotes: string) => void,
+  observationID: ?string
 };
 
 type State = {
@@ -55,58 +57,72 @@ export default class EndObservationModal extends React.Component<Props, State> {
 
   render() {
     const { nextSteps, endingNotes } = this.state;
-    const { patientName, isVisible, closeModal, endObservation } = this.props;
+    const {
+      patientName,
+      isVisible,
+      closeModal,
+      endObservation,
+      observationID
+    } = this.props;
+    if (observationID == null) {
+      // Should never be this state bc "End Observation" button will not show
+      return null;
+    }
+
     const message = `End observation for ${patientName}?`;
     return (
       <Modal isVisible={isVisible} onBackdropPress={closeModal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalHeading}>{message}</Text>
-          <Text style={styles.modalSubHeading}>Reasons</Text>
-          {NEXT_STEPS.map(nextStep => (
-            <CheckBox
-              title={nextStep}
-              key={nextStep}
-              checked={nextSteps.has(nextStep)}
-              onPress={() => this.handleNextStepChecked(nextStep)}
-              containerStyle={styles.checkBoxContainer}
-              textStyle={styles.checkBoxLabel}
-              iconType="feather"
-              checkedIcon="check-square"
-              uncheckedIcon="square"
-              checkedColor={colours.primaryGrey}
-              uncheckedColor={colours.primaryGrey}
+        <ScrollView style={styles.modalContainer}>
+          <View style={styles.endModalView}>
+            <Text style={styles.modalHeading}>{message}</Text>
+            <ObservationSummaryTable observationID={observationID} />
+            <Text style={styles.modalSubHeading}>Reasons</Text>
+            {NEXT_STEPS.map(nextStep => (
+              <CheckBox
+                title={nextStep}
+                key={nextStep}
+                checked={nextSteps.has(nextStep)}
+                onPress={() => this.handleNextStepChecked(nextStep)}
+                containerStyle={styles.checkBoxContainer}
+                textStyle={styles.checkBoxLabel}
+                iconType="feather"
+                checkedIcon="check-square"
+                uncheckedIcon="square"
+                checkedColor={colours.primaryGrey}
+                uncheckedColor={colours.primaryGrey}
+              />
+            ))}
+            <Text
+              style={{
+                ...styles.modalSubHeading,
+                ...{ paddingTop: 12, paddingBottom: 8 }
+              }}
+            >
+              Notes
+            </Text>
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => this.setState({ endingNotes: notes })}
+              value={endingNotes}
+              multiline
+              height={isTablet() ? 200 : 100}
             />
-          ))}
-          <Text
-            style={{
-              ...styles.modalSubHeading,
-              ...{ paddingTop: 12, paddingBottom: 8 }
-            }}
-          >
-            Notes
-          </Text>
-          <TextInput
-            style={styles.comments}
-            onChangeText={notes => this.setState({ endingNotes: notes })}
-            value={endingNotes}
-            multiline
-            height={isTablet() ? 200 : 100}
-          />
-          <View style={styles.observationModalButtons}>
-            <Button
-              onPress={closeModal}
-              title="Cancel"
-              buttonStyle={styles.modalCancelButton}
-              titleProps={{ style: styles.modalButtonTitle }}
-            />
-            <Button
-              onPress={() => endObservation(nextSteps, endingNotes)}
-              title="End Observation"
-              buttonStyle={styles.modalButton}
-              titleProps={{ style: styles.modalButtonTitle }}
-            />
+            <View style={styles.observationModalButtons}>
+              <Button
+                onPress={closeModal}
+                title="Cancel"
+                buttonStyle={styles.modalCancelButton}
+                titleProps={{ style: styles.modalButtonTitle }}
+              />
+              <Button
+                onPress={() => endObservation(nextSteps, endingNotes)}
+                title="End Observation"
+                buttonStyle={styles.modalButton}
+                titleProps={{ style: styles.modalButtonTitle }}
+              />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     );
   }

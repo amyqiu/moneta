@@ -130,7 +130,8 @@ export default StyleSheet.create({
   },
   checkBoxLabel: {
     fontSize: RFValue(isTablet() ? 16 : 14),
-    fontWeight: "normal"
+    fontWeight: "normal",
+    color: colours.black
   },
   comments: {
     margin: 4,
@@ -170,5 +171,28 @@ export default StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colours.white,
     padding: isTablet() ? 24 : 8
+  },
+  tableContainer: {
+    backgroundColor: colours.white,
+    paddingBottom: 12
+  },
+  tableHeader: {
+    backgroundColor: colours.white
+  },
+  tableHeaderText: {
+    margin: 6,
+    fontSize: RFValue(14),
+    fontWeight: "bold"
+  },
+  tableText: {
+    margin: 6,
+    fontSize: RFValue(12)
+  },
+  endModalView: {
+    paddingBottom: 48
+  },
+  observationStart: {
+    fontSize: RFValue(14),
+    paddingBottom: 12
   }
 });
