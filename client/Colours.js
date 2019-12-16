@@ -1,5 +1,6 @@
 const colours = {
   white: "#ffffff",
+  black: "#000000",
   primaryGrey: "#393939",
   secondaryGrey: "#c4c4c4",
   backgroundGrey: "#f4f4f4",
