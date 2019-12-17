@@ -57,3 +57,7 @@ declare module 'react-native-modal' {
 declare module 'react-native-table-component' {
   declare module.exports: any
 }
+
+declare module 'react-native-snap-carousel' {
+  declare module.exports: any
+}
