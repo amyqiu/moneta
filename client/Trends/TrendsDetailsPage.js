@@ -4,8 +4,6 @@ import { View, ScrollView } from "react-native";
 import { Text, Card } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import moment from "moment";
-import Icon from "react-native-vector-icons/Ionicons";
 import {
   VictoryBar,
   VictoryChart,
@@ -16,10 +14,17 @@ import {
 } from "victory-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import navigationStyles from "../NavigationStyles";
-import colours from "../Colours";
 import styles from "../Patients/PatientStyles";
+import CorrelationsView from "./CorrelationsView";
 import BEHAVIOURS from "../NewEntry/Behaviours";
-import { scaleWidth, isTablet } from "../Helpers";
+import {
+  scaleWidth,
+  isTablet,
+  formatObservationDates,
+  createObservationDropdown,
+  SELECT_ICON,
+  SELECT_COLOURS
+} from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -123,29 +128,6 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
     return trends;
   };
 
-  formatObservationDates = (observation: Object) => {
-    if (observation == null) {
-      return "";
-    }
-    return `${moment(observation.start_time).format("MMM D, YYYY")} - ${moment(
-      observation.end_time || new Date()
-    ).format("MMM D, YYYY")}`;
-  };
-
-  createObservationDropdown = () => {
-    const { navigation } = this.props;
-    const patient = navigation.getParam("patient");
-
-    const items = [];
-    patient.observations.forEach(period => {
-      items.push({
-        name: this.formatObservationDates(period),
-        id: period._id
-      });
-    });
-    return items;
-  };
-
   handleFirstPeriodChange = async (selectedPeriods: Array<Object>) => {
     this.setState({ firstSelectedPeriod: selectedPeriods });
     if (selectedPeriods.length > 0) {
@@ -176,12 +158,9 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
       firstObservationData,
       secondObservationData
     } = this.state;
-    const items = this.createObservationDropdown();
-
-    const selectColours = {
-      primary: colours.primaryGrey,
-      chipColor: colours.primaryGrey
-    };
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const items = createObservationDropdown(patient.observations);
 
     const selectStyles = {
       selectToggle: styles.observationToggle,
@@ -191,24 +170,16 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
       itemText: styles.dropdownItemText
     };
 
-    const selectedIcon = (
-      <Icon
-        size={36}
-        name="ios-checkmark"
-        style={{ color: colours.successGreen, marginRight: 16 }}
-      />
-    );
-
     const width = scaleWidth(0.95);
     const height = width * (isTablet() ? 1 : 1.6);
 
     const legendData = [
       {
-        name: this.formatObservationDates(firstObservation),
+        name: formatObservationDates(firstObservation),
         symbol: { fill: "tomato" }
       },
       {
-        name: this.formatObservationDates(secondObservation),
+        name: formatObservationDates(secondObservation),
         symbol: { fill: "blue" }
       }
     ];
@@ -237,8 +208,8 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                 onSelectedItemsChange={this.handleFirstPeriodChange}
                 selectedItems={firstSelectedPeriod}
                 styles={selectStyles}
-                colors={selectColours}
-                selectedIconComponent={selectedIcon}
+                colors={SELECT_COLOURS}
+                selectedIconComponent={SELECT_ICON}
               />
               <SectionedMultiSelect
                 items={items}
@@ -248,8 +219,8 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                 onSelectedItemsChange={this.handleSecondPeriodChange}
                 selectedItems={secondSelectedPeriod}
                 styles={selectStyles}
-                colors={selectColours}
-                selectedIconComponent={selectedIcon}
+                colors={SELECT_COLOURS}
+                selectedIconComponent={SELECT_ICON}
               />
             </View>
             {firstObservationData && secondObservationData ? (
@@ -327,6 +298,7 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
               </View>
             ) : null}
           </Card>
+          <CorrelationsView observations={patient.observations} />
         </ScrollView>
       </View>
     );

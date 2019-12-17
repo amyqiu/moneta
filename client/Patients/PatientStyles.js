@@ -194,5 +194,9 @@ export default StyleSheet.create({
   observationStart: {
     fontSize: RFValue(14),
     paddingBottom: 12
+  },
+  singleObservation: {
+    paddingBottom: 12,
+    paddingLeft: 16
   }
 });
