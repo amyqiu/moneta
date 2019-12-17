@@ -1,4 +1,5 @@
 const { validationResult, body } = require('express-validator/check');
+const wuzzy = require('wuzzy');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
 
@@ -50,7 +51,7 @@ exports.validate = (method) => {
 exports.observation_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.list() });
+    return res.status(422).json({ errors: errors.array() });
   }
 
   let observation;
@@ -107,7 +108,7 @@ exports.observation_create = (req, res) => {
 exports.observation_end = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.list() });
+    return res.status(422).json({ errors: errors.array() });
   }
 
   if (!Array.isArray(req.body.next_steps)) {
@@ -230,9 +231,9 @@ exports.observation_get_correlations = (req, res) => {
       const correlations = [];
       const negativeBehaviours = ['Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
       for (let i = 0; i < negativeBehaviours.length; i += 1) {
-        const behaviour = obs.aggregated_behaviours.get(negativeBehaviours[i]);
-        const sum = behaviour.reduce((a, b) => a + b, 0);
-        // Find behaviour categories that occurred over 5 times, if none, will return empty list
+        const bArray = obs.aggregated_behaviours.get(negativeBehaviours[i]);
+        const sum = bArray.reduce((a, b) => a + b, 0);
+        // Find behaviours that occurred over 5 times, return empty list if none
         if (sum >= 5) {
           const list = [];
           // Check against all locations
@@ -240,8 +241,8 @@ exports.observation_get_correlations = (req, res) => {
           for (let j = 0; j < obs.aggregated_locations.size; j += 1) {
             const temp = {};
             temp.trigger = it.next().value;
-            temp.coeff = getPearsonCoefficient(behaviour,
-              obs.aggregated_locations.get(temp.trigger));
+            temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_locations.get(temp.trigger));
+            temp.index = wuzzy.tanimoto(bArray, obs.aggregated_locations.get(temp.trigger));
             list.push(temp);
           }
           // Check against all contexts
@@ -249,8 +250,8 @@ exports.observation_get_correlations = (req, res) => {
           for (let k = 0; k < obs.aggregated_contexts.size; k += 1) {
             const temp = {};
             temp.trigger = it2.next().value;
-            temp.coeff = getPearsonCoefficient(behaviour,
-              obs.aggregated_contexts.get(temp.trigger));
+            temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_contexts.get(temp.trigger));
+            temp.index = wuzzy.tanimoto(bArray, obs.aggregated_contexts.get(temp.trigger));
             list.push(temp);
           }
           // Sort and find top 3 triggers
