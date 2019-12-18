@@ -1,6 +1,11 @@
 // @flow
 import React from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator
+} from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
@@ -134,7 +139,6 @@ export default class PatientPage extends React.Component<Props, State> {
   };
 
   handleEndObservation = (nextSteps: Set<string>, endingNotes: string) => {
-    // TODO: Show summary screen with graphs?
     this.setState({ loadingObservation: true });
     const { navigation } = this.props;
     const { observationID } = this.state;
@@ -277,6 +281,82 @@ export default class PatientPage extends React.Component<Props, State> {
     return processedData;
   };
 
+  renderTrends = () => {
+    const {
+      loadingTrends,
+      isExpandedTrends,
+      selectedBehaviours,
+      inObservation,
+      observationStart
+    } = this.state;
+    if (loadingTrends) {
+      return <ActivityIndicator size="large" color={colours.primaryGrey} />;
+    }
+    const { navigation } = this.props;
+    const patient = navigation.getParam("patient");
+    const processedData = this.processHourlyTrends();
+    const dropdownItems = this.createDropdownItems();
+    const selectedIcon = (
+      <Icon
+        size={48}
+        name="ios-checkmark"
+        style={{ color: colours.successGreen, marginRight: 16 }}
+      />
+    );
+
+    let periodStart = null;
+    let periodEnd = null;
+    if (inObservation && observationStart) {
+      periodStart = observationStart.format("MMM Do, YYYY");
+      periodEnd = moment().format("MMM Do, YYYY");
+    } else if (patient.observations.length > 0) {
+      const lastObservation =
+        patient.observations[patient.observations.length - 1];
+      periodStart = moment(lastObservation.start_time).format("MMM Do, YYYY");
+      periodEnd = moment(lastObservation.end_time).format("MMM Do, YYYY");
+    }
+
+    return (
+      <View style={isExpandedTrends ? {} : { display: "none" }}>
+        {processedData.length === 0 ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>
+              No entries available for current observation period.
+            </Text>
+          </View>
+        ) : (
+          <View>
+            <SectionedMultiSelect
+              items={dropdownItems}
+              uniqueKey="id"
+              selectText="Select behaviours"
+              onSelectedItemsChange={this.handleSelectedBehavioursChange}
+              selectedItems={selectedBehaviours}
+              hideSearch
+              styles={{
+                selectToggleText: styles.dropdownToggleText,
+                chipText: styles.dropdownChipText,
+                confirmText: styles.dropdownConfirmText,
+                itemText: styles.dropdownItemText
+              }}
+              colors={{
+                primary: colours.primaryGrey,
+                chipColor: colours.primaryGrey
+              }}
+              selectedIconComponent={selectedIcon}
+            />
+            <HourlyColumnChart
+              graphData={processedData}
+              selectedBehaviours={new Set(selectedBehaviours)}
+              periodStart={periodStart}
+              periodEnd={periodEnd}
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
+
   static navigationOptions = {
     ...navigationStyles,
     title: "Resident Overview"
@@ -285,12 +365,10 @@ export default class PatientPage extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const {
-      observationStart,
       inObservation,
       isExpandedRecentActivity,
       isExpandedTrends,
       loadingObservation,
-      selectedBehaviours,
       observationID,
       startObservationModal,
       endObservationModal
@@ -325,27 +403,7 @@ export default class PatientPage extends React.Component<Props, State> {
       />
     );
 
-    const processedData = this.processHourlyTrends();
-    const dropdownItems = this.createDropdownItems();
-    const selectedIcon = (
-      <Icon
-        size={48}
-        name="ios-checkmark"
-        style={{ color: colours.successGreen, marginRight: 16 }}
-      />
-    );
-
-    let periodStart = null;
-    let periodEnd = null;
-    if (inObservation && observationStart) {
-      periodStart = observationStart.format("MMM Do, YYYY");
-      periodEnd = moment().format("MMM Do, YYYY");
-    } else if (patient.observations.length > 0) {
-      const lastObservation =
-        patient.observations[patient.observations.length - 1];
-      periodStart = moment(lastObservation.start_time).format("MMM Do, YYYY");
-      periodEnd = moment(lastObservation.end_time).format("MMM Do, YYYY");
-    }
+    const trendsSection = this.renderTrends();
 
     return (
       <View style={styles.background}>
@@ -430,52 +488,16 @@ export default class PatientPage extends React.Component<Props, State> {
                 style={{ marginLeft: "auto" }}
               />
             </TouchableOpacity>
-            <View style={isExpandedTrends ? {} : { display: "none" }}>
-              {processedData.length === 0 ? (
-                <View style={styles.errorContainer}>
-                  <Text style={styles.errorText}>
-                    No entries available for current observation period.
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <SectionedMultiSelect
-                    items={dropdownItems}
-                    uniqueKey="id"
-                    selectText="Select behaviours"
-                    onSelectedItemsChange={this.handleSelectedBehavioursChange}
-                    selectedItems={selectedBehaviours}
-                    hideSearch
-                    styles={{
-                      selectToggleText: styles.dropdownToggleText,
-                      chipText: styles.dropdownChipText,
-                      confirmText: styles.dropdownConfirmText,
-                      itemText: styles.dropdownItemText
-                    }}
-                    colors={{
-                      primary: colours.primaryGrey,
-                      chipColor: colours.primaryGrey
-                    }}
-                    selectedIconComponent={selectedIcon}
-                  />
-                  <HourlyColumnChart
-                    graphData={processedData}
-                    selectedBehaviours={new Set(selectedBehaviours)}
-                    periodStart={periodStart}
-                    periodEnd={periodEnd}
-                  />
-                </View>
-              )}
-              <View style={styles.centerContainer}>
-                <Button
-                  onPress={this.handleNavigateMoreTrends}
-                  title="View More Trends"
-                  buttonStyle={styles.smallButton}
-                  containerStyle={styles.viewMoreButtonContainer}
-                  titleProps={{ style: styles.smallButtonTitle }}
-                />
-              </View>
+            <View style={styles.centerContainer}>
+              <Button
+                onPress={this.handleNavigateMoreTrends}
+                title="View More Trends"
+                buttonStyle={styles.smallButton}
+                containerStyle={styles.viewMoreButtonContainer}
+                titleProps={{ style: styles.smallButtonTitle }}
+              />
             </View>
+            {trendsSection}
           </Card>
         </ScrollView>
         <Toast

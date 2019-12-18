@@ -22,6 +22,7 @@ import {
   isTablet,
   formatObservationDates,
   createObservationDropdown,
+  processObservationData,
   SELECT_ICON,
   SELECT_COLOURS
 } from "../Helpers";
@@ -59,7 +60,7 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
         throw Error(response.statusText);
       }
       const observation = await response.json();
-      const observationData = this.processObservationData(observation);
+      const observationData = processObservationData(observation);
       if (isFirstPeriod) {
         this.setState({
           firstObservation: observation,
@@ -74,22 +75,6 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  processObservationData = (observation: Object) => {
-    const processedData = [];
-    BEHAVIOURS.forEach((_, behaviour) => {
-      if (!behaviour.includes("Sleeping") && !behaviour.includes("Calm")) {
-        const entryData = observation.aggregated_behaviours[behaviour];
-        const totalOccurrences = entryData.reduce((a, b) => a + b, 0);
-
-        processedData.push({
-          x: behaviour,
-          y: totalOccurrences
-        });
-      }
-    });
-    return processedData;
   };
 
   calculateTrendChanges = () => {
