@@ -3,6 +3,7 @@ import { Dimensions } from "react-native";
 import moment from "moment";
 import Icon from "react-native-vector-icons/Ionicons";
 import colours from "./Colours";
+import BEHAVIOURS from "./NewEntry/Behaviours";
 
 export function scaleWidth(percent: number) {
   const deviceWidth = Dimensions.get("window").width;
@@ -32,6 +33,22 @@ export function createObservationDropdown(observations: [Object]) {
     });
   });
   return items;
+}
+
+export function processObservationData(observation: Object) {
+  const processedData = [];
+  BEHAVIOURS.forEach((_, behaviour) => {
+    if (!behaviour.includes("Sleeping") && !behaviour.includes("Calm")) {
+      const entryData = observation.aggregated_behaviours[behaviour];
+      const totalOccurrences = entryData.reduce((a, b) => a + b, 0);
+
+      processedData.push({
+        x: behaviour,
+        y: totalOccurrences
+      });
+    }
+  });
+  return processedData;
 }
 
 export const SELECT_COLOURS = {

@@ -197,6 +197,44 @@ export default StyleSheet.create({
   },
   singleObservation: {
     paddingBottom: 12,
-    paddingLeft: 16
+    paddingLeft: 18,
+    alignItems: "center"
+  },
+  carouselContainer: {
+    alignItems: "center"
+  },
+  carouselMainText: {
+    fontSize: RFValue(16),
+    fontWeight: "bold"
+  },
+  carouselSubText: {
+    fontSize: RFValue(14)
+  },
+  behaviourCard: {
+    borderWidth: 1,
+    borderColor: "#000000",
+    padding: 12,
+    backgroundColor: "white",
+    paddingHorizontal: 12
+    // shadowColor: "#000",
+    // shadowOffset: { width: 1, height: 1 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 1
+  },
+  carouselPercentage: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "baseline",
+    paddingTop: 8
+  },
+  occurrenceLabel: {
+    fontSize: RFValue(16),
+    paddingRight: 4
+  },
+  carouselSub: {
+    paddingVertical: 12
+  },
+  carouselCorrelations: {
+    paddingVertical: 12
   }
 });

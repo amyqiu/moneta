@@ -135,7 +135,7 @@ export default class Calendar extends React.Component<Props, State> {
     const formattedDay = selectedStartDate.format("LL");
     entryTimes.forEach(entry => {
       const time = moment(entry.time).format("HH:mm A");
-      data.push({ key: time, entryData: entry });
+      data.push({ key: entry.time, entryData: entry, formattedTime: time });
     });
 
     let existingTimesList = null;
@@ -153,7 +153,7 @@ export default class Calendar extends React.Component<Props, State> {
           <TouchableOpacity
             onPress={() => this.navigateOldEntry(item.entryData)}
           >
-            <Text style={styles.entryLink}>{item.key}</Text>
+            <Text style={styles.entryLink}>{item.formattedTime}</Text>
           </TouchableOpacity>
         )}
       />
