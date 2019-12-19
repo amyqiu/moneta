@@ -4,6 +4,7 @@ import { View, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Card, Text, CheckBox } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import moment from "moment";
+import Icon from "react-native-vector-icons/Ionicons";
 import BehaviourCheckbox from "./BehaviourCheckbox";
 import BEHAVIOURS from "./Behaviours";
 import CONTEXTS from "./Contexts";
@@ -15,9 +16,19 @@ import colours from "../Colours";
 type Props = NavigationScreenProps & {};
 
 export default class NewEntryPage extends React.Component<Props, {}> {
-  static navigationOptions = {
-    ...navigationStyles,
-    title: "Old Entry"
+  static navigationOptions = ({ navigation }: { navigation: Object }) => {
+    return {
+      ...navigationStyles,
+      title: "Old Entry",
+      headerRight: (
+        <Icon
+          size={24}
+          name="ios-home"
+          style={{ color: colours.white, marginRight: 16 }}
+          onPress={() => navigation.navigate("AllPatients")}
+        />
+      )
+    };
   };
 
   render() {

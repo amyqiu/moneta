@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Card, Text, CheckBox, Button } from "react-native-elements";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import Icon from "react-native-vector-icons/Ionicons";
 import {
   NavigationScreenProps,
   StackActions,
@@ -35,6 +36,21 @@ type State = {
 };
 
 export default class NewEntryPage extends React.Component<Props, State> {
+  static navigationOptions = ({ navigation }: { navigation: Object }) => {
+    return {
+      ...navigationStyles,
+      title: "New Entry",
+      headerRight: (
+        <Icon
+          size={24}
+          name="ios-home"
+          style={{ color: colours.white, marginRight: 16 }}
+          onPress={() => navigation.navigate("AllPatients")}
+        />
+      )
+    };
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -172,11 +188,6 @@ export default class NewEntryPage extends React.Component<Props, State> {
       .catch(error => {
         console.log("error", error);
       });
-  };
-
-  static navigationOptions = {
-    ...navigationStyles,
-    title: "New Entry"
   };
 
   render() {

@@ -37,7 +37,7 @@ export default StyleSheet.create({
     fontSize: isTablet() ? RFValue(10) : RFValue(14)
   },
   searchInput: {
-    color: colours.primaryGrey,
+    color: colours.black,
     fontWeight: "normal",
     fontSize: RFValue(14)
   },
@@ -101,7 +101,7 @@ export default StyleSheet.create({
   },
   viewMoreButtonContainer: {
     paddingVertical: 8,
-    width: "50%"
+    width: isTablet() ? "60%" : "90%"
   },
   errorContainer: {
     flexDirection: "row",
@@ -212,14 +212,15 @@ export default StyleSheet.create({
   },
   behaviourCard: {
     borderWidth: 1,
-    borderColor: "#000000",
-    padding: 12,
-    backgroundColor: "white",
-    paddingHorizontal: 12
-    // shadowColor: "#000",
-    // shadowOffset: { width: 1, height: 1 },
-    // shadowOpacity: 0.8,
-    // shadowRadius: 1
+    borderColor: colours.black,
+    paddingVertical: 12,
+    backgroundColor: colours.white,
+    paddingHorizontal: 12,
+    shadowColor: colours.black,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    elevation: 4
   },
   carouselPercentage: {
     flexDirection: "row",
