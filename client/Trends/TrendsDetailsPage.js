@@ -12,9 +12,11 @@ import {
   VictoryGroup,
   VictoryLabel
 } from "victory-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { RFValue } from "react-native-responsive-fontsize";
 import navigationStyles from "../NavigationStyles";
 import styles from "../Patients/PatientStyles";
+import colours from "../Colours";
 import CorrelationsView from "./CorrelationsView";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import {
@@ -39,6 +41,21 @@ type State = {
 };
 
 export default class TrendsDetailsPage extends React.Component<Props, State> {
+  static navigationOptions = ({ navigation }: { navigation: Object }) => {
+    return {
+      ...navigationStyles,
+      title: "Trends",
+      headerRight: (
+        <Icon
+          size={24}
+          name="ios-home"
+          style={{ color: colours.white, marginRight: 16 }}
+          onPress={() => navigation.navigate("AllPatients")}
+        />
+      )
+    };
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -127,11 +144,6 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
       // Will only be one selected period
       this.getObservation(selectedPeriods[0], false);
     }
-  };
-
-  static navigationOptions = {
-    ...navigationStyles,
-    title: "Trends"
   };
 
   render() {
@@ -274,7 +286,7 @@ export default class TrendsDetailsPage extends React.Component<Props, State> {
                     orientation="horizontal"
                   />
                 </VictoryChart>
-                <Text h4 style={{ paddingBottom: isTablet() ? 16 : 8 }}>
+                <Text h4 style={{ paddingVertical: isTablet() ? 16 : 8 }}>
                   Behaviour Trends
                 </Text>
                 <View style={{ paddingLeft: isTablet() ? 16 : 4 }}>

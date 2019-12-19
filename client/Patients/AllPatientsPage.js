@@ -8,6 +8,7 @@ import {
   RefreshControl
 } from "react-native";
 import { Button, Text, SearchBar } from "react-native-elements";
+import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps, NavigationEvents } from "react-navigation";
 import styles from "./PatientStyles";
 import navigationStyles from "../NavigationStyles";
@@ -161,12 +162,22 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     const { search, patients, isLoading, isError, isRefreshing } = this.state;
     const patientRows = this.renderRows(patients);
     const spinner = (
-      <ActivityIndicator size="large" color={colours.primaryGrey} />
+      <View style={{ paddingTop: 8 }}>
+        <ActivityIndicator size="large" color={colours.primaryGrey} />
+      </View>
     );
     const error = (
       <Text style={styles.errorText}>Could not retrieve patients.</Text>
     );
     const content = isLoading ? spinner : patientRows;
+
+    const searchIcon = (
+      <Icon
+        size={24}
+        name="ios-search"
+        style={{ color: colours.black, marginRight: 8 }}
+      />
+    );
 
     return (
       <View style={styles.background}>
@@ -174,10 +185,14 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         <SearchBar
           lightTheme
           placeholder="Search..."
+          placeholderTextColor={colours.black}
           onChangeText={this.updateSearch}
           value={search}
-          containerStyle={{ backgroundColor: colours.primaryGrey }}
+          containerStyle={{ backgroundColor: colours.white }}
+          inputContainerStyle={{ backgroundColor: colours.white }}
           inputStyle={styles.searchInput}
+          searchIcon={searchIcon}
+          clearIcon={null}
         />
         <ScrollView style={{ marginBottom: 8 }}>
           <RefreshControl

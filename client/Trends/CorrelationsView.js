@@ -15,6 +15,7 @@ import {
   SELECT_ICON
 } from "../Helpers";
 import BEHAVIOURS from "../NewEntry/Behaviours";
+import SUGGESTIONS from "./Suggestions";
 
 type Props = NavigationScreenProps & {
   observations: [Object]
@@ -159,7 +160,9 @@ export default class CorrelationsView extends React.Component<Props, State> {
           )}
         </View>
         <View style={styles.carouselCorrelations}>
-          <Text style={styles.carouselMainText}>Top Correlations:</Text>
+          <Text style={styles.carouselMainText}>
+            Top Correlations/Suggestions:
+          </Text>
           {correlationResults == null ? (
             <Text style={styles.carouselSubText}>
               Not enough data for correlations
@@ -172,7 +175,9 @@ export default class CorrelationsView extends React.Component<Props, State> {
                     style={styles.carouselSubText}
                     key={correlation.trigger}
                   >
-                    {`${correlation.trigger} ${correlation.coeff.toFixed(2)}`}
+                    {`${correlation.trigger} ${correlation.coeff.toFixed(
+                      2
+                    )} - ${SUGGESTIONS.get(correlation.trigger)}`}
                   </Text>
                 );
               })}
@@ -202,7 +207,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
     };
 
     return (
-      <Card containerStyle={{ borderRadius: 4, marginBottom: 12 }}>
+      <Card containerStyle={{ borderRadius: 4, paddingBottom: 12 }}>
         <Text h3 style={{ paddingBottom: 4 }}>
           Behaviour Correlations
         </Text>
@@ -220,7 +225,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
           />
         </View>
         {observation == null || processedBehaviours == null ? null : (
-          <View>
+          <View style={{ marginBottom: 4 }}>
             <Carousel
               data={Array.from(processedBehaviours.keys()).sort(
                 (a, b) =>
@@ -229,7 +234,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
               )}
               renderItem={this.renderCarouselItem}
               sliderWidth={isTablet() ? scaleWidth(0.92) : scaleWidth(0.82)}
-              itemWidth={isTablet() ? 360 : 250}
+              itemWidth={isTablet() ? 480 : 250}
               removeClippedSubviews={false}
             />
           </View>

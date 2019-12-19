@@ -42,6 +42,21 @@ type State = {
 };
 
 export default class PatientPage extends React.Component<Props, State> {
+  static navigationOptions = ({ navigation }: { navigation: Object }) => {
+    return {
+      ...navigationStyles,
+      title: "Resident Overview",
+      headerRight: (
+        <Icon
+          size={24}
+          name="ios-home"
+          style={{ color: colours.white, marginRight: 16 }}
+          onPress={() => navigation.navigate("AllPatients")}
+        />
+      )
+    };
+  };
+
   constructor(props: Props) {
     super(props);
     const { navigation } = props;
@@ -64,6 +79,7 @@ export default class PatientPage extends React.Component<Props, State> {
 
   async componentDidMount() {
     const { navigation } = this.props;
+
     const showToast = navigation.getParam("showSubmitEntryToast");
     if (showToast) {
       this.refs.toast.show("Succesfully submitted!");
@@ -357,11 +373,6 @@ export default class PatientPage extends React.Component<Props, State> {
     );
   };
 
-  static navigationOptions = {
-    ...navigationStyles,
-    title: "Resident Overview"
-  };
-
   render() {
     const { navigation } = this.props;
     const {
@@ -491,12 +502,15 @@ export default class PatientPage extends React.Component<Props, State> {
             <View style={styles.centerContainer}>
               <Button
                 onPress={this.handleNavigateMoreTrends}
-                title="View More Trends"
+                title="Compare Periods/View Correlations"
                 buttonStyle={styles.smallButton}
                 containerStyle={styles.viewMoreButtonContainer}
                 titleProps={{ style: styles.smallButtonTitle }}
               />
             </View>
+            <Text h4 style={{ paddingTop: 12 }}>
+              Hourly Trends
+            </Text>
             {trendsSection}
           </Card>
         </ScrollView>
