@@ -254,11 +254,29 @@ exports.observation_get_correlations = (req, res) => {
             temp.index = wuzzy.tanimoto(bArray, obs.aggregated_contexts.get(temp.trigger));
             list.push(temp);
           }
+          // Check time of occurrence and return most frequent hour
+          const hours = []; const count = []; const modes = []; let maxIndex = 0;
+          for (let l = 0; l < obs.entry_times.length; l += 1) {
+            if (bArray[l] === 1) {
+              const hour = obs.entry_times[l].getHours();
+              hours.push(hour);
+              count[hour] = (count[hour] || 0) + 1;
+              if (count[hour] > maxIndex) {
+                maxIndex = count[hour];
+              }
+            }
+          }
+          for (let m = 0; m < count.length; m += 1) {
+            if (count[m] === maxIndex) {
+              modes.push(m);
+            }
+          }
           // Sort and find top 3 triggers
           list.sort((a, b) => b.coeff - a.coeff);
           const b = {};
           b.behaviour = negativeBehaviours[i];
           b.results = list.slice(0, 3);
+          b.top_time = modes;
           correlations.push(b);
         }
       }
