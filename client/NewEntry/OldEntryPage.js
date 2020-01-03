@@ -34,13 +34,8 @@ export default class NewEntryPage extends React.Component<Props, {}> {
   render() {
     const { navigation } = this.props;
     const entry = navigation.getParam("entry");
-    // TODO: replace checkedBehaviours with entry.behaviours
-    const checkedBehaviours = new Map([
-      ["Awake/Calm", new Set()],
-      ["Restless", new Set(["Exploring/Searching"])]
-    ]);
-    const comment = "previously entered comment";
-    const formattedDate = moment(entry.time).format("MMMM d, YYYY H:mm:ss a");
+    const entryDate = new Date(entry.time);
+    const formattedDate = moment(entryDate).format("MMMM Do YYYY, h:mm:ss a");
 
     // TODO: refactor BehaviourCheckbox and make this list a shared component with NewEntry
     const behavourCheckboxes = [];
@@ -52,10 +47,10 @@ export default class NewEntryPage extends React.Component<Props, {}> {
           color={behaviour.color}
           subBehaviours={behaviour.subBehaviours}
           onBehaviourChecked={() => {}}
-          originallyChecked={checkedBehaviours.has(behaviour.label)}
+          originallyChecked={behaviour.label in entry.behaviours}
           originallyCheckedSubBehaviours={
-            checkedBehaviours.has(behaviour.label)
-              ? checkedBehaviours.get(behaviour.label)
+            behaviour.label in entry.behaviours
+              ? new Set(entry.behaviours[behaviour.label])
               : new Set()
           }
         />
@@ -118,7 +113,7 @@ export default class NewEntryPage extends React.Component<Props, {}> {
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Comments</Text>
-                <Text style={styles.date}>{comment}</Text>
+                <Text style={styles.date}>{entry.comments}</Text>
               </View>
             </Card>
             <Card containerStyle={{ borderRadius: 4, paddingBottom: 100 }}>

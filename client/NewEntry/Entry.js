@@ -4,5 +4,6 @@ export type Entry = {
   locations: [string],
   contexts: [string],
   behaviours: [string],
-  time: string
+  time: string,
+  comments: string
 };
