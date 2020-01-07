@@ -221,13 +221,11 @@ exports.entry_find_day = (req, res) => {
       Entry.find({ observation_ID: { $in: uniqueDates } })
         .exec((obvErr, entries) => {
           const entryDayArray = [];
-          // TODO:
           if (obvErr) {
             return res.status(500).send(err);
           } if (!entries) {
             return res.status(500).send('Entries do not exist');
           }
-          console.log(entries);
           for (let j = 0; j < entries.length; j += 1) {
             const entry = entries[j];
             if (entry.time.getMonth() + 1 === month
