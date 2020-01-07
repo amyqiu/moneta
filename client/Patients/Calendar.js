@@ -85,7 +85,8 @@ export default class Calendar extends React.Component<Props, State> {
           locations: rawEntry.locations,
           contexts: rawEntry.contexts,
           behaviours: rawEntry.behaviours,
-          time: rawEntry.time
+          time: rawEntry.time,
+          comments: rawEntry.comments
         };
       });
       this.setState({
