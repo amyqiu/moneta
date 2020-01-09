@@ -4,6 +4,7 @@ import moment from "moment";
 import Icon from "react-native-vector-icons/Ionicons";
 import colours from "./Colours";
 import BEHAVIOURS from "./NewEntry/Behaviours";
+import type { Patient } from "./Patients/Patient";
 
 export function scaleWidth(percent: number) {
   const deviceWidth = Dimensions.get("window").width;
@@ -24,7 +25,7 @@ export function formatObservationDates(observation: Object) {
   ).format("MMM D, YYYY")}`;
 }
 
-export function createObservationDropdown(observations: [Object]) {
+export function createDropdownPeriods(observations: [Object]) {
   const items = [];
   observations.forEach(period => {
     items.push({
@@ -51,9 +52,47 @@ export function processObservationData(observation: Object) {
   return processedData;
 }
 
+export function parseRawPatient(rawPatient: Object) {
+  return {
+    name: rawPatient.name,
+    id: rawPatient._id,
+    displayId: rawPatient.display_ID,
+    room: rawPatient.room,
+    imageUri: rawPatient.profile_picture,
+    inObservation: rawPatient.in_observation,
+    observations: rawPatient.observation_periods
+  };
+}
+
+export function getLastObservation(patient: Patient) {
+  const observationCount = patient.observations.length;
+  return observationCount > 0
+    ? patient.observations[observationCount - 1]._id
+    : null;
+}
+
+export function getSecondLastObservation(patient: Patient) {
+  const observationCount = patient.observations.length;
+  return observationCount > 1
+    ? patient.observations[observationCount - 2]._id
+    : null;
+}
+
+export function createDropdownBehaviours() {
+  const dropdownItems = [];
+  BEHAVIOURS.forEach((_, behaviour) => {
+    dropdownItems.push({
+      name: behaviour,
+      id: behaviour
+    });
+  });
+  return dropdownItems;
+}
+
 export const SELECT_COLOURS = {
   primary: colours.primaryGrey,
-  chipColor: colours.primaryGrey
+  chipColor: colours.primaryGrey,
+  selectToggleTextColor: colours.white
 };
 
 export const SELECT_ICON = (
@@ -63,3 +102,13 @@ export const SELECT_ICON = (
     style={{ color: colours.successGreen, marginRight: 16 }}
   />
 );
+
+export const STARTING_REASONS = [
+  "Baseline/Admission",
+  "Transition/Move",
+  "New Behaviour",
+  "Behaviour Change",
+  "New Intervention",
+  "Medication Adjustment",
+  "Urgent Referral/Transfer"
+];

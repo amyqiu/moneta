@@ -1,61 +1,79 @@
 // @flow
 import React from "react";
 import { View } from "react-native";
-import { Text, Card } from "react-native-elements";
+import { Text } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import Carousel from "react-native-snap-carousel";
 import navigationStyles from "../NavigationStyles";
 import styles from "../Patients/PatientStyles";
-import {
-  isTablet,
-  scaleWidth,
-  createObservationDropdown,
-  SELECT_COLOURS,
-  SELECT_ICON
-} from "../Helpers";
+import { isTablet, scaleWidth } from "../Helpers";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import SUGGESTIONS from "./Suggestions";
 
 type Props = NavigationScreenProps & {
-  observations: [Object]
+  observationID: string
 };
 
 type State = {
-  selectedPeriod: Array<string>,
   correlations: ?Map<string, Object>,
-  observation: ?Object,
   processedBehaviours: ?Map<string, number>,
-  totalOccurrences: ?number
+  totalOccurrences: ?number,
+  observation: ?Object
 };
 
+// TODO: Add hour correlations
+
 export default class CorrelationsView extends React.Component<Props, State> {
+  _isMounted = false;
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      selectedPeriod: [],
       correlations: null,
-      observation: null,
       processedBehaviours: null,
-      totalOccurrences: null
+      totalOccurrences: null,
+      observation: null
     };
   }
+
+  async componentDidMount() {
+    this._isMounted = true;
+    this.updateData();
+  }
+
+  async componentDidUpdate(prevProps: Props) {
+    const { observationID } = this.props;
+    if (observationID !== prevProps.observationID) {
+      this.updateData();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  updateData = () => {
+    const { observationID } = this.props;
+    this.getObservation(observationID);
+    this.getObservationCorrelations(observationID);
+  };
 
   getObservationCorrelations = async (observationID: string) => {
     try {
       const response = await fetch(
         `https://vast-savannah-47684.herokuapp.com/observation/get-correlations/?id=${observationID}`
       );
-      console.log(observationID);
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      const results = await response.json();
-      const correlations = new Map<string, Object>();
-      results.forEach(correlation => {
-        correlations.set(correlation.behaviour, correlation.results);
-      });
-      this.setState({ correlations });
+      if (this._isMounted) {
+        const results = await response.json();
+        const correlations = new Map<string, Object>();
+        results.forEach(correlation => {
+          correlations.set(correlation.behaviour, correlation.results);
+        });
+        this.setState({ correlations });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -69,32 +87,25 @@ export default class CorrelationsView extends React.Component<Props, State> {
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      const observation = await response.json();
+      if (this._isMounted) {
+        const observation = await response.json();
 
-      let totalOccurrences = 0;
-      const processedBehaviours = new Map<string, number>();
+        let totalOccurrences = 0;
+        const processedBehaviours = new Map<string, number>();
 
-      BEHAVIOURS.forEach((_, behaviour) => {
-        const entryData = observation.aggregated_behaviours[behaviour];
-        const count = entryData.reduce((a, b) => a + b, 0);
-        totalOccurrences += count;
-        if (!behaviour.includes("Sleeping") && !behaviour.includes("Awake")) {
-          processedBehaviours.set(behaviour, count);
-        }
-      });
+        BEHAVIOURS.forEach((_, behaviour) => {
+          const entryData = observation.aggregated_behaviours[behaviour];
+          const count = entryData.reduce((a, b) => a + b, 0);
+          totalOccurrences += count;
+          if (!behaviour.includes("Sleeping") && !behaviour.includes("Awake")) {
+            processedBehaviours.set(behaviour, count);
+          }
+        });
 
-      this.setState({ observation, totalOccurrences, processedBehaviours });
+        this.setState({ totalOccurrences, processedBehaviours, observation });
+      }
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  handleObservationChange = async (selectedPeriods: Array<Object>) => {
-    this.setState({ selectedPeriod: selectedPeriods });
-    if (selectedPeriods.length > 0) {
-      // Will only be one selected period
-      this.getObservationCorrelations(selectedPeriods[0]);
-      this.getObservation(selectedPeriods[0]);
     }
   };
 
@@ -102,13 +113,8 @@ export default class CorrelationsView extends React.Component<Props, State> {
     if (item.includes("Sleeping") || item.includes("Awake")) {
       return null;
     }
-
-    const {
-      processedBehaviours,
-      totalOccurrences,
-      observation,
-      correlations
-    } = this.state;
+    const { observation } = this.state;
+    const { processedBehaviours, totalOccurrences, correlations } = this.state;
     if (
       processedBehaviours == null ||
       totalOccurrences == null ||
@@ -194,36 +200,13 @@ export default class CorrelationsView extends React.Component<Props, State> {
   };
 
   render() {
-    const { observations } = this.props;
-    const { selectedPeriod, observation, processedBehaviours } = this.state;
-    const items = createObservationDropdown(observations);
-
-    const selectStyles = {
-      selectToggle: styles.observationToggle,
-      selectToggleText: styles.dropdownToggleText,
-      chipText: styles.dropdownChipText,
-      confirmText: styles.dropdownConfirmText,
-      itemText: styles.dropdownItemText
-    };
+    const { processedBehaviours, observation } = this.state;
 
     return (
-      <Card containerStyle={{ borderRadius: 4, paddingBottom: 12 }}>
-        <Text h3 style={{ paddingBottom: 4 }}>
+      <View>
+        <Text h4 style={{ paddingBottom: 12 }}>
           Behaviour Correlations
         </Text>
-        <View style={styles.singleObservation}>
-          <SectionedMultiSelect
-            items={items}
-            single
-            uniqueKey="id"
-            selectText="Select observation period"
-            onSelectedItemsChange={this.handleObservationChange}
-            selectedItems={selectedPeriod}
-            styles={selectStyles}
-            colors={SELECT_COLOURS}
-            selectedIconComponent={SELECT_ICON}
-          />
-        </View>
         {observation == null || processedBehaviours == null ? null : (
           <View style={{ marginBottom: 4 }}>
             <Carousel
@@ -239,7 +222,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
             />
           </View>
         )}
-      </Card>
+      </View>
     );
   }
 }

@@ -9,7 +9,9 @@ const colours = {
   successGreen: "#28A144",
   warningOrange: "#CF7911",
   errorRed: "#B80D0D",
-  actionBlue: "#3272D9"
+  actionBlue: "#3272D9",
+  compareRed: "#FA4D56",
+  compareBlue: "#4589ff"
 };
 
 export default colours;

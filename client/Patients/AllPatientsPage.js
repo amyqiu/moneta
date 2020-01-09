@@ -15,6 +15,7 @@ import navigationStyles from "../NavigationStyles";
 import colours from "../Colours";
 import PatientInfo from "./PatientInfo";
 import type { Patient } from "./Patient";
+import { parseRawPatient } from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -56,17 +57,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         throw Error(response.statusText);
       }
       const json = await response.json();
-      const parsedPatients = json.map(rawPatient => {
-        return {
-          name: rawPatient.name,
-          id: rawPatient._id,
-          displayId: rawPatient.display_ID,
-          room: rawPatient.room,
-          imageUri: rawPatient.profile_picture,
-          inObservation: rawPatient.in_observation,
-          observations: rawPatient.observation_periods
-        };
-      });
+      const parsedPatients = json.map(parseRawPatient);
       this.setState({
         patients: parsedPatients.sort((a, b) => (a.name > b.name ? 1 : -1)),
         isLoading: false,
@@ -125,16 +116,10 @@ export default class AllPatientsPage extends React.Component<Props, State> {
         >
           <PatientInfo
             patient={patient}
-            observationID={
-              patient.inObservation
-                ? patient.observations[patient.observations.length - 1]._id
-                : null
-            }
             onNavigatePatient={() => this.navigatePatient(patient)}
             extraButton={extraButton}
             onAddEntry={this.navigateEntry}
             observationButton={null}
-            inObservation={patient.inObservation}
           />
         </TouchableOpacity>
       );

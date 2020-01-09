@@ -20,16 +20,12 @@ type Props = {
   periodEnd: ?string
 };
 
-type State = {
-  // checked: boolean,
-};
+type State = {};
 
 export default class HourlyColumnChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      // checked: false,
-    };
+    this.state = {};
   }
 
   render() {
