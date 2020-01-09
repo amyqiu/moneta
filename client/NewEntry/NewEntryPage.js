@@ -147,7 +147,8 @@ export default class NewEntryPage extends React.Component<Props, State> {
     });
     const { navigation } = this.props;
     const patient = navigation.getParam("patient");
-    const observationID = navigation.getParam("observationID");
+    const observationID =
+      patient.observations[patient.observations.length - 1]._id;
     const data = JSON.stringify({
       behaviours: this.mapToObject(checkedBehaviours),
       locations: Array.from(checkedLocations),
@@ -176,7 +177,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
               NavigationActions.navigate({ routeName: "AllPatients" }),
               NavigationActions.navigate({
                 routeName: "Patient",
-                params: { patient, showSubmitEntryToast: true, observationID }
+                params: { patient, showSubmitEntryToast: true }
               })
             ]
           });

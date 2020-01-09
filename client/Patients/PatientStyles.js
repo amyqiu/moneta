@@ -196,7 +196,7 @@ export default StyleSheet.create({
     paddingBottom: 12
   },
   singleObservation: {
-    paddingBottom: 12,
+    paddingBottom: 8,
     paddingLeft: 18,
     alignItems: "center"
   },
@@ -237,5 +237,8 @@ export default StyleSheet.create({
   },
   carouselCorrelations: {
     paddingVertical: 12
+  },
+  selectText: {
+    fontSize: RFValue(16)
   }
 });

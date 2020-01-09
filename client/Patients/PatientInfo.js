@@ -10,12 +10,10 @@ import colours from "../Colours";
 
 type Props = {
   patient: Patient,
-  observationID: ?string,
   onNavigatePatient: ?() => void,
   extraButton: React.Node,
   onAddEntry: Object => void,
-  observationButton: ?React.Node,
-  inObservation: boolean
+  observationButton: ?React.Node
 };
 
 type State = {
@@ -40,25 +38,21 @@ export default class PatientInfo extends React.Component<Props, State> {
   }
 
   async componentDidUpdate(prevProps: Props, prevState: State) {
-    const { inObservation, patient } = this.props;
-    if (inObservation && prevState.lastEntryTime === "") {
+    const { patient } = this.props;
+    if (patient.inObservation && prevState.lastEntryTime === "") {
       this.getPatientLastEntry(patient.id);
     }
   }
 
   handleNavigateNewEntry = () => {
-    const { patient, observationID, onAddEntry } = this.props;
+    const { patient, onAddEntry } = this.props;
     const { lastEntryTime } = this.state;
-    onAddEntry({
-      patient,
-      observationID,
-      lastEntryTime
-    });
+    onAddEntry({ patient, lastEntryTime });
   };
 
   getPatientLastEntry = async (patientID: string) => {
-    const { inObservation } = this.props;
-    if (!inObservation) {
+    const { patient } = this.props;
+    if (!patient.inObservation) {
       this.setState({ lastEntryTime: "", loadingEntryTime: false });
       return;
     }
@@ -81,8 +75,8 @@ export default class PatientInfo extends React.Component<Props, State> {
 
   calculateNextEntry = () => {
     const { lastEntryTime } = this.state;
-    const { inObservation } = this.props;
-    if (!inObservation) {
+    const { patient } = this.props;
+    if (!patient.inObservation) {
       return {
         colour: colours.secondaryGrey,
         text: isTablet() ? "Not in observation period" : "Not in observation"
@@ -126,8 +120,7 @@ export default class PatientInfo extends React.Component<Props, State> {
       patient,
       onNavigatePatient,
       extraButton,
-      observationButton,
-      inObservation
+      observationButton
     } = this.props;
     const { loadingEntryTime } = this.state;
 
@@ -145,7 +138,7 @@ export default class PatientInfo extends React.Component<Props, State> {
           title="+ Add Entry"
           titleProps={{ style: styles.smallButtonTitle }}
           underlayColor="white"
-          disabled={!inObservation}
+          disabled={!patient.inObservation}
           disabledStyle={{ backgroundColor: colours.disabled }}
         />
         {extraButton}
@@ -218,7 +211,7 @@ export default class PatientInfo extends React.Component<Props, State> {
                   {nextEntry.text}
                 </Text>
               )}
-              {inObservation ? (
+              {patient.inObservation ? (
                 <Text style={styles.patientDetailsText}>
                   <Text style={{ fontWeight: "bold" }}>
                     {isTablet() ? "Observation Started: " : "Started: "}
