@@ -194,7 +194,10 @@ export default class EndObservationModal extends React.Component<Props, State> {
               confirmText: styles.dropdownConfirmText,
               itemText: styles.dropdownItemText
             }}
-            colors={SELECT_COLOURS}
+            colors={{
+              ...SELECT_COLOURS,
+              selectToggleTextColor: colours.primaryGrey
+            }}
             selectedIconComponent={SELECT_ICON}
           />
           <HourlyColumnChart
@@ -203,7 +206,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
             periodStart={periodStart ? periodStart.format("MMM D, YYYY") : null}
             periodEnd={periodEnd ? periodEnd.format("MMM D, YYYY") : null}
           />
-          <View style={{ paddingTop: 8 }}>
+          <View style={{ paddingTop: isTablet() ? 8 : 0 }}>
             <CorrelationsView observationID={selectedObservationID} />
           </View>
         </View>
