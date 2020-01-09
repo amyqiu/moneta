@@ -1,5 +1,4 @@
 const { validationResult, body } = require('express-validator/check');
-const wuzzy = require('wuzzy');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
 
@@ -242,7 +241,6 @@ exports.observation_get_correlations = (req, res) => {
             const temp = {};
             temp.trigger = it.next().value;
             temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_locations.get(temp.trigger));
-            temp.index = wuzzy.tanimoto(bArray, obs.aggregated_locations.get(temp.trigger));
             list.push(temp);
           }
           // Check against all contexts
@@ -251,32 +249,52 @@ exports.observation_get_correlations = (req, res) => {
             const temp = {};
             temp.trigger = it2.next().value;
             temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_contexts.get(temp.trigger));
-            temp.index = wuzzy.tanimoto(bArray, obs.aggregated_contexts.get(temp.trigger));
             list.push(temp);
           }
           // Check time of occurrence and return most frequent hour
-          const hours = []; const count = []; const modes = []; let maxIndex = 0;
+          const hours = []; const times = [];
+          // const count = []; const maxIndex = 0;
           for (let l = 0; l < obs.entry_times.length; l += 1) {
             if (bArray[l] === 1) {
-              const hour = obs.entry_times[l].getHours();
-              hours.push(hour);
-              count[hour] = (count[hour] || 0) + 1;
-              if (count[hour] > maxIndex) {
-                maxIndex = count[hour];
+              let hour = obs.entry_times[l].getHours();
+              const min = obs.entry_times[l].getMinutes();
+              let ampm = '';
+              if (hour >= 0 && hour < 12) {
+                if (hour === 0) {
+                  hour = 12;
+                }
+                ampm = 'AM';
+              } else {
+                hour -= 12;
+                ampm = 'PM';
               }
+              const timeString = `${hour}:${Math.ceil(min / 30) * 30}${ampm}`;
+              if (hours.includes(timeString)) {
+                for (let m = 0; m < times.length; m += 1) {
+                  if (timeString === times[m].value) {
+                    times[m].frequency += 1;
+                  }
+                }
+              } else {
+                const temp = {};
+                temp.value = timeString;
+                temp.frequency = 1;
+                times.push(temp);
+              }
+              hours.push(timeString);
             }
           }
-          for (let m = 0; m < count.length; m += 1) {
-            if (count[m] === maxIndex) {
-              modes.push(m);
-            }
-          }
-          // Sort and find top 3 triggers
+          // Sort and find top 3 triggers and top 3 times
           list.sort((a, b) => b.coeff - a.coeff);
+          times.sort((a, b) => b.frequency - a.frequency);
           const b = {};
           b.behaviour = negativeBehaviours[i];
           b.results = list.slice(0, 3);
-          b.top_time = modes;
+          if (times.length >= 3) {
+            b.times = times.slice(0, 3);
+          } else {
+            b.times = times;
+          }
           correlations.push(b);
         }
       }
