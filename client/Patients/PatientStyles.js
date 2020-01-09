@@ -83,8 +83,7 @@ export default StyleSheet.create({
     justifyContent: "space-between"
   },
   dropdownToggleText: {
-    fontSize: RFValue(14),
-    color: colours.white
+    fontSize: RFValue(14)
   },
   dropdownChipText: {
     fontSize: RFValue(12)
