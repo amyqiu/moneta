@@ -91,7 +91,8 @@ export function createDropdownBehaviours() {
 
 export const SELECT_COLOURS = {
   primary: colours.primaryGrey,
-  chipColor: colours.primaryGrey
+  chipColor: colours.primaryGrey,
+  selectToggleTextColor: colours.white
 };
 
 export const SELECT_ICON = (
@@ -101,3 +102,13 @@ export const SELECT_ICON = (
     style={{ color: colours.successGreen, marginRight: 16 }}
   />
 );
+
+export const STARTING_REASONS = [
+  "Baseline/Admission",
+  "Transition/Move",
+  "New Behaviour",
+  "Behaviour Change",
+  "New Intervention",
+  "Medication Adjustment",
+  "Urgent Referral/Transfer"
+];

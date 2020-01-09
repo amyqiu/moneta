@@ -252,7 +252,7 @@ export default class PatientPage extends React.Component<Props, State> {
               onNavigateOldEntry={this.handleNavigateOldEntry}
             />
           </CollapsibleCard>
-          <CollapsibleCard startExpanded title="Trends and Correlations">
+          <CollapsibleCard startExpanded title="Observation Period Details">
             <PatientTrends startExpanded patient={patient} />
           </CollapsibleCard>
           <CollapsibleCard startExpanded title="Compare Observation Periods">

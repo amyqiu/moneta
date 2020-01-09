@@ -28,7 +28,8 @@ type State = {
   selectedBehaviours: Array<Object>,
   selectedPeriods: Array<string>,
   aggregatedBehaviours: ?Map<string, Array<number>>,
-  entryTimes: ?Array<moment>
+  entryTimes: ?Array<moment>,
+  observation: ?Object
 };
 
 export default class EndObservationModal extends React.Component<Props, State> {
@@ -40,7 +41,8 @@ export default class EndObservationModal extends React.Component<Props, State> {
       selectedBehaviours: [...BEHAVIOURS.keys()],
       selectedPeriods: lastObservation ? [lastObservation] : [],
       aggregatedBehaviours: null,
-      entryTimes: null
+      entryTimes: null,
+      observation: null
     };
   }
 
@@ -84,7 +86,8 @@ export default class EndObservationModal extends React.Component<Props, State> {
       this.setState({
         isLoading: false,
         aggregatedBehaviours,
-        entryTimes
+        entryTimes,
+        observation: json
       });
     } catch (error) {
       console.log("error", error);
@@ -138,7 +141,12 @@ export default class EndObservationModal extends React.Component<Props, State> {
 
   render() {
     const { patient } = this.props;
-    const { isLoading, selectedBehaviours, selectedPeriods } = this.state;
+    const {
+      isLoading,
+      selectedBehaviours,
+      selectedPeriods,
+      observation
+    } = this.state;
 
     const processedData = this.processHourlyTrends();
     const dropdownBehaviours = createDropdownBehaviours();
@@ -170,7 +178,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
         </View>
       ) : (
         <View>
-          <Text h4 style={{ paddingTop: 12 }}>
+          <Text h4 style={{ paddingTop: 4 }}>
             Hourly Trends
           </Text>
           <SectionedMultiSelect
@@ -225,6 +233,48 @@ export default class EndObservationModal extends React.Component<Props, State> {
             selectedIconComponent={SELECT_ICON}
           />
         </View>
+        {observation != null ? (
+          <View>
+            <Text h3 style={{ paddingBottom: 8 }}>
+              Notes
+            </Text>
+            <Text>
+              <Text style={styles.modalSubHeading}>Starting Reasons: </Text>
+              <Text style={styles.patientDetailsText}>
+                {observation.reasons.length > 0
+                  ? observation.reasons.join(", ")
+                  : "None"}
+              </Text>
+            </Text>
+            <Text>
+              <Text style={styles.modalSubHeading}>Starting Notes: </Text>
+              <Text style={styles.patientDetailsText}>
+                {observation.starting_notes || "None"}
+              </Text>
+            </Text>
+            {observation.end_time ? (
+              <View>
+                <Text>
+                  <Text style={styles.modalSubHeading}>Next Steps: </Text>
+                  <Text style={styles.patientDetailsText}>
+                    {observation.next_steps.length > 0
+                      ? observation.next_steps.join(", ")
+                      : "None"}
+                  </Text>
+                </Text>
+                <Text>
+                  <Text style={styles.modalSubHeading}>Ending Notes: </Text>
+                  <Text style={styles.patientDetailsText}>
+                    {observation.ending_notes || "None"}
+                  </Text>
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
+        <Text h3 style={{ paddingBottom: 8, paddingTop: isTablet() ? 28 : 12 }}>
+          Trends/Correlations
+        </Text>
         {isLoading ? spinner : data}
       </View>
     );

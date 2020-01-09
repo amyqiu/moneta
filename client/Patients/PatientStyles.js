@@ -61,7 +61,6 @@ export default StyleSheet.create({
     backgroundColor: colours.secondaryGrey
   },
   errorText: {
-    padding: 16,
     fontSize: RFValue(16)
   },
   observationButtonContainer: {
@@ -84,7 +83,8 @@ export default StyleSheet.create({
     justifyContent: "space-between"
   },
   dropdownToggleText: {
-    fontSize: RFValue(14)
+    fontSize: RFValue(14),
+    color: colours.white
   },
   dropdownChipText: {
     fontSize: RFValue(12)
@@ -113,7 +113,7 @@ export default StyleSheet.create({
   },
   observationToggle: {
     width: isTablet() ? 320 : 142,
-    backgroundColor: colours.secondaryGrey,
+    backgroundColor: colours.primaryGrey,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginVertical: 12
@@ -239,6 +239,7 @@ export default StyleSheet.create({
     paddingVertical: 12
   },
   selectText: {
+    paddingTop: 8,
     fontSize: RFValue(16)
   }
 });

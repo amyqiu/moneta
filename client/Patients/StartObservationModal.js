@@ -5,7 +5,7 @@ import { Button, Text, CheckBox } from "react-native-elements";
 import Modal from "react-native-modal";
 import styles from "./PatientStyles";
 import colours from "../Colours";
-import { isTablet } from "../Helpers";
+import { isTablet, STARTING_REASONS } from "../Helpers";
 
 type Props = {
   patientName: string,
@@ -18,16 +18,6 @@ type State = {
   checkedReasons: Set<string>,
   startingNotes: string
 };
-
-const STARTING_REASONS = [
-  "Baseline/Admission",
-  "Transition/Move",
-  "New Behaviour",
-  "Behaviour Change",
-  "New Intervention",
-  "Medication Adjustment",
-  "Urgent Referral/Transfer"
-];
 
 export default class StartObservationModal extends React.Component<
   Props,

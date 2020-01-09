@@ -21,6 +21,8 @@ type State = {
   observation: ?Object
 };
 
+// TODO: Add hour correlations
+
 export default class CorrelationsView extends React.Component<Props, State> {
   _isMounted = false;
 

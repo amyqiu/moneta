@@ -164,7 +164,6 @@ export default class ObservationComparison extends React.Component<
     const items = createDropdownPeriods(patient.observations);
 
     const selectStyles = {
-      selectToggle: styles.observationToggle,
       selectToggleText: styles.dropdownToggleText,
       chipText: styles.dropdownChipText,
       confirmText: styles.dropdownConfirmText,
@@ -177,11 +176,11 @@ export default class ObservationComparison extends React.Component<
     const legendData = [
       {
         name: formatObservationDates(firstObservation),
-        symbol: { fill: "tomato" }
+        symbol: { fill: colours.compareRed }
       },
       {
         name: formatObservationDates(secondObservation),
-        symbol: { fill: "blue" }
+        symbol: { fill: colours.compareBlue }
       }
     ];
 
@@ -207,7 +206,14 @@ export default class ObservationComparison extends React.Component<
               selectText="Select 1st observation period"
               onSelectedItemsChange={this.handleFirstPeriodChange}
               selectedItems={firstSelectedPeriod}
-              styles={selectStyles}
+              styles={{
+                ...selectStyles,
+                selectToggle: {
+                  ...styles.observationToggle,
+                  borderColor: colours.compareRed,
+                  borderWidth: 2
+                }
+              }}
               colors={SELECT_COLOURS}
               selectedIconComponent={SELECT_ICON}
             />
@@ -223,7 +229,14 @@ export default class ObservationComparison extends React.Component<
               selectText="Select 2nd observation period"
               onSelectedItemsChange={this.handleSecondPeriodChange}
               selectedItems={secondSelectedPeriod}
-              styles={selectStyles}
+              styles={{
+                ...selectStyles,
+                selectToggle: {
+                  ...styles.observationToggle,
+                  borderColor: colours.compareBlue,
+                  borderWidth: 2
+                }
+              }}
               colors={SELECT_COLOURS}
               selectedIconComponent={SELECT_ICON}
             />
@@ -245,7 +258,10 @@ export default class ObservationComparison extends React.Component<
               }}
               style={{ parent: { border: "1px solid black" } }}
             >
-              <VictoryGroup colorScale={["tomato", "blue"]} offset={barWidth}>
+              <VictoryGroup
+                colorScale={[colours.compareRed, colours.compareBlue]}
+                offset={barWidth}
+              >
                 <VictoryBar
                   data={firstObservationData}
                   key="observation_1"
