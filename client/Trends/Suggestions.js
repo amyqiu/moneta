@@ -1,3 +1,5 @@
+// TODO: Add test tips!
+
 const SUGGESTIONS = new Map([
   ["Common Areas", "Test tip 1"],
   ["Individual Room", "Test tip 2"],
