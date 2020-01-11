@@ -21,8 +21,6 @@ type State = {
   observation: ?Object
 };
 
-// TODO: Add hour correlations
-
 export default class CorrelationsView extends React.Component<Props, State> {
   _isMounted = false;
 
@@ -70,7 +68,10 @@ export default class CorrelationsView extends React.Component<Props, State> {
         const results = await response.json();
         const correlations = new Map<string, Object>();
         results.forEach(correlation => {
-          correlations.set(correlation.behaviour, correlation.results);
+          correlations.set(correlation.behaviour, {
+            results: correlation.results,
+            times: correlation.times
+          });
         });
         this.setState({ correlations });
       }
@@ -124,6 +125,11 @@ export default class CorrelationsView extends React.Component<Props, State> {
       return null;
     }
 
+    const correlation = correlations.get(item);
+    if (correlation == null) {
+      return null;
+    }
+
     const count = processedBehaviours.get(item) || 0;
     const percentage = totalOccurrences
       ? `${((count * 100.0) / totalOccurrences).toFixed(0)}%`
@@ -136,7 +142,8 @@ export default class CorrelationsView extends React.Component<Props, State> {
       }
     });
 
-    const correlationResults = correlations.get(item);
+    const correlationResults = correlation.results;
+    const correlationTimes = correlation.times;
 
     return (
       <View style={styles.behaviourCard}>
@@ -175,15 +182,30 @@ export default class CorrelationsView extends React.Component<Props, State> {
             </Text>
           ) : (
             <View>
-              {correlationResults.map(correlation => {
+              {correlationResults.map(behaviour => {
                 return (
-                  <Text
-                    style={styles.carouselSubText}
-                    key={correlation.trigger}
-                  >
-                    {`${correlation.trigger} ${correlation.coeff.toFixed(
+                  <Text style={styles.carouselSubText} key={behaviour.trigger}>
+                    {`${behaviour.trigger} ${behaviour.coeff.toFixed(
                       2
-                    )} - ${SUGGESTIONS.get(correlation.trigger)}`}
+                    )} - ${SUGGESTIONS.get(behaviour.trigger)}`}
+                  </Text>
+                );
+              })}
+            </View>
+          )}
+        </View>
+        <View style={styles.carouselCorrelations}>
+          <Text style={styles.carouselMainText}>Most Frequent Times:</Text>
+          {correlationResults == null ? (
+            <Text style={styles.carouselSubText}>
+              Not enough data for frequency analysis
+            </Text>
+          ) : (
+            <View>
+              {correlationTimes.map(time => {
+                return (
+                  <Text style={styles.carouselSubText} key={time.value}>
+                    {`${time.value}: ${time.frequency} occurrences`}
                   </Text>
                 );
               })}
@@ -200,14 +222,21 @@ export default class CorrelationsView extends React.Component<Props, State> {
   };
 
   render() {
-    const { processedBehaviours, observation } = this.state;
+    const { processedBehaviours, observation, correlations } = this.state;
 
     return (
       <View>
         <Text h4 style={{ paddingBottom: 12 }}>
           Behaviour Correlations
         </Text>
-        {observation == null || processedBehaviours == null ? null : (
+        {observation == null ||
+        processedBehaviours == null ||
+        correlations == null ||
+        correlations.size === 0 ? (
+          <Text style={styles.carouselSubText}>
+            Not enough data for correlations
+          </Text>
+        ) : (
           <View style={{ marginBottom: 4 }}>
             <Carousel
               data={Array.from(processedBehaviours.keys()).sort(
