@@ -252,23 +252,30 @@ exports.observation_get_correlations = (req, res) => {
             list.push(temp);
           }
           // Check time of occurrence and return most frequent hour
-          const hours = []; const times = [];
-          // const count = []; const maxIndex = 0;
+          const hours = []; const times = []; let timeString = '';
           for (let l = 0; l < obs.entry_times.length; l += 1) {
             if (bArray[l] === 1) {
               let hour = obs.entry_times[l].getHours();
               const min = obs.entry_times[l].getMinutes();
-              let ampm = '';
+              let roundedMin = Math.round(min / 30) * 30;
+              if (roundedMin === 60) {
+                roundedMin = 0;
+                hour += 1;
+              }
+              let ampm = 'PM';
               if (hour >= 0 && hour < 12) {
                 if (hour === 0) {
                   hour = 12;
                 }
                 ampm = 'AM';
-              } else {
+              } else if (hour > 12) {
                 hour -= 12;
-                ampm = 'PM';
               }
-              const timeString = `${hour}:${Math.ceil(min / 30) * 30}${ampm}`;
+              if (roundedMin === 0) {
+                timeString = `${hour}:${roundedMin}0${ampm}`;
+              } else {
+                timeString = `${hour}:${roundedMin}${ampm}`;
+              }
               if (hours.includes(timeString)) {
                 for (let m = 0; m < times.length; m += 1) {
                   if (timeString === times[m].value) {
