@@ -1,11 +1,11 @@
 // @flow
 import * as React from "react";
 import { View, TextInput, ScrollView } from "react-native";
-import { Button, Text, CheckBox } from "react-native-elements";
+import { Button, Text } from "react-native-elements";
 import Modal from "react-native-modal";
+import ObservationCheckBox from "./ObservationCheckBox";
 import ObservationSummaryTable from "./ObservationSummaryTable";
 import styles from "./PatientStyles";
-import colours from "../Colours";
 import { isTablet } from "../Helpers";
 
 type Props = {
@@ -20,19 +20,6 @@ type State = {
   nextSteps: Set<string>,
   endingNotes: string
 };
-
-const NEXT_STEPS = [
-  "Repeat DOS in 4-6 weeks",
-  "No further DOS",
-  "ABC charting for behaviour",
-  "Clinical huddle/meeting",
-  "Progress note written",
-  "Consult with substitute decision maker (SDM)",
-  "Medication adjustment/review",
-  "Non-pharmacological interventions",
-  "Care plan updated",
-  "Referral"
-];
 
 export default class EndObservationModal extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -76,22 +63,10 @@ export default class EndObservationModal extends React.Component<Props, State> {
           <View style={styles.endModalView}>
             <Text style={styles.modalHeading}>{message}</Text>
             <ObservationSummaryTable observationID={observationID} />
-            <Text style={styles.modalSubHeading}>Reasons</Text>
-            {NEXT_STEPS.map(nextStep => (
-              <CheckBox
-                title={nextStep}
-                key={nextStep}
-                checked={nextSteps.has(nextStep)}
-                onPress={() => this.handleNextStepChecked(nextStep)}
-                containerStyle={styles.checkBoxContainer}
-                textStyle={styles.checkBoxLabel}
-                iconType="feather"
-                checkedIcon="check-square"
-                uncheckedIcon="square"
-                checkedColor={colours.primaryGrey}
-                uncheckedColor={colours.primaryGrey}
-              />
-            ))}
+            <ObservationCheckBox
+              nextSteps={nextSteps}
+              handleNextStepChecked={this.handleNextStepChecked}
+            />
             <Text
               style={{
                 ...styles.modalSubHeading,

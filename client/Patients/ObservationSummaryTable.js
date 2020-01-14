@@ -8,7 +8,8 @@ import styles from "./PatientStyles";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 
 type Props = {
-  observationID: string
+  observationID: string,
+  observationData: ?Object
 };
 
 type State = {
@@ -37,7 +38,13 @@ export default class ObservationSummaryTable extends React.Component<
   }
 
   getObservation = async () => {
-    const { observationID } = this.props;
+    const { observationID, observationData } = this.props;
+    if (observationData != null) {
+      this.setState({
+        observationData
+      });
+      return;
+    }
     try {
       const response = await fetch(
         `https://vast-savannah-47684.herokuapp.com/observation/${observationID}`

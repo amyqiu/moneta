@@ -97,6 +97,11 @@ export default class PatientPage extends React.Component<Props, State> {
     navigation.navigate("OldEntry", { entry });
   };
 
+  handleNavigateObservationOverview = (observationId: string) => {
+    const { navigation } = this.props;
+    navigation.navigate("ObservationOverview", { observationId });
+  };
+
   handleNavigateMoreTrends = () => {
     const { navigation } = this.props;
     const { patient } = this.state;
@@ -250,6 +255,9 @@ export default class PatientPage extends React.Component<Props, State> {
             <Calendar
               patient={patient}
               onNavigateOldEntry={this.handleNavigateOldEntry}
+              onNavigateObservationOverview={
+                this.handleNavigateObservationOverview
+              }
             />
           </CollapsibleCard>
           <CollapsibleCard startExpanded title="Observation Period Details">
