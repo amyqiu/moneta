@@ -18,7 +18,13 @@ const NEXT_STEPS = [
   "Referral"
 ];
 
-const ObservationCheckBox = ({ nextSteps, handleNextStepChecked }) => {
+const ObservationCheckBox = ({
+  nextSteps,
+  handleNextStepChecked
+}: {
+  nextSteps: Set<string>,
+  handleNextStepChecked: string => void
+}) => {
   return (
     <View>
       <Text style={styles.modalSubHeading}>Reasons</Text>
