@@ -15,7 +15,7 @@ import colours from "../Colours";
 
 type Props = NavigationScreenProps & {};
 
-export default class NewEntryPage extends React.Component<Props, {}> {
+export default class OldEntryPage extends React.Component<Props, {}> {
   static navigationOptions = ({ navigation }: { navigation: Object }) => {
     return {
       ...navigationStyles,
@@ -25,7 +25,7 @@ export default class NewEntryPage extends React.Component<Props, {}> {
           size={24}
           name="ios-home"
           style={{ color: colours.white, marginRight: 16 }}
-          onPress={() => navigation.navigate("AllPatients")}
+          onPress={() => navigation.navigate("Patient")}
         />
       )
     };
