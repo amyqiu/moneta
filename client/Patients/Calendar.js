@@ -162,7 +162,7 @@ export default class Calendar extends React.Component<Props, State> {
         key: observation,
         isEntry: false,
         observationId: observation,
-        rowTitle: "observation overview"
+        rowTitle: "Observation Overview"
       });
     });
     entryTimes.forEach(entry => {
@@ -171,7 +171,7 @@ export default class Calendar extends React.Component<Props, State> {
         key: entry.time,
         isEntry: true,
         entryData: entry,
-        rowTitle: `${time} entry`
+        rowTitle: `${time} Entry`
       });
     });
 

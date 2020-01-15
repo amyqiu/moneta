@@ -17,7 +17,7 @@ import PatientTrends from "./PatientTrends";
 import CollapsibleCard from "./CollapsibleCard";
 import type { Patient } from "./Patient";
 import ObservationComparison from "../Trends/ObservationComparison";
-import { parseRawPatient, getLastObservation } from "../Helpers";
+import { parseRawPatient, getLastObservation, isTablet } from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -251,7 +251,11 @@ export default class PatientPage extends React.Component<Props, State> {
             onAddEntry={this.handleNewEntry}
             observationButton={observationButton}
           />
-          <CollapsibleCard startExpanded={false} title="Recent Activity">
+          <CollapsibleCard
+            startExpanded={false}
+            title="Recent Activity"
+            iconName="md-alarm"
+          >
             <Calendar
               patient={patient}
               onNavigateOldEntry={this.handleNavigateOldEntry}
@@ -260,10 +264,20 @@ export default class PatientPage extends React.Component<Props, State> {
               }
             />
           </CollapsibleCard>
-          <CollapsibleCard startExpanded title="Observation Period Details">
+          <CollapsibleCard
+            startExpanded
+            title={isTablet() ? "Observation Period Details" : "Period Details"}
+            iconName="ios-list"
+          >
             <PatientTrends startExpanded patient={patient} />
           </CollapsibleCard>
-          <CollapsibleCard startExpanded title="Compare Observation Periods">
+          <CollapsibleCard
+            startExpanded
+            title={
+              isTablet() ? "Compare Observation Periods" : "Compare Periods"
+            }
+            iconName="ios-swap"
+          >
             <ObservationComparison patient={patient} />
           </CollapsibleCard>
         </ScrollView>

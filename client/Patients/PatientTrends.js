@@ -241,33 +241,33 @@ export default class EndObservationModal extends React.Component<Props, State> {
             <Text h3 style={{ paddingBottom: 8 }}>
               Notes
             </Text>
-            <Text>
-              <Text style={styles.modalSubHeading}>Starting Reasons: </Text>
-              <Text style={styles.patientDetailsText}>
+            <Text style={styles.obsDetails}>
+              <Text style={styles.obsSubHeading}>Starting Reasons: </Text>
+              <Text style={styles.obsDetailsText}>
                 {observation.reasons.length > 0
                   ? observation.reasons.join(", ")
                   : "None"}
               </Text>
             </Text>
-            <Text>
-              <Text style={styles.modalSubHeading}>Starting Notes: </Text>
-              <Text style={styles.patientDetailsText}>
+            <Text style={styles.obsDetails}>
+              <Text style={styles.obsSubHeading}>Starting Notes: </Text>
+              <Text style={styles.obsDetailsText}>
                 {observation.starting_notes || "None"}
               </Text>
             </Text>
             {observation.end_time ? (
               <View>
-                <Text>
-                  <Text style={styles.modalSubHeading}>Next Steps: </Text>
-                  <Text style={styles.patientDetailsText}>
+                <Text style={styles.obsDetails}>
+                  <Text style={styles.obsSubHeading}>Next Steps: </Text>
+                  <Text style={styles.obsDetailsText}>
                     {observation.next_steps.length > 0
                       ? observation.next_steps.join(", ")
                       : "None"}
                   </Text>
                 </Text>
-                <Text>
-                  <Text style={styles.modalSubHeading}>Ending Notes: </Text>
-                  <Text style={styles.patientDetailsText}>
+                <Text style={styles.obsDetails}>
+                  <Text style={styles.obsSubHeading}>Ending Notes: </Text>
+                  <Text style={styles.obsDetailsText}>
                     {observation.ending_notes || "None"}
                   </Text>
                 </Text>

@@ -174,7 +174,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
         </View>
         <View style={styles.carouselCorrelations}>
           <Text style={styles.carouselMainText}>
-            Top Correlations/Suggestions:
+            Top Correlations/Suggestions*:
           </Text>
           {correlationResults == null ? (
             <Text style={styles.carouselSubText}>
@@ -185,12 +185,17 @@ export default class CorrelationsView extends React.Component<Props, State> {
               {correlationResults.map(behaviour => {
                 return (
                   <Text style={styles.carouselSubText} key={behaviour.trigger}>
-                    {`${behaviour.trigger} ${behaviour.coeff.toFixed(
+                    {`${behaviour.trigger} (${behaviour.coeff.toFixed(
                       2
-                    )} - ${SUGGESTIONS.get(behaviour.trigger)}`}
+                    )}) - ${SUGGESTIONS.get(behaviour.trigger)}`}
                   </Text>
                 );
               })}
+              <Text style={styles.carouselFootnote}>
+                * Correlations are calculated using Pearson Coefficients and may
+                not be exact. All suggestions should be reviewed by a healthcare
+                professional.
+              </Text>
             </View>
           )}
         </View>

@@ -135,7 +135,7 @@ export default class PatientInfo extends React.Component<Props, State> {
           buttonStyle={styles.smallButton}
           containerStyle={styles.buttonContainer}
           onPress={this.handleNavigateNewEntry}
-          title="+ Add Entry"
+          title="Add Entry"
           titleProps={{ style: styles.smallButtonTitle }}
           underlayColor="white"
           disabled={!patient.inObservation}
