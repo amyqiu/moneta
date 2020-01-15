@@ -43,7 +43,7 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colours.actionBlue,
-    marginTop: 48,
+    marginTop: isTablet() ? 48 : 24,
     marginBottom: 12,
     paddingVertical: 12,
     borderRadius: 4,
