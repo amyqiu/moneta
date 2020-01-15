@@ -62,7 +62,10 @@ export default class EndObservationModal extends React.Component<Props, State> {
         <ScrollView style={styles.modalContainer}>
           <View style={styles.endModalView}>
             <Text style={styles.modalHeading}>{message}</Text>
-            <ObservationSummaryTable observationID={observationID} />
+            <ObservationSummaryTable
+              observationData={null}
+              observationID={observationID}
+            />
             <ObservationCheckBox
               nextSteps={nextSteps}
               handleNextStepChecked={this.handleNextStepChecked}

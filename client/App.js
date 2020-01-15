@@ -7,8 +7,15 @@ import ObservationOverview from "./Patients/ObservationOverview";
 import OldEntryPage from "./NewEntry/OldEntryPage";
 import PatientPage from "./Patients/PatientPage";
 import AllPatientsPage from "./Patients/AllPatientsPage";
+import LoginPage from "./LoginPage";
 
 const MainNavigator = createStackNavigator({
+  Login: {
+    screen: LoginPage,
+    navigationOptions: {
+      header: null
+    }
+  },
   AllPatients: { screen: AllPatientsPage },
   Patient: { screen: PatientPage },
   NewEntry: { screen: NewEntryPage },

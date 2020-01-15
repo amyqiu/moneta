@@ -14,6 +14,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'no-underscore-dangle': 'off',
     'react/no-string-refs': 'off',
+    "react/jsx-props-no-spreading": 'off'
   },
   'globals': {
     "fetch": false
