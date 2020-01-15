@@ -1,4 +1,5 @@
 const { validationResult, body } = require('express-validator/check');
+const moment = require('moment');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
 
@@ -306,5 +307,38 @@ exports.observation_get_correlations = (req, res) => {
         }
       }
       return res.status(200).send(correlations);
+    });
+};
+
+// Calculate summary Stats
+function getSummaryStats(obs) {
+  const data = [];
+  const topLevelBehaviours = ['Sleeping in Bed', 'Sleeping in Chair', 'Awake/Calm', 'Positively Engaged', 'Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
+  for (let i = 0; i < topLevelBehaviours.length; i += 1) {
+    const bArray = obs.aggregated_behaviours.get(topLevelBehaviours[i]);
+    const occurrences = bArray.reduce((a, b) => a + b, 0);
+    const startDate = moment(obs.start_time);
+    const daysPassed = moment().diff(startDate, 'days');
+    const averageOccurrences = daysPassed
+      ? ((occurrences * 0.5) / daysPassed).toFixed(2)
+      : 'N/A';
+    data.push([topLevelBehaviours[i], occurrences, averageOccurrences]);
+  }
+  return data;
+}
+
+// Generate pdf summary chart
+exports.observation_generate_pdf = (req, res) => {
+  Observation
+    .findById(req.query.id)
+    .exec((err, obs) => {
+      if (err) {
+        return res.status(500).send(err);
+      } if (!obs) {
+        return res.status(500).send('Could not find observation');
+      }
+      const data = getSummaryStats(obs);
+      // TODO: generate pdf
+      return res.status(200).send(data);
     });
 };
