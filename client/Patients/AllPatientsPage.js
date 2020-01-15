@@ -135,7 +135,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       <Button
         buttonStyle={styles.headerButton}
         containerStyle={styles.headerContainer}
-        title="+ Add Resident"
+        title="Add Resident"
         titleProps={{
           style: styles.headerButtonTitle
         }}

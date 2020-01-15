@@ -8,7 +8,8 @@ import colours from "../Colours";
 type Props = {
   startExpanded: boolean,
   title: string,
-  children: React.Element<any>
+  children: React.Element<any>,
+  iconName: string
 };
 
 type State = {
@@ -34,7 +35,7 @@ export default class StartObservationModal extends React.Component<
 
   render() {
     const { isExpanded } = this.state;
-    const { title, children } = this.props;
+    const { title, children, iconName } = this.props;
     return (
       <Card
         containerStyle={{
@@ -44,9 +45,10 @@ export default class StartObservationModal extends React.Component<
         }}
       >
         <TouchableOpacity
-          style={{ flexDirection: "row" }}
+          style={{ flexDirection: "row", alignItems: "center" }}
           onPress={this.toggleExpanded}
         >
+          <Icon name={iconName} size={30} style={{ paddingRight: 12 }} />
           <Text h3 style={{ paddingBottom: 4 }}>
             {title}
           </Text>

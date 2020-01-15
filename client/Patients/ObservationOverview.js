@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { View, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Card, Text } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -71,7 +71,7 @@ export default class ObservationOverview extends React.Component<Props, State> {
     }
 
     return (
-      <KeyboardAvoidingView behavior="position">
+      <View style={{ paddingBottom: 12 }}>
         <View style={{ backgroundColor: "#b30000" }}>
           <Text style={styles.warning}>
             You are reviewing an old observation period: you cannot edit this
@@ -106,7 +106,7 @@ export default class ObservationOverview extends React.Component<Props, State> {
             </Card>
           </View>
           <View style={styles.background}>
-            <Card containerStyle={{ borderRadius: 4, paddingBottom: 100 }}>
+            <Card containerStyle={{ borderRadius: 4, marginBottom: 20 }}>
               <View>
                 <Text h4>Ending Notes</Text>
                 <Text style={styles.date}>{observationData.ending_notes}</Text>
@@ -114,7 +114,7 @@ export default class ObservationOverview extends React.Component<Props, State> {
             </Card>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

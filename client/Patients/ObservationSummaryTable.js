@@ -68,7 +68,7 @@ export default class ObservationSummaryTable extends React.Component<
         behaviour
       ].reduce((a, b) => a + b, 0);
       const averageOccurrences = daysPassed
-        ? ((occurrences * 1.0) / daysPassed).toFixed(2)
+        ? ((occurrences * 0.5) / daysPassed).toFixed(2)
         : "N/A";
       data.push([behaviour, occurrences, averageOccurrences]);
     });

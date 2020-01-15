@@ -44,6 +44,10 @@ export default StyleSheet.create({
   patientDetailsText: {
     fontSize: RFValue(14)
   },
+  obsDetailsText: {
+    fontSize: RFValue(14),
+    paddingVertical: isTablet() ? 24 : 6
+  },
   entryLink: {
     fontSize: RFValue(14),
     color: colours.link,
@@ -61,7 +65,8 @@ export default StyleSheet.create({
     backgroundColor: colours.secondaryGrey
   },
   errorText: {
-    fontSize: RFValue(16)
+    fontSize: RFValue(16),
+    paddingBottom: isTablet() ? 12 : 4
   },
   observationButtonContainer: {
     paddingVertical: 8,
@@ -161,6 +166,13 @@ export default StyleSheet.create({
     fontSize: RFValue(16),
     fontWeight: "bold"
   },
+  obsSubHeading: {
+    fontSize: RFValue(16),
+    fontWeight: "bold"
+  },
+  obsDetails: {
+    paddingVertical: isTablet() ? 6 : 2
+  },
   modalHeading: {
     fontSize: RFValue(20),
     fontWeight: "bold",
@@ -207,7 +219,13 @@ export default StyleSheet.create({
     fontWeight: "bold"
   },
   carouselSubText: {
-    fontSize: RFValue(14)
+    fontSize: RFValue(14),
+    paddingVertical: isTablet() ? 6 : 2
+  },
+  carouselFootnote: {
+    fontSize: RFValue(12),
+    paddingTop: isTablet() ? 8 : 4,
+    fontStyle: "italic"
   },
   behaviourCard: {
     borderWidth: 1,
@@ -225,7 +243,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "baseline",
-    paddingTop: 8
+    paddingVertical: 8
   },
   occurrenceLabel: {
     fontSize: RFValue(16),
