@@ -21,6 +21,7 @@ router.post('/observation/create', observationController.validate('observation_c
 router.post('/observation/end', observationController.validate('observation_end'), observationController.observation_end);
 router.get('/observation/findall', observationController.observation_find_all);
 router.get('/observation/get-correlations', observationController.observation_get_correlations);
+router.get('/observation/generate-pdf', observationController.observation_generate_pdf);
 router.get('/observation/:id', observationController.observation_details);
 router.put('/observation/:id/update', observationController.observation_update);
 router.delete('/observation/:id/delete', observationController.observation_delete);
