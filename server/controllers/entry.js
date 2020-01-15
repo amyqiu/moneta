@@ -152,26 +152,6 @@ exports.entry_find_all = (req, res) => {
   });
 };
 
-function getObservationPeriod(id, month, year) {
-  return new Promise((resolve) => {
-    Observation
-      .findById(id)
-      .exec((err, obs) => {
-        const obvsID = [];
-        if (obs.entry_times.length >= 1) {
-          for (let i = 0; i < obs.entry_times.length; i += 1) {
-            const time = obs.entry_times[i];
-            const idObv = obs.id;
-            if (time.getMonth() + 1 === month && time.getFullYear() === year) {
-              obvsID.push(idObv);
-            }
-          }
-        }
-        setTimeout(() => resolve(obvsID), 300);
-      });
-  });
-}
-
 exports.entry_find_day = (req, res) => {
   if (Number.isNaN(req.query.month)
     || Number.isNaN(req.query.day)
@@ -193,28 +173,23 @@ exports.entry_find_day = (req, res) => {
       }
       const month = parseInt(req.query.month, 10);
       const year = parseInt(req.query.year, 10);
-      // eslint-disable-next-line no-console
-      const dateArray = [];
+      const dateArray = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
         if (period.start_time.getMonth() + 1 === month
           && period.start_time.getFullYear() === year) {
           try {
-            // eslint-disable-next-line no-await-in-loop
-            const obvsID = await getObservationPeriod(period.id, month, year);
-            dateArray.push(obvsID);
+            dateArray.add(period.id);
           } catch (daysErr) {
             return res.status(500).send('Error getting entry days from observation');
           }
+        } else if (period.start_time.getMonth() + 1 > month
+        || period.start_time.getFullYear() > year) {
+          break;
         }
       }
-
-      let date1D = [];
-
-      for (let i = 0; i < dateArray.length; i += 1) {
-        date1D = date1D.concat(dateArray[i]);
-      }
-      const uniqueDates = date1D.filter((elem, index, self) => index === self.indexOf(elem));
+      // make the dateArray a set, it will remove duplicates already
+      const uniqueDates = Array.from(dateArray);
 
       const day = parseInt(req.query.day, 10);
 
