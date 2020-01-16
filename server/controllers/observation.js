@@ -32,6 +32,10 @@ exports.validate = (method) => {
         body('patient_ID').exists().isString(),
         body('start_time').exists().isInt(),
         body('starting_notes').exists().isString(),
+        body('personalized_behaviour_1_title').exists().isString(),
+        body('personalized_behaviour_2_title').exists().isString(),
+        body('personalized_context_1_title').exists().isString(),
+        body('personalized_context_2_title').exists().isString(),
       ];
     }
     case 'observation_end': {
@@ -72,6 +76,10 @@ exports.observation_create = (req, res) => {
         entries: [],
         starting_notes: req.body.starting_notes,
         reasons: req.body.reasons,
+        personalized_behaviour_1_title: req.body.personalized_behaviour_1_title,
+        personalized_behaviour_2_title: req.body.personalized_behaviour_2_title,
+        personalized_context_1_title: req.body.personalized_context_1_title,
+        personalized_context_2_title: req.body.personalized_context_2_title,
       },
     );
   } catch (createErr) {
@@ -229,6 +237,9 @@ exports.observation_get_correlations = (req, res) => {
       }
       const correlations = [];
       const negativeBehaviours = ['Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
+      if (obs.personalized_behaviour_1_title) { negativeBehaviours.push('Personalized Behaviour 1'); }
+      if (obs.personalized_behaviour_2_title) { negativeBehaviours.push('Personalized Behaviour 2'); }
+
       for (let i = 0; i < negativeBehaviours.length; i += 1) {
         const bArray = obs.aggregated_behaviours.get(negativeBehaviours[i]);
         const sum = bArray.reduce((a, b) => a + b, 0);

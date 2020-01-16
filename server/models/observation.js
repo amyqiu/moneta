@@ -35,6 +35,8 @@ const defaultBehaviours = {
   'Explicit Comments': [],
   'Public Masturbation': [],
   'Touching Others': [],
+  'Personalized Behaviour 1': [],
+  'Personalized Behaviour 2': [],
 };
 
 const defaultContexts = {
@@ -49,6 +51,8 @@ const defaultContexts = {
   Treatment: [],
   'Directed at Residents': [],
   'Directed at Staff': [],
+  'Personalized Context 1': [],
+  'Personalized Context 2': [],
 };
 
 const defaultLocations = {
@@ -72,6 +76,10 @@ const ObservationSchema = new Schema({
     type: Array, of: String, required: false, default: [],
   },
   starting_notes: { type: String, required: false, default: '' },
+  personalized_behaviour_1_title: { type: String, required: false, default: '' },
+  personalized_behaviour_2_title: { type: String, required: false, default: '' },
+  personalized_context_1_title: { type: String, required: false, default: '' },
+  personalized_context_2_title: { type: String, required: false, default: '' },
   ending_notes: { type: String, required: false, default: '' },
   next_steps: {
     type: Array, of: String, required: false, default: [],
