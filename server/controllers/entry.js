@@ -158,7 +158,6 @@ exports.entry_find_day = (req, res) => {
     || Number.isNaN(req.query.year)) {
     return res.status(500).send('Month/Day/Year is not a number');
   }
-  // use ID of patient to find all of the entries associated with that patient for specific day
 
   Patient
     .findById(req.query.id)
@@ -173,29 +172,26 @@ exports.entry_find_day = (req, res) => {
       }
       const month = parseInt(req.query.month, 10);
       const year = parseInt(req.query.year, 10);
-      const dateArray = new Set();
+      const obsIDs = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
         if (period.start_time.getMonth() + 1 === month
           && period.start_time.getFullYear() === year) {
           try {
-            dateArray.add(period.id);
-          } catch (daysErr) {
-            return res.status(500).send('Error getting entry days from observation');
+            obsIDs.add(period.id);
+          } catch (obsErr) {
+            return res.status(500).send('Error getting observation IDs');
           }
         } else if (period.start_time.getMonth() + 1 > month
         || period.start_time.getFullYear() > year) {
           break;
         }
       }
-      // make the dateArray a set, it will remove duplicates already
-      const uniqueDates = Array.from(dateArray);
-
+      const uniqueIDs = Array.from(obsIDs);
       const day = parseInt(req.query.day, 10);
-
-      Entry.find({ observation_ID: { $in: uniqueDates } })
+      Entry.find({ observation_ID: { $in: uniqueIDs } })
         .exec((obvErr, entries) => {
-          const entryDayArray = [];
+          const entryArray = [];
           if (obvErr) {
             return res.status(500).send(err);
           } if (!entries) {
@@ -207,14 +203,13 @@ exports.entry_find_day = (req, res) => {
               && entry.time.getDate() === day
               && entry.time.getFullYear() === year) {
               try {
-                // console.log(entry);
-                entryDayArray.push(entry);
+                entryArray.push(entry);
               } catch (dayErr) {
                 return res.status(500).send('Error getting entry days from observation');
               }
             }
           }
-          return res.status(200).send(entryDayArray);
+          return res.status(200).send(entryArray);
         });
     });
 };
