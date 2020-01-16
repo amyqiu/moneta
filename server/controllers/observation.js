@@ -1,5 +1,10 @@
 const { validationResult, body } = require('express-validator/check');
 const moment = require('moment');
+const pdfMakePrinter = require('pdfmake/src/printer');
+const pdfMake = require('pdfmake/build/pdfmake.js');
+const pdfFonts = require('pdfmake/build/vfs_fonts.js');
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
 
@@ -327,6 +332,31 @@ function getSummaryStats(obs) {
   return data;
 }
 
+function generatePdf(docDefinition, callback) {
+  const fontDescriptors = {
+    Roboto: {
+      normal: 'roboto/Roboto-Regular.ttf',
+      bold: 'roboto/Roboto-Medium.ttf',
+      italics: 'roboto/Roboto-Italic.ttf',
+      bolditalics: 'roboto/Roboto-Italic.ttf',
+    },
+  };
+  const printer = new pdfMakePrinter(fontDescriptors);
+  const doc = printer.createPdfKitDocument(docDefinition);
+  const chunks = [];
+
+  doc.on('data', (chunk) => {
+    chunks.push(chunk);
+  });
+
+  doc.on('end', () => {
+    const result = Buffer.concat(chunks);
+    callback(`data:application/pdf;base64,${result.toString('base64')}`);
+  });
+
+  doc.end();
+}
+
 // Generate pdf summary chart
 exports.observation_generate_pdf = (req, res) => {
   Observation
@@ -338,7 +368,12 @@ exports.observation_generate_pdf = (req, res) => {
         return res.status(500).send('Could not find observation');
       }
       const data = getSummaryStats(obs);
-      // TODO: generate pdf
-      return res.status(200).send(data);
+      const docDefinition = {
+        content: ['This will show up in the file created'],
+      };
+      // sends a base64 encoded string to client
+      generatePdf(docDefinition, (response) => {
+        res.status(200).send(response);
+      });
     });
 };

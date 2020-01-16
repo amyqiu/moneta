@@ -14,7 +14,8 @@
     "express": "^4.17.1",
     "express-validator": "^6.2.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.7.5"
+    "mongoose": "^5.7.5",
+    "pdfmake": "^0.1.63"
   },
   "engines": {
     "node": "10.16.3"
