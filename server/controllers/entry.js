@@ -1,4 +1,4 @@
-const { validationResult, body, query } = require('express-validator/check');
+const { validationResult, body, query } = require('express-validator');
 const Entry = require('../models/entry');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
