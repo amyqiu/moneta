@@ -10,7 +10,7 @@ const entryController = require('../controllers/entry');
 router.get('/patient/test', patientController.patient_test);
 router.post('/patient/create', patientController.validate('patient_create'), patientController.patient_create);
 router.get('/patient/findall', patientController.patient_find_all);
-router.get('/patient/find-days-with-entries', patientController.find_days_with_entries);
+router.get('/patient/find-days-with-entries', patientController.validate('find_days_with_entries'), patientController.find_days_with_entries);
 router.get('/patient/last-entry-time', patientController.last_entry_time);
 router.get('/patient/:id', patientController.patient_details);
 router.put('/patient/:id/update', patientController.patient_update);
@@ -30,7 +30,7 @@ router.delete('/observation/:id/delete', observationController.observation_delet
 router.get('/entry/test', entryController.entry_test);
 router.post('/entry/create', entryController.validate('entry_create'), entryController.entry_create);
 router.get('/entry/findall', entryController.entry_find_all);
-router.get('/entry/find-entries-on-day', entryController.entry_find_day);
+router.get('/entry/find-entries-on-day', entryController.validate('entry_find_day'), entryController.entry_find_day);
 router.get('/entry/:id', entryController.entry_details);
 router.put('/entry/:id/update', entryController.entry_update);
 router.delete('/entry/:id/delete', entryController.entry_delete);

@@ -1,4 +1,4 @@
-const { validationResult, body } = require('express-validator/check');
+const { validationResult, body, query } = require('express-validator/check');
 const Entry = require('../models/entry');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
@@ -15,8 +15,14 @@ exports.validate = (method) => {
         body('comments').optional().isString(),
         body('time').exists().isInt(),
       ];
-    }
-    default: {
+    } case 'entry_find_day': {
+      return [
+        query('id').exists().isString(),
+        query('day').exists().isInt(),
+        query('month').exists().isInt(),
+        query('year').exists().isInt(),
+      ];
+    } default: {
       return [];
     }
   }
@@ -88,7 +94,7 @@ function updateAggregatedData(req, res, obs, entry) {
 exports.entry_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let entry;
@@ -153,10 +159,9 @@ exports.entry_find_all = (req, res) => {
 };
 
 exports.entry_find_day = (req, res) => {
-  if (Number.isNaN(req.query.month) // TODO: move
-    || Number.isNaN(req.query.day)
-    || Number.isNaN(req.query.year)) {
-    return res.status(500).send('Month/Day/Year is not a number');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   // use ID of patient to search through observation periods
