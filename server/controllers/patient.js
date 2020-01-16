@@ -1,6 +1,5 @@
 const { validationResult, body } = require('express-validator/check');
 const Patient = require('../models/patient');
-const Observation = require('../models/observation');
 const Entry = require('../models/entry');
 
 exports.validate = (method) => {
@@ -133,7 +132,6 @@ exports.find_days_with_entries = (req, res) => {
         }
       }
       const uniqueIDs = Array.from(obsIDs);
-      const day = parseInt(req.query.day, 10);
 
       Entry.find({ observation_ID: { $in: uniqueIDs } })
         .exec((obvErr, entries) => {
