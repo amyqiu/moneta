@@ -51,7 +51,7 @@ exports.validate = (method) => {
 exports.observation_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let observation;
@@ -108,7 +108,7 @@ exports.observation_create = (req, res) => {
 exports.observation_end = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   if (!Array.isArray(req.body.next_steps)) {

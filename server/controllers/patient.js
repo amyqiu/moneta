@@ -1,6 +1,5 @@
-const { validationResult, body } = require('express-validator/check');
+const { validationResult, body, query } = require('express-validator/check');
 const Patient = require('../models/patient');
-const Observation = require('../models/observation');
 const Entry = require('../models/entry');
 
 exports.validate = (method) => {
@@ -12,6 +11,12 @@ exports.validate = (method) => {
         body('room').exists().isString(),
         body('profile_picture').exists().isString(),
         body('display_ID').exists().isString(),
+      ];
+    } case 'find_days_with_entries': {
+      return [
+        query('id').exists().isString(),
+        query('month').exists().isInt(),
+        query('year').exists().isInt(),
       ];
     } default: {
       return [];
@@ -25,7 +30,7 @@ exports.patient_test = (req, res) => res.status(200).send('Greetings from the pa
 exports.patient_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let patient;
@@ -100,10 +105,11 @@ exports.patient_delete = (req, res) => {
 };
 
 exports.find_days_with_entries = (req, res) => {
-  if (Number.isNaN(req.query.month)
-    || Number.isNaN(req.query.year)) {
-    return res.status(500).send('Month/Day is not a number');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
+
   Patient
     .findById(req.query.id)
     .populate('observation_periods', 'start_time end_time')
@@ -113,27 +119,28 @@ exports.find_days_with_entries = (req, res) => {
       } if (!patient) {
         return res.status(500).send('Patient does not exist');
       } if (patient.observation_periods.length < 1) {
-        return res.status(500).send('Patient has no observations');
+        return [];
       }
       const month = parseInt(req.query.month, 10);
       const year = parseInt(req.query.year, 10);
       const obsIDs = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
-        if (period.start_time.getMonth() + 1 === month
-          && period.start_time.getFullYear() === year) {
-          try {
-            obsIDs.add(period.id);
-          } catch (obsErr) {
-            return res.status(500).send('Error getting observation IDs');
-          }
-        } else if (period.start_time.getMonth() + 1 > month
-        || period.start_time.getFullYear() > year) {
+        const startMonth = period.start_time.getMonth() + 1;
+        const startYear = period.start_time.getFullYear();
+        const endMonth = (period.end_time || new Date()).getMonth() + 1;
+        const endYear = (period.end_time || new Date()).getFullYear();
+
+        const withinMonth = startMonth <= month && endMonth >= month;
+        const withinYear = startYear <= year && endYear >= year;
+
+        if (withinMonth && withinYear) {
+          obsIDs.add(period.id);
+        } else if ((endYear === year && endMonth > month) || (endYear > year)) {
           break;
         }
       }
       const uniqueIDs = Array.from(obsIDs);
-      const day = parseInt(req.query.day, 10);
 
       Entry.find({ observation_ID: { $in: uniqueIDs } })
         .exec((obvErr, entries) => {
@@ -145,13 +152,13 @@ exports.find_days_with_entries = (req, res) => {
           }
           for (let j = 0; j < entries.length; j += 1) {
             const entry = entries[j];
-            if (entry.time.getMonth() + 1 === month
-              && entry.time.getFullYear() === year) {
-              try {
-                entryDays.add(entry.time.getDate());
-              } catch (dayErr) {
-                return res.status(500).send('Error getting entry days from observation');
-              }
+            const entryMonth = entry.time.getMonth() + 1;
+            const entryYear = entry.time.getFullYear();
+            if (entryMonth === month && entryYear === year) {
+              entryDays.add(entry.time.getDate());
+            } else if ((entryYear === year && entryMonth > month)
+              || (entryYear > year)) {
+              break;
             }
           }
           const entryDayArray = Array.from(entryDays);
