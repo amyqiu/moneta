@@ -19,13 +19,13 @@ Server deployed to: https://vast-savannah-47684.herokuapp.com/
 * Can see logs with `heroku logs --tail`
 
 ### Unit Testing
-Install Jest with `npm install --save-dev jest -g`
-Tests are located in "server/__tests__"
-Run tests using `npm run test` in server directory
+* Install Jest with `npm install --save-dev jest -g`
+* Tests are located in "server/__tests__"
+* Run tests using `npm run test` in server directory
 
 ## Setup Instructions for Client
-See https://facebook.github.io/react-native/docs/getting-started and run `npm install`
-To run in production mode (with login screen): `expo start --no-dev --minify`
+* See https://facebook.github.io/react-native/docs/getting-started and run `npm install`
+* To run in production mode (with login screen): `expo start --no-dev --minify`
 
 ### For Atom
  * Install `linter` and `linter-eslint` packages, with automatic save enabled for `linter-eslint`

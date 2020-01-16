@@ -15,6 +15,7 @@ import Calendar from "./Calendar";
 import type { Entry } from "../NewEntry/Entry";
 import PatientTrends from "./PatientTrends";
 import CollapsibleCard from "./CollapsibleCard";
+import Exporter from "./Exporter";
 import type { Patient } from "./Patient";
 import ObservationComparison from "../Trends/ObservationComparison";
 import { parseRawPatient, getLastObservation, isTablet } from "../Helpers";
@@ -207,16 +208,6 @@ export default class PatientPage extends React.Component<Props, State> {
       ? this.confirmEndObservation
       : this.confirmStartObservation;
 
-    const exportButton = (
-      <Button
-        onPress={this.handleExport}
-        title="Export"
-        buttonStyle={styles.smallButton}
-        containerStyle={styles.buttonContainer}
-        titleProps={{ style: styles.smallButtonTitle }}
-      />
-    );
-
     const observationButton = (
       <Button
         onPress={observationAction}
@@ -247,10 +238,17 @@ export default class PatientPage extends React.Component<Props, State> {
           <PatientInfo
             patient={patient}
             onNavigatePatient={null}
-            extraButton={exportButton}
+            extraButton={null}
             onAddEntry={this.handleNewEntry}
             observationButton={observationButton}
           />
+          <CollapsibleCard
+            startExpanded={false}
+            title="Export"
+            iconName="ios-arrow-round-down"
+          >
+            <Exporter patient={patient} />
+          </CollapsibleCard>
           <CollapsibleCard
             startExpanded={false}
             title="Recent Activity"

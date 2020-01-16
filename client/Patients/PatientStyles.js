@@ -258,5 +258,15 @@ export default StyleSheet.create({
   selectText: {
     paddingTop: 8,
     fontSize: RFValue(16)
+  },
+  downloadText: {
+    fontSize: RFValue(16),
+    fontWeight: "bold",
+    paddingBottom: 12
+  },
+  downloadLink: {
+    color: colours.actionBlue,
+    fontSize: RFValue(16),
+    textDecorationLine: "underline"
   }
 });

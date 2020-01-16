@@ -11,7 +11,7 @@ import colours from "../Colours";
 type Props = {
   patient: Patient,
   onNavigatePatient: ?() => void,
-  extraButton: React.Node,
+  extraButton: ?React.Node,
   onAddEntry: Object => void,
   observationButton: ?React.Node
 };
