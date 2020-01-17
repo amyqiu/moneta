@@ -1,6 +1,6 @@
 const { validationResult, body } = require('express-validator');
 const moment = require('moment');
-const pdfMakePrinter = require('pdfmake/src/printer');
+const PdfMakePrinter = require('pdfmake/src/printer');
 const pdfMake = require('pdfmake/build/pdfmake.js');
 const pdfFonts = require('pdfmake/build/vfs_fonts.js');
 
@@ -333,12 +333,22 @@ exports.observation_get_correlations = (req, res) => {
 // Calculate summary Stats
 function getSummaryStats(obs) {
   const data = [];
+  // data.push(['Behaviour', 'Total 1/2 Hour Blocks', 'Average Hours Per Day']);
+  data.push([{ text: 'Behaviour', bold: true, style: 'tableHeader' }, { text: 'Total 1/2 Hour Blocks', bold: true, style: 'tableHeader' }, { text: 'Average Hours Per Day', bold: true, style: 'tableHeader' }]);
+  let daysPassed;
   const topLevelBehaviours = ['Sleeping in Bed', 'Sleeping in Chair', 'Awake/Calm', 'Positively Engaged', 'Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
+  if (obs.personalized_behaviour_1_title) { topLevelBehaviours.push('Personalized Behaviour 1'); }
+  if (obs.personalized_behaviour_2_title) { topLevelBehaviours.push('Personalized Behaviour 2'); }
   for (let i = 0; i < topLevelBehaviours.length; i += 1) {
     const bArray = obs.aggregated_behaviours.get(topLevelBehaviours[i]);
     const occurrences = bArray.reduce((a, b) => a + b, 0);
     const startDate = moment(obs.start_time);
-    const daysPassed = moment().diff(startDate, 'days');
+    if (obs.end_time) {
+      const oneDayMs = 1000 * 3600 * 24;
+      daysPassed = Math.round((obs.end_time.getTime() - obs.start_time.getTime()) / oneDayMs);
+    } else {
+      daysPassed = moment().diff(startDate, 'days');
+    }
     const averageOccurrences = daysPassed
       ? ((occurrences * 0.5) / daysPassed).toFixed(2)
       : 'N/A';
@@ -356,7 +366,7 @@ function generatePdf(docDefinition, callback) {
       bolditalics: 'roboto/Roboto-Italic.ttf',
     },
   };
-  const printer = new pdfMakePrinter(fontDescriptors);
+  const printer = new PdfMakePrinter(fontDescriptors);
   const doc = printer.createPdfKitDocument(docDefinition);
   const chunks = [];
 
@@ -384,7 +394,22 @@ exports.observation_generate_pdf = (req, res) => {
       }
       const data = getSummaryStats(obs);
       const docDefinition = {
-        content: ['This will show up in the file created'],
+        content: [
+          { text: 'Observation Summary', bold: true, style: 'header' },
+          `\nStart Time: ${obs.start_time}\nEnd Time:  ${obs.end_time}`,
+          `\nStarting Notes: ${obs.starting_notes}`,
+          { text: '\nSummary Table\n', bold: true, style: 'subheader' },
+          {
+            style: 'tableExample',
+            table: {
+              widths: ['*', '*', 'auto'],
+              headerRows: 1,
+              body: data,
+            },
+          },
+          `\nEnding Notes: \n${obs.ending_notes}`,
+          `\nNext Steps: \n${obs.next_steps}`,
+        ],
       };
       // sends a base64 encoded string to client
       generatePdf(docDefinition, (response) => {
