@@ -66,7 +66,7 @@ const defaultLocations = {
 const ObservationSchema = new Schema({
   patient_ID: { type: String, required: true, max: 100 },
   start_time: { type: Date, required: true },
-  end_time: { type: Date, required: false },
+  end_time: { type: Date, required: false, default: '' },
   entries: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Entry' }], default: [] },
   aggregated_behaviours: { type: Map, of: [Number], default: defaultBehaviours },
   aggregated_contexts: { type: Map, of: [Number], default: defaultContexts },
