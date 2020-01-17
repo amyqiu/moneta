@@ -1,4 +1,4 @@
-const { validationResult, body } = require('express-validator/check');
+const { validationResult, body, query } = require('express-validator');
 const Entry = require('../models/entry');
 const Observation = require('../models/observation');
 const Patient = require('../models/patient');
@@ -15,8 +15,14 @@ exports.validate = (method) => {
         body('comments').optional().isString(),
         body('time').exists().isInt(),
       ];
-    }
-    default: {
+    } case 'entry_find_day': {
+      return [
+        query('id').exists().isString(),
+        query('day').exists().isInt(),
+        query('month').exists().isInt(),
+        query('year').exists().isInt(),
+      ];
+    } default: {
       return [];
     }
   }
@@ -88,7 +94,7 @@ function updateAggregatedData(req, res, obs, entry) {
 exports.entry_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let entry;
@@ -152,34 +158,13 @@ exports.entry_find_all = (req, res) => {
   });
 };
 
-function getObservationPeriod(id, month, year) {
-  return new Promise((resolve) => {
-    Observation
-      .findById(id)
-      .exec((err, obs) => {
-        const obvsID = [];
-        if (obs.entry_times.length >= 1) {
-          for (let i = 0; i < obs.entry_times.length; i += 1) {
-            const time = obs.entry_times[i];
-            const idObv = obs.id;
-            if (time.getMonth() + 1 === month && time.getFullYear() === year) {
-              obvsID.push(idObv);
-            }
-          }
-        }
-        setTimeout(() => resolve(obvsID), 300);
-      });
-  });
-}
-
 exports.entry_find_day = (req, res) => {
-  if (Number.isNaN(req.query.month)
-    || Number.isNaN(req.query.day)
-    || Number.isNaN(req.query.year)) {
-    return res.status(500).send('Month/Day/Year is not a number');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
-  // use ID of patient to find all of the entries associated with that patient for specific day
 
+  // use ID of patient to search through observation periods
   Patient
     .findById(req.query.id)
     .populate('observation_periods', 'start_time end_time')
@@ -189,57 +174,53 @@ exports.entry_find_day = (req, res) => {
       } if (!patient) {
         return res.status(500).send('Patient does not exist');
       } if (patient.observation_periods.length < 1) {
-        return res.status(500).send('Patient has no observations');
+        return res.status(200).send([]);
       }
+
       const month = parseInt(req.query.month, 10);
       const year = parseInt(req.query.year, 10);
-      // eslint-disable-next-line no-console
-      const dateArray = [];
+      const day = parseInt(req.query.day, 10);
+
+      const obsIDs = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
-        if (period.start_time.getMonth() + 1 === month
-          && period.start_time.getFullYear() === year) {
-          try {
-            // eslint-disable-next-line no-await-in-loop
-            const obvsID = await getObservationPeriod(period.id, month, year);
-            dateArray.push(obvsID);
-          } catch (daysErr) {
-            return res.status(500).send('Error getting entry days from observation');
-          }
+        const startMonth = period.start_time.getMonth() + 1;
+        const startYear = period.start_time.getFullYear();
+        const endMonth = (period.end_time || new Date()).getMonth() + 1;
+        const endYear = (period.end_time || new Date()).getFullYear();
+
+        const withinMonth = startMonth <= month && endMonth >= month;
+        const withinYear = startYear <= year && endYear >= year;
+
+        if (withinMonth && withinYear) {
+          obsIDs.add(period.id);
+        } else if ((endYear === year && endMonth > month) || (endYear > year)) {
+          break;
         }
       }
 
-      let date1D = [];
-
-      for (let i = 0; i < dateArray.length; i += 1) {
-        date1D = date1D.concat(dateArray[i]);
-      }
-      const uniqueDates = date1D.filter((elem, index, self) => index === self.indexOf(elem));
-
-      const day = parseInt(req.query.day, 10);
-
-      Entry.find({ observation_ID: { $in: uniqueDates } })
+      Entry.find({ observation_ID: { $in: Array.from(obsIDs) } })
         .exec((obvErr, entries) => {
-          const entryDayArray = [];
+          const entryArray = [];
           if (obvErr) {
             return res.status(500).send(err);
           } if (!entries) {
-            return res.status(500).send('Entries do not exist');
+            return res.status(200).send('Entries do not exist');
           }
           for (let j = 0; j < entries.length; j += 1) {
             const entry = entries[j];
-            if (entry.time.getMonth() + 1 === month
-              && entry.time.getDate() === day
-              && entry.time.getFullYear() === year) {
-              try {
-                // console.log(entry);
-                entryDayArray.push(entry);
-              } catch (dayErr) {
-                return res.status(500).send('Error getting entry days from observation');
-              }
+            const entryMonth = entry.time.getMonth() + 1;
+            const entryDay = entry.time.getDate();
+            const entryYear = entry.time.getFullYear();
+            if (entryMonth === month && entryDay === day && entryYear === year) {
+              entryArray.push(entry);
+            } else if ((entryYear === year && entryMonth === month && entryDay > day)
+              || (entryYear === year && entryMonth > month)
+              || (entryYear > year)) {
+              break;
             }
           }
-          return res.status(200).send(entryDayArray);
+          return res.status(200).send(entryArray);
         });
     });
 };

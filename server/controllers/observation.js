@@ -1,4 +1,4 @@
-const { validationResult, body } = require('express-validator/check');
+const { validationResult, body } = require('express-validator');
 const moment = require('moment');
 const pdfMakePrinter = require('pdfmake/src/printer');
 const pdfMake = require('pdfmake/build/pdfmake.js');
@@ -38,6 +38,10 @@ exports.validate = (method) => {
         body('patient_ID').exists().isString(),
         body('start_time').exists().isInt(),
         body('starting_notes').exists().isString(),
+        body('personalized_behaviour_1_title').exists().isString(),
+        body('personalized_behaviour_2_title').exists().isString(),
+        body('personalized_context_1_title').exists().isString(),
+        body('personalized_context_2_title').exists().isString(),
       ];
     }
     case 'observation_end': {
@@ -56,7 +60,7 @@ exports.validate = (method) => {
 exports.observation_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let observation;
@@ -78,6 +82,10 @@ exports.observation_create = (req, res) => {
         entries: [],
         starting_notes: req.body.starting_notes,
         reasons: req.body.reasons,
+        personalized_behaviour_1_title: req.body.personalized_behaviour_1_title,
+        personalized_behaviour_2_title: req.body.personalized_behaviour_2_title,
+        personalized_context_1_title: req.body.personalized_context_1_title,
+        personalized_context_2_title: req.body.personalized_context_2_title,
       },
     );
   } catch (createErr) {
@@ -113,7 +121,7 @@ exports.observation_create = (req, res) => {
 exports.observation_end = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   if (!Array.isArray(req.body.next_steps)) {
@@ -213,7 +221,7 @@ exports.observation_delete = (req, res) => {
 };
 
 // Find Pearson Correlation Coefficient
-function getPearsonCoefficient(x, y) {
+exports.getPearsonCoefficient = (x, y) => {
   const n = x.length;
   const d = new Array(n);
   for (let i = 0; i < n; i += 1) {
@@ -221,7 +229,7 @@ function getPearsonCoefficient(x, y) {
   }
   const sum = d.reduce((a, b) => a + b, 0);
   return sum / (n - 1);
-}
+};
 
 // Return top 3 correlations for each negavtive behaviour in observation period
 exports.observation_get_correlations = (req, res) => {
@@ -235,6 +243,9 @@ exports.observation_get_correlations = (req, res) => {
       }
       const correlations = [];
       const negativeBehaviours = ['Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
+      if (obs.personalized_behaviour_1_title) { negativeBehaviours.push('Personalized Behaviour 1'); }
+      if (obs.personalized_behaviour_2_title) { negativeBehaviours.push('Personalized Behaviour 2'); }
+
       for (let i = 0; i < negativeBehaviours.length; i += 1) {
         const bArray = obs.aggregated_behaviours.get(negativeBehaviours[i]);
         const sum = bArray.reduce((a, b) => a + b, 0);
@@ -246,7 +257,9 @@ exports.observation_get_correlations = (req, res) => {
           for (let j = 0; j < obs.aggregated_locations.size; j += 1) {
             const temp = {};
             temp.trigger = it.next().value;
-            temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_locations.get(temp.trigger));
+            temp.coeff = this.getPearsonCoefficient(
+              bArray, obs.aggregated_locations.get(temp.trigger),
+            );
             list.push(temp);
           }
           // Check against all contexts
@@ -254,7 +267,9 @@ exports.observation_get_correlations = (req, res) => {
           for (let k = 0; k < obs.aggregated_contexts.size; k += 1) {
             const temp = {};
             temp.trigger = it2.next().value;
-            temp.coeff = getPearsonCoefficient(bArray, obs.aggregated_contexts.get(temp.trigger));
+            temp.coeff = this.getPearsonCoefficient(
+              bArray, obs.aggregated_contexts.get(temp.trigger),
+            );
             list.push(temp);
           }
           // Check time of occurrence and return most frequent hour

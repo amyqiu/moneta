@@ -1,6 +1,6 @@
-const { validationResult, body } = require('express-validator/check');
+const { validationResult, body, query } = require('express-validator');
 const Patient = require('../models/patient');
-const Observation = require('../models/observation');
+const Entry = require('../models/entry');
 
 exports.validate = (method) => {
   switch (method) {
@@ -11,6 +11,12 @@ exports.validate = (method) => {
         body('room').exists().isString(),
         body('profile_picture').exists().isString(),
         body('display_ID').exists().isString(),
+      ];
+    } case 'find_days_with_entries': {
+      return [
+        query('id').exists().isString(),
+        query('month').exists().isInt(),
+        query('year').exists().isInt(),
       ];
     } default: {
       return [];
@@ -24,7 +30,7 @@ exports.patient_test = (req, res) => res.status(200).send('Greetings from the pa
 exports.patient_create = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
 
   let patient;
@@ -98,31 +104,12 @@ exports.patient_delete = (req, res) => {
   });
 };
 
-// Get days with entries from an observation period
-function getDaysFromPeriod(id, month, year) {
-  return new Promise((resolve) => {
-    Observation
-      .findById(id)
-      .exec((err, obs) => {
-        const days = [];
-        if (obs.entry_times.length >= 1) {
-          for (let i = 0; i < obs.entry_times.length; i += 1) {
-            const time = obs.entry_times[i];
-            if (time.getMonth() + 1 === month && time.getFullYear() === year) {
-              days.push(time.getDate());
-            }
-          }
-        }
-        setTimeout(() => resolve(days), 300);
-      });
-  });
-}
-
-// Get days with entries given month
 exports.find_days_with_entries = (req, res) => {
-  if (Number.isNaN(req.query.month) || Number.isNaN(req.query.year)) {
-    return res.status(500).send('Month/Year is not a number');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
   }
+
   Patient
     .findById(req.query.id)
     .populate('observation_periods', 'start_time end_time')
@@ -132,32 +119,51 @@ exports.find_days_with_entries = (req, res) => {
       } if (!patient) {
         return res.status(500).send('Patient does not exist');
       } if (patient.observation_periods.length < 1) {
-        return res.status(500).send('Patient has no observations');
+        return [];
       }
       const month = parseInt(req.query.month, 10);
       const year = parseInt(req.query.year, 10);
-      // Loop through each observation period, check if start_time is in same month
-      const dateArray = [];
+      const obsIDs = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
-        if (period.start_time.getMonth() + 1 === month
-          && period.start_time.getFullYear() === year) {
-          try {
-            // eslint-disable-next-line no-await-in-loop
-            const days = await getDaysFromPeriod(period.id, month, year);
-            dateArray.push(days);
-          } catch (daysErr) {
-            return res.status(500).send('Error getting entry days from observation');
-          }
+        const startMonth = period.start_time.getMonth() + 1;
+        const startYear = period.start_time.getFullYear();
+        const endMonth = (period.end_time || new Date()).getMonth() + 1;
+        const endYear = (period.end_time || new Date()).getFullYear();
+
+        const withinMonth = startMonth <= month && endMonth >= month;
+        const withinYear = startYear <= year && endYear >= year;
+
+        if (withinMonth && withinYear) {
+          obsIDs.add(period.id);
+        } else if ((endYear === year && endMonth > month) || (endYear > year)) {
+          break;
         }
       }
-      // Convert to 1D array and remove duplicates
-      let date1D = [];
-      for (let i = 0; i < dateArray.length; i += 1) {
-        date1D = date1D.concat(dateArray[i]);
-      }
-      const uniqueDates = date1D.filter((elem, index, self) => index === self.indexOf(elem));
-      return res.status(200).send(uniqueDates);
+      const uniqueIDs = Array.from(obsIDs);
+
+      Entry.find({ observation_ID: { $in: uniqueIDs } })
+        .exec((obvErr, entries) => {
+          const entryDays = new Set();
+          if (obvErr) {
+            return res.status(500).send(err);
+          } if (!entries) {
+            return res.status(500).send('Entries do not exist');
+          }
+          for (let j = 0; j < entries.length; j += 1) {
+            const entry = entries[j];
+            const entryMonth = entry.time.getMonth() + 1;
+            const entryYear = entry.time.getFullYear();
+            if (entryMonth === month && entryYear === year) {
+              entryDays.add(entry.time.getDate());
+            } else if ((entryYear === year && entryMonth > month)
+              || (entryYear > year)) {
+              break;
+            }
+          }
+          const entryDayArray = Array.from(entryDays);
+          return res.status(200).send(entryDayArray);
+        });
     });
 };
 
