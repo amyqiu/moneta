@@ -33,7 +33,11 @@
     "react-native-web": "^0.11.7",
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",
-    "victory-native": "31.0.0"
+    "victory-native": "31.0.0",
+    "expo-print": "~7.0.0",
+    "expo-file-system": "~7.0.0",
+    "expo-web-browser": "~7.0.0",
+    "expo-sharing": "~7.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

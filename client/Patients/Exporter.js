@@ -1,8 +1,9 @@
 // @flow
 import * as React from "react";
-import { View, ActivityIndicator } from "react-native";
+import { Share, View, ActivityIndicator } from "react-native";
 import { Text } from "react-native-elements";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import * as FileSystem from "expo-file-system";
 import colours from "../Colours";
 import type { Patient } from "./Patient";
 import styles from "./PatientStyles";
@@ -63,20 +64,45 @@ export default class Exporter extends React.Component<Props, State> {
 
     try {
       const response = await fetch(
-        `https://vast-savannah-47684.herokuapp.com/observation/${observationID}`
+        `https://vast-savannah-47684.herokuapp.com/observation/generate-pdf/?id=${observationID}`
       );
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      const json = await response.json();
+      const downloadLink = await response.text();
 
       this.setState({
         isLoading: false,
-        downloadLink: json
+        downloadLink
       });
     } catch (error) {
       console.log("error", error);
     }
+  };
+
+  openPDFLink = async () => {
+    const { downloadLink } = this.state;
+    const observationID = this.getSelectedObservation();
+
+    // No observation selected
+    if (observationID == null || downloadLink == null) {
+      return;
+    }
+
+    FileSystem.downloadAsync(
+      downloadLink,
+      `${FileSystem.cacheDirectory}${observationID}.pdf`
+    )
+      .then(async ({ uri }) => {
+        try {
+          await Share.share({ url: uri });
+        } catch (error) {
+          console.log(error.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   render() {
@@ -89,12 +115,13 @@ export default class Exporter extends React.Component<Props, State> {
       <ActivityIndicator size="large" color={colours.primaryGrey} />
     );
 
-    // TODO: replace with actual link
     const download =
       downloadLink != null ? (
         <View style={styles.centerContainer}>
           <Text>
-            <Text style={styles.downloadLink}>Download PDF Here</Text>
+            <Text style={styles.downloadLink} onPress={this.openPDFLink}>
+              Download PDF Here
+            </Text>
           </Text>
         </View>
       ) : (

@@ -20,7 +20,7 @@ Server deployed to: https://vast-savannah-47684.herokuapp.com/
 
 ### Unit Testing
 * Install Jest with `npm install --save-dev jest -g`
-* Tests are located in "server/__tests__"
+* Tests are located in "server/\_\_tests\_\_"
 * Run tests using `npm run test` in server directory
 
 ## Setup Instructions for Client

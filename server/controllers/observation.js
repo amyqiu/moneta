@@ -363,7 +363,7 @@ function generatePdf(docDefinition, callback) {
       normal: 'roboto/Roboto-Regular.ttf',
       bold: 'roboto/Roboto-Medium.ttf',
       italics: 'roboto/Roboto-Italic.ttf',
-      bolditalics: 'roboto/Roboto-Italic.ttf',
+      bolditalics: 'roboto/Roboto-MediumItalic.ttf',
     },
   };
   const printer = new PdfMakePrinter(fontDescriptors);
