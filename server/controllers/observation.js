@@ -333,9 +333,7 @@ exports.observation_get_correlations = (req, res) => {
 // Calculate summary Stats
 function getSummaryStats(obs) {
   const data = [];
-  // data.push(['Behaviour', 'Total 1/2 Hour Blocks', 'Average Hours Per Day']);
   data.push([{ text: 'Behaviour', bold: true, style: 'tableHeader' }, { text: 'Total 1/2 Hour Blocks', bold: true, style: 'tableHeader' }, { text: 'Average Hours Per Day', bold: true, style: 'tableHeader' }]);
-  let daysPassed;
   const topLevelBehaviours = ['Sleeping in Bed', 'Sleeping in Chair', 'Awake/Calm', 'Positively Engaged', 'Noisy', 'Restless', 'Exit Seeking', 'Aggressive - Verbal', 'Aggressive - Physical', 'Aggressive - Sexual'];
   if (obs.personalized_behaviour_1_title) { topLevelBehaviours.push('Personalized Behaviour 1'); }
   if (obs.personalized_behaviour_2_title) { topLevelBehaviours.push('Personalized Behaviour 2'); }
@@ -343,16 +341,40 @@ function getSummaryStats(obs) {
     const bArray = obs.aggregated_behaviours.get(topLevelBehaviours[i]);
     const occurrences = bArray.reduce((a, b) => a + b, 0);
     const startDate = moment(obs.start_time);
-    if (obs.end_time) {
-      const oneDayMs = 1000 * 3600 * 24;
-      daysPassed = Math.round((obs.end_time.getTime() - obs.start_time.getTime()) / oneDayMs);
-    } else {
-      daysPassed = moment().diff(startDate, 'days');
-    }
+    const oneDayMs = 1000 * 3600 * 24;
+    const daysPassed = (obs.end_time) ? Math.round((obs.end_time.getTime() - obs.start_time.getTime()) / oneDayMs) : moment().diff(startDate, 'days');
     const averageOccurrences = daysPassed
       ? ((occurrences * 0.5) / daysPassed).toFixed(2)
       : 'N/A';
     data.push([topLevelBehaviours[i], occurrences, averageOccurrences]);
+  }
+  return data;
+}
+
+function getStartingReasons(reasons) {
+  const data = [];
+  const reasonArr = Array.from(STARTING_REASONS);
+  const noMark = '___';
+  const mark = '_Y_';
+  for (let i = 0; i < reasonArr.length / 2; i += 1) {
+    const check1 = (reasons.includes(reasonArr[i])) ? mark : noMark;
+    const check2 = (reasons.includes(reasonArr[reasonArr.length - 2 - i])) ? mark : noMark;
+    data.push([check1, reasonArr[i], check2, reasonArr[reasonArr.length - 2 - i]]);
+  }
+  const check = (reasons.includes(reasonArr[reasonArr.length - 1])) ? mark : noMark;
+  data.push([check, reasonArr[reasonArr.length - 1], '', '']);
+  return data;
+}
+
+function getNextSteps(steps) {
+  const data = [];
+  const stepArr = Array.from(NEXT_STEPS);
+  const noMark = '___';
+  const mark = '_Y_';
+  for (let i = 0; i < stepArr.length / 2; i += 1) {
+    const check1 = (steps.includes(stepArr[i])) ? mark : noMark;
+    const check2 = (steps.includes(stepArr[stepArr.length - 2 - i])) ? mark : noMark;
+    data.push([check1, stepArr[i], check2, stepArr[stepArr.length - 1 - i]]);
   }
   return data;
 }
@@ -392,28 +414,57 @@ exports.observation_generate_pdf = (req, res) => {
       } if (!obs) {
         return res.status(500).send('Could not find observation');
       }
-      const data = getSummaryStats(obs);
-      const docDefinition = {
-        content: [
-          { text: 'Observation Summary', bold: true, style: 'header' },
-          `\nStart Time: ${obs.start_time}\nEnd Time:  ${obs.end_time}`,
-          `\nStarting Notes: ${obs.starting_notes}`,
-          { text: '\nSummary Table\n', bold: true, style: 'subheader' },
-          {
-            style: 'tableExample',
-            table: {
-              widths: ['*', '*', 'auto'],
-              headerRows: 1,
-              body: data,
-            },
-          },
-          `\nEnding Notes: \n${obs.ending_notes}`,
-          `\nNext Steps: \n${obs.next_steps}`,
-        ],
-      };
-      // sends a base64 encoded string to client
-      generatePdf(docDefinition, (response) => {
-        res.status(200).send(response);
-      });
+      const endTime = (obs.end_time) ? obs.end_time.toDateString() : ' ';
+      Patient
+        .findById(obs.patient_ID)
+        .populate('observation_periods', 'start_time end_time')
+        .exec(async (err2, patient) => {
+          if (err) {
+            return res.status(500).send(err2);
+          } if (!patient) {
+            return res.status(500).send('Patient does not exist');
+          }
+          const docDefinition = {
+            content: [
+              { text: `Observation Summary for ${patient.name}`, bold: true, fontSize: 20 },
+              `Age: ${patient.age}\nRoom:  ${patient.room}`,
+              `\nStart Time: ${obs.start_time.toDateString()}\nEnd Time:  ${endTime}`,
+              { text: '\nStarting Reasons:\n', bold: true, fontSize: 14 },
+              {
+                style: 'tableExample',
+                table: {
+                  widths: [20, 220, 20, 'auto'],
+                  body: getStartingReasons(obs.reasons),
+                },
+                layout: 'noBorders',
+              },
+              { text: '\nStarting Notes:\n', bold: true, fontSize: 14 },
+              `${obs.starting_notes}`,
+              { text: '\nSummary Table\n\n', bold: true, fontSize: 14 },
+              {
+                style: 'tableExample',
+                table: {
+                  widths: ['*', '*', 'auto'],
+                  body: getSummaryStats(obs),
+                },
+              },
+              { text: '\nNext Steps:\n', bold: true, fontSize: 14 },
+              {
+                style: 'tableExample',
+                table: {
+                  widths: [20, 200, 20, 'auto'],
+                  body: getNextSteps(obs.next_steps),
+                },
+                layout: 'noBorders',
+              },
+              { text: '\nEnding Notes:\n', bold: true, fontSize: 14 },
+              `${obs.ending_notes}`,
+            ],
+          };
+          // sends a base64 encoded string to client
+          generatePdf(docDefinition, (response) => {
+            res.status(200).send(response);
+          });
+        });
     });
 };
