@@ -115,7 +115,8 @@ export default class PatientPage extends React.Component<Props, State> {
 
   handleStartObservation = (
     checkedReasons: Set<string>,
-    startingNotes: string
+    startingNotes: string,
+    customFields: Array<string>
   ) => {
     this.setState({ loadingObservation: true });
     const { patient } = this.state;
@@ -124,7 +125,11 @@ export default class PatientPage extends React.Component<Props, State> {
       patient_ID: patient.id,
       start_time: Math.round(start.getTime() / 1000),
       reasons: Array.from(checkedReasons),
-      starting_notes: startingNotes
+      starting_notes: startingNotes,
+      personalized_behaviour_1_title: customFields[0],
+      personalized_behaviour_2_title: customFields[1],
+      personalized_context_1_title: customFields[2],
+      personalized_context_2_title: customFields[3]
     });
     fetch("https://vast-savannah-47684.herokuapp.com/observation/create", {
       method: "POST",

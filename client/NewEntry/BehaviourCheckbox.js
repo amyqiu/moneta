@@ -7,6 +7,7 @@ import colours from "../Colours";
 
 type Props = {
   label: string,
+  endpointLabel?: string,
   color: string,
   subBehaviours: Array<string>,
   onBehaviourChecked: (string, boolean, Set<string>) => void,
@@ -52,15 +53,20 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
   handleBehaviourChecked = () => {
     const { checked, checkedSubBehaviours } = this.state;
-    const { onBehaviourChecked, label, originallyChecked } = this.props;
+    const {
+      onBehaviourChecked,
+      endpointLabel,
+      label,
+      originallyChecked
+    } = this.props;
 
     if (originallyChecked !== null) {
       return;
     }
     if (checked) {
-      onBehaviourChecked(label, false, new Set());
+      onBehaviourChecked(endpointLabel || label, false, new Set());
     } else {
-      onBehaviourChecked(label, true, checkedSubBehaviours);
+      onBehaviourChecked(endpointLabel || label, true, checkedSubBehaviours);
     }
 
     this.setState({ checked: !checked });
@@ -122,5 +128,6 @@ export default class BehaviourCheckbox extends React.Component<Props, State> {
 
 // $FlowFixMe: suppressing this error because flow doesn't understand defaultprops
 BehaviourCheckbox.defaultProps = {
+  endpointLabel: "",
   originallyCheckedSubBehaviours: new Set()
 };

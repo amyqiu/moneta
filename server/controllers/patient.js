@@ -73,7 +73,10 @@ exports.patient_find_all = (req, res) => {
 exports.patient_details = (req, res) => {
   Patient
     .findById(req.params.id)
-    .populate('observation_periods', 'start_time end_time')
+    .populate(
+      'observation_periods',
+      'start_time end_time personalized_behaviour_1_title personalized_behaviour_2_title personalized_context_1_title personalized_context_2_title',
+    )
     .exec((err, patient) => {
       if (err) {
         return res.status(500).send(err);

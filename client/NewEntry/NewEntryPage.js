@@ -202,6 +202,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     } = this.state;
     const { navigation } = this.props;
     const lastEntryTime = navigation.getParam("lastEntryTime");
+    const patient = navigation.getParam("patient");
 
     const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
 
@@ -217,6 +218,85 @@ export default class NewEntryPage extends React.Component<Props, State> {
           originallyChecked={null}
         />
       );
+    });
+
+    const customBehaviourEntries = new Map([
+      [
+        patient.observations[patient.observations.length - 1]
+          .personalized_behaviour_1_title,
+        "Personalized Behaviour 1"
+      ],
+      [
+        patient.observations[patient.observations.length - 1]
+          .personalized_behaviour_2_title,
+        "Personalized Behaviour 2"
+      ]
+    ]);
+    customBehaviourEntries.forEach((endpointName, behaviour) => {
+      if (behaviour) {
+        behavourCheckboxes.push(
+          <BehaviourCheckbox
+            key={endpointName}
+            label={behaviour}
+            endpointLabel={endpointName}
+            color="#00008b"
+            subBehaviours={[]}
+            onBehaviourChecked={this.onBehaviourChecked}
+            originallyChecked={null}
+          />
+        );
+      }
+    });
+
+    const contextCheckboxes = [];
+    CONTEXTS.map(context =>
+      contextCheckboxes.push(
+        <CheckBox
+          title={context}
+          key={context}
+          checked={checkedContexts.has(context)}
+          onPress={() => this.handleContextChecked(context)}
+          containerStyle={styles.checkBoxContainer}
+          textStyle={styles.checkBoxLabel}
+          iconType="feather"
+          checkedIcon="check-square"
+          uncheckedIcon="square"
+          checkedColor={colours.primaryGrey}
+          uncheckedColor={colours.primaryGrey}
+        />
+      )
+    );
+
+    const customContextEntries = new Map([
+      [
+        patient.observations[patient.observations.length - 1]
+          .personalized_context_1_title,
+        "Personalized Context 1"
+      ],
+      [
+        patient.observations[patient.observations.length - 1]
+          .personalized_context_2_title,
+        "Personalized Context 2"
+      ]
+    ]);
+    customContextEntries.forEach((endpointName, context) => {
+      if (context) {
+        contextCheckboxes.push(
+          <CheckBox
+            title={context}
+            key={endpointName}
+            checked={checkedContexts.has(endpointName)}
+            onPress={() => this.handleContextChecked(endpointName)}
+            containerStyle={styles.checkBoxContainer}
+            textStyle={styles.checkBoxLabel}
+            iconType="feather"
+            checkedIcon="check-square"
+            uncheckedIcon="square"
+            checkedColor={colours.primaryGrey}
+            uncheckedColor={colours.primaryGrey}
+          />
+        );
+      }
     });
 
     return (
@@ -252,21 +332,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Context</Text>
-                {CONTEXTS.map(context => (
-                  <CheckBox
-                    title={context}
-                    key={context}
-                    checked={checkedContexts.has(context)}
-                    onPress={() => this.handleContextChecked(context)}
-                    containerStyle={styles.checkBoxContainer}
-                    textStyle={styles.checkBoxLabel}
-                    iconType="feather"
-                    checkedIcon="check-square"
-                    uncheckedIcon="square"
-                    checkedColor={colours.primaryGrey}
-                    uncheckedColor={colours.primaryGrey}
-                  />
-                ))}
+                {contextCheckboxes}
               </View>
             </Card>
             <Card containerStyle={{ borderRadius: 4 }}>

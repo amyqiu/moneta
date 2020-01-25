@@ -166,6 +166,12 @@ export default StyleSheet.create({
     fontSize: RFValue(16),
     fontWeight: "bold"
   },
+  startModalSubHeading: {
+    fontSize: RFValue(16),
+    fontWeight: "bold",
+    paddingTop: 12,
+    paddingBottom: 8
+  },
   obsSubHeading: {
     fontSize: RFValue(16),
     fontWeight: "bold"
