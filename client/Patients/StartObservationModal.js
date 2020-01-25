@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { View, TextInput } from "react-native";
+import { View, ScrollView, TextInput } from "react-native";
 import { Button, Text, CheckBox } from "react-native-elements";
 import Modal from "react-native-modal";
 import styles from "./PatientStyles";
@@ -11,12 +11,17 @@ type Props = {
   patientName: string,
   isVisible: boolean,
   closeModal: () => void,
-  startObservation: (checkedReasons: Set<string>, startingNotes: string) => void
+  startObservation: (
+    checkedReasons: Set<string>,
+    startingNotes: string,
+    customEntryFields: Array<string>
+  ) => void
 };
 
 type State = {
   checkedReasons: Set<string>,
-  startingNotes: string
+  startingNotes: string,
+  customEntryFields: Array<string>
 };
 
 export default class StartObservationModal extends React.Component<
@@ -27,7 +32,8 @@ export default class StartObservationModal extends React.Component<
     super(props);
     this.state = {
       checkedReasons: new Set(),
-      startingNotes: ""
+      startingNotes: "",
+      customEntryFields: ["", "", "", ""]
     };
   }
 
@@ -44,59 +50,106 @@ export default class StartObservationModal extends React.Component<
   };
 
   render() {
-    const { checkedReasons, startingNotes } = this.state;
+    const { checkedReasons, startingNotes, customEntryFields } = this.state;
     const { patientName, isVisible, closeModal, startObservation } = this.props;
     const message = `Start observation for ${patientName}?`;
     return (
       <Modal isVisible={isVisible} onBackdropPress={closeModal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalHeading}>{message}</Text>
-          <Text style={styles.modalSubHeading}>Reasons</Text>
-          {STARTING_REASONS.map(reason => (
-            <CheckBox
-              title={reason}
-              key={reason}
-              checked={checkedReasons.has(reason)}
-              onPress={() => this.handleReasonChecked(reason)}
-              containerStyle={styles.checkBoxContainer}
-              textStyle={styles.checkBoxLabel}
-              iconType="feather"
-              checkedIcon="check-square"
-              uncheckedIcon="square"
-              checkedColor={colours.primaryGrey}
-              uncheckedColor={colours.primaryGrey}
+        <ScrollView>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalHeading}>{message}</Text>
+            <Text style={styles.modalSubHeading}>Reasons</Text>
+            {STARTING_REASONS.map(reason => (
+              <CheckBox
+                title={reason}
+                key={reason}
+                checked={checkedReasons.has(reason)}
+                onPress={() => this.handleReasonChecked(reason)}
+                containerStyle={styles.checkBoxContainer}
+                textStyle={styles.checkBoxLabel}
+                iconType="feather"
+                checkedIcon="check-square"
+                uncheckedIcon="square"
+                checkedColor={colours.primaryGrey}
+                uncheckedColor={colours.primaryGrey}
+              />
+            ))}
+            <Text style={styles.startModalSubHeading}>
+              Add optional custom behaviour fields
+            </Text>
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => {
+                customEntryFields[0] = notes;
+                this.setState({ customEntryFields });
+              }}
+              value={customEntryFields[0]}
+              multiline
+              height={isTablet() ? 80 : 40}
             />
-          ))}
-          <Text
-            style={{
-              ...styles.modalSubHeading,
-              ...{ paddingTop: 12, paddingBottom: 8 }
-            }}
-          >
-            Notes
-          </Text>
-          <TextInput
-            style={styles.comments}
-            onChangeText={notes => this.setState({ startingNotes: notes })}
-            value={startingNotes}
-            multiline
-            height={isTablet() ? 200 : 100}
-          />
-          <View style={styles.observationModalButtons}>
-            <Button
-              onPress={closeModal}
-              title="Cancel"
-              buttonStyle={styles.modalCancelButton}
-              titleProps={{ style: styles.modalButtonTitle }}
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => {
+                customEntryFields[1] = notes;
+                this.setState({ customEntryFields });
+              }}
+              value={customEntryFields[1]}
+              multiline
+              height={isTablet() ? 80 : 40}
             />
-            <Button
-              onPress={() => startObservation(checkedReasons, startingNotes)}
-              title="Start Observation"
-              buttonStyle={styles.modalButton}
-              titleProps={{ style: styles.modalButtonTitle }}
+            <Text style={styles.startModalSubHeading}>
+              Add optional custom context fields
+            </Text>
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => {
+                customEntryFields[2] = notes;
+                this.setState({ customEntryFields });
+              }}
+              value={customEntryFields[2]}
+              multiline
+              height={isTablet() ? 80 : 40}
             />
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => {
+                customEntryFields[3] = notes;
+                this.setState({ customEntryFields });
+              }}
+              value={customEntryFields[3]}
+              multiline
+              height={isTablet() ? 80 : 40}
+            />
+            <Text style={styles.startModalSubHeading}>Notes</Text>
+            <TextInput
+              style={styles.comments}
+              onChangeText={notes => this.setState({ startingNotes: notes })}
+              value={startingNotes}
+              multiline
+              height={isTablet() ? 200 : 100}
+            />
+            <View style={styles.observationModalButtons}>
+              <Button
+                onPress={closeModal}
+                title="Cancel"
+                buttonStyle={styles.modalCancelButton}
+                titleProps={{ style: styles.modalButtonTitle }}
+              />
+              <Button
+                onPress={() => {
+                  startObservation(
+                    checkedReasons,
+                    startingNotes,
+                    customEntryFields
+                  );
+                }}
+                title="Start Observation"
+                buttonStyle={styles.modalButton}
+                titleProps={{ style: styles.modalButtonTitle }}
+              />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     );
   }
