@@ -72,6 +72,29 @@ export default class ObservationSummaryTable extends React.Component<
         : "N/A";
       data.push([behaviour, occurrences, averageOccurrences]);
     });
+
+    const customBehaviourEntries = new Map([
+      [
+        observationData.personalized_behaviour_1_title,
+        "Personalized Behaviour 1"
+      ],
+      [
+        observationData.personalized_behaviour_2_title,
+        "Personalized Behaviour 2"
+      ]
+    ]);
+    customBehaviourEntries.forEach((endpointName, behaviour) => {
+      if (behaviour) {
+        const occurrences = observationData.aggregated_behaviours[
+          endpointName
+        ].reduce((a, b) => a + b, 0);
+        const averageOccurrences = daysPassed
+          ? ((occurrences * 0.5) / daysPassed).toFixed(2)
+          : "N/A";
+        data.push([behaviour, occurrences, averageOccurrences]);
+      }
+    });
+
     return data;
   };
 

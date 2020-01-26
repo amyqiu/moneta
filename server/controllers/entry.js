@@ -12,6 +12,10 @@ exports.validate = (method) => {
         body('behaviours').optional(),
         body('locations').optional(),
         body('contexts').optional(),
+        body('personalized_behaviour_1_title').optional(),
+        body('personalized_behaviour_2_title').optional(),
+        body('personalized_context_1_title').optional(),
+        body('personalized_context_2_title').optional(),
         body('comments').optional().isString(),
         body('time').exists().isInt(),
       ];
@@ -167,7 +171,10 @@ exports.entry_find_day = (req, res) => {
   // use ID of patient to search through observation periods
   Patient
     .findById(req.query.id)
-    .populate('observation_periods', 'start_time end_time')
+    .populate(
+      'observation_periods',
+      'start_time end_time personalized_behaviour_1_title personalized_behaviour_2_title personalized_context_1_title personalized_context_2_title',
+    )
     .exec(async (err, patient) => {
       if (err) {
         return res.status(500).send(err);
@@ -182,6 +189,7 @@ exports.entry_find_day = (req, res) => {
       const day = parseInt(req.query.day, 10);
 
       const obsIDs = new Set();
+      const obsLabels = new Map();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
         const startMonth = period.start_time.getMonth() + 1;
@@ -194,6 +202,13 @@ exports.entry_find_day = (req, res) => {
 
         if (withinMonth && withinYear) {
           obsIDs.add(period.id);
+          obsLabels.set(period.id,
+            {
+              personalized_behaviour_1_title: period.personalized_behaviour_1_title,
+              personalized_behaviour_2_title: period.personalized_behaviour_2_title,
+              personalized_context_1_title: period.personalized_context_1_title,
+              personalized_context_2_title: period.personalized_context_2_title,
+            });
         } else if ((endYear === year && endMonth > month) || (endYear > year)) {
           break;
         }
@@ -213,7 +228,7 @@ exports.entry_find_day = (req, res) => {
             const entryDay = entry.time.getDate();
             const entryYear = entry.time.getFullYear();
             if (entryMonth === month && entryDay === day && entryYear === year) {
-              entryArray.push(entry);
+              entryArray.push({ ...obsLabels.get(entry.observation_ID), ...entry._doc });
             } else if ((entryYear === year && entryMonth === month && entryDay > day)
               || (entryYear === year && entryMonth > month)
               || (entryYear > year)) {

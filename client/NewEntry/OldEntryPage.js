@@ -57,6 +57,65 @@ export default class OldEntryPage extends React.Component<Props, {}> {
       );
     });
 
+    const customBehaviourEntries = new Map([
+      [entry.personalized_behaviour_1_title, "Personalized Behaviour 1"],
+      [entry.personalized_behaviour_2_title, "Personalized Behaviour 2"]
+    ]);
+    customBehaviourEntries.forEach((endpointName, behaviour) => {
+      if (behaviour) {
+        behavourCheckboxes.push(
+          <BehaviourCheckbox
+            key={endpointName}
+            label={behaviour}
+            endpointLabel={endpointName}
+            color="#00008b"
+            subBehaviours={[]}
+            onBehaviourChecked={() => {}}
+            originallyChecked={endpointName in entry.behaviours}
+          />
+        );
+      }
+    });
+
+    const contextCheckboxes = [];
+    CONTEXTS.map(context => (
+      <CheckBox
+        title={context}
+        key={context}
+        checked={entry.contexts.includes(context)}
+        containerStyle={styles.checkBoxContainer}
+        textStyle={styles.checkBoxLabel}
+        iconType="feather"
+        checkedIcon="check-square"
+        uncheckedIcon="square"
+        checkedColor={colours.primaryGrey}
+        uncheckedColor={colours.primaryGrey}
+      />
+    ));
+
+    const customContextEntries = new Map([
+      [entry.personalized_context_1_title, "Personalized Context 1"],
+      [entry.personalized_context_2_title, "Personalized Context 2"]
+    ]);
+    customContextEntries.forEach((endpointName, context) => {
+      if (context) {
+        contextCheckboxes.push(
+          <CheckBox
+            title={context}
+            key={endpointName}
+            checked={entry.contexts.includes(endpointName)}
+            containerStyle={styles.checkBoxContainer}
+            textStyle={styles.checkBoxLabel}
+            iconType="feather"
+            checkedIcon="check-square"
+            uncheckedIcon="square"
+            checkedColor={colours.primaryGrey}
+            uncheckedColor={colours.primaryGrey}
+          />
+        );
+      }
+    });
+
     return (
       <KeyboardAvoidingView behavior="position">
         <View style={{ backgroundColor: "#b30000" }}>
@@ -94,20 +153,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Context</Text>
-                {CONTEXTS.map(context => (
-                  <CheckBox
-                    title={context}
-                    key={context}
-                    checked={entry.contexts.includes(context)}
-                    containerStyle={styles.checkBoxContainer}
-                    textStyle={styles.checkBoxLabel}
-                    iconType="feather"
-                    checkedIcon="check-square"
-                    uncheckedIcon="square"
-                    checkedColor={colours.primaryGrey}
-                    uncheckedColor={colours.primaryGrey}
-                  />
-                ))}
+                {contextCheckboxes}
               </View>
             </Card>
             <Card containerStyle={{ borderRadius: 4 }}>
