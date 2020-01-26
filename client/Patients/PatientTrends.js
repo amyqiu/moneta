@@ -76,16 +76,32 @@ export default class EndObservationModal extends React.Component<Props, State> {
       }
       const json = await response.json();
       const aggregatedBehaviours = new Map<string, Array<number>>();
+      const selectedBehaviours = [...BEHAVIOURS.keys()];
       Object.keys(json.aggregated_behaviours).forEach(behaviour => {
         aggregatedBehaviours.set(
           behaviour,
           json.aggregated_behaviours[behaviour]
         );
       });
+      if (json.personalized_behaviour_1_title) {
+        selectedBehaviours.push(json.personalized_behaviour_1_title);
+        aggregatedBehaviours.set(
+          json.personalized_behaviour_1_title,
+          json.aggregated_behaviours["Personalized Behaviour 1"]
+        );
+      }
+      if (json.personalized_behaviour_2_title) {
+        selectedBehaviours.push(json.personalized_behaviour_2_title);
+        aggregatedBehaviours.set(
+          json.personalized_behaviour_2_title,
+          json.aggregated_behaviours["Personalized Behaviour 2"]
+        );
+      }
       const entryTimes = json.entry_times.map(entryTime => moment(entryTime));
       this.setState({
         isLoading: false,
         aggregatedBehaviours,
+        selectedBehaviours,
         entryTimes,
         observation: json
       });
@@ -120,7 +136,9 @@ export default class EndObservationModal extends React.Component<Props, State> {
           dataPoints.push({
             x: isTablet() ? `${i}h` : i,
             y: hourlyData[i],
-            color: BEHAVIOURS.get(behaviour).color
+            color: BEHAVIOURS.get(behaviour)
+              ? BEHAVIOURS.get(behaviour).color
+              : "#00008b"
           });
         }
         processedData.push(dataPoints);
@@ -149,7 +167,10 @@ export default class EndObservationModal extends React.Component<Props, State> {
     } = this.state;
 
     const processedData = this.processHourlyTrends();
-    const dropdownBehaviours = createDropdownBehaviours();
+    const dropdownBehaviours = createDropdownBehaviours(
+      observation ? observation.personalized_behaviour_1_title : "",
+      observation ? observation.personalized_behaviour_2_title : ""
+    );
     const dropdownPeriods = createDropdownPeriods(patient.observations);
     const selectedObservationID = this.getSelectedObservation();
 

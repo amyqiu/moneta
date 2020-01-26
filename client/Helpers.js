@@ -78,7 +78,10 @@ export function getSecondLastObservation(patient: Patient) {
     : null;
 }
 
-export function createDropdownBehaviours() {
+export function createDropdownBehaviours(
+  optionalBehaviour1?: string,
+  optionalBehaviour2?: string
+) {
   const dropdownItems = [];
   BEHAVIOURS.forEach((_, behaviour) => {
     dropdownItems.push({
@@ -86,6 +89,18 @@ export function createDropdownBehaviours() {
       id: behaviour
     });
   });
+  if (optionalBehaviour1) {
+    dropdownItems.push({
+      name: optionalBehaviour1,
+      id: optionalBehaviour1
+    });
+  }
+  if (optionalBehaviour2) {
+    dropdownItems.push({
+      name: optionalBehaviour2,
+      id: optionalBehaviour2
+    });
+  }
   return dropdownItems;
 }
 
