@@ -316,6 +316,11 @@ exports.observation_get_correlations = (req, res) => {
           list.sort((a, b) => b.coeff - a.coeff);
           times.sort((a, b) => b.frequency - a.frequency);
           const b = {};
+          if (negativeBehaviours[i] === 'Personalized Behaviour 1') {
+            negativeBehaviours[i] = obs.personalized_behaviour_1_title;
+          } else if (negativeBehaviours[i] === 'Personalized Behaviour 2') {
+            negativeBehaviours[i] = obs.personalized_behaviour_2_title;
+          }
           b.behaviour = negativeBehaviours[i];
           b.results = list.slice(0, 3);
           if (times.length >= 3) {
@@ -346,6 +351,11 @@ function getSummaryStats(obs) {
     const averageOccurrences = daysPassed
       ? ((occurrences * 0.5) / daysPassed).toFixed(2)
       : 'N/A';
+    if (topLevelBehaviours[i] === 'Personalized Behaviour 1') {
+      topLevelBehaviours[i] = obs.personalized_behaviour_1_title;
+    } else if (topLevelBehaviours[i] === 'Personalized Behaviour 2') {
+      topLevelBehaviours[i] = obs.personalized_behaviour_2_title;
+    }
     data.push([topLevelBehaviours[i], occurrences, averageOccurrences]);
   }
   return data;
@@ -354,7 +364,7 @@ function getSummaryStats(obs) {
 function getStartingReasons(reasons) {
   const data = [];
   const reasonArr = Array.from(STARTING_REASONS);
-  const noMark = '___';
+  const noMark = '_N_';
   const mark = '_Y_';
   for (let i = 0; i < reasonArr.length / 2; i += 1) {
     const check1 = (reasons.includes(reasonArr[i])) ? mark : noMark;
@@ -369,7 +379,7 @@ function getStartingReasons(reasons) {
 function getNextSteps(steps) {
   const data = [];
   const stepArr = Array.from(NEXT_STEPS);
-  const noMark = '___';
+  const noMark = '_N_';
   const mark = '_Y_';
   for (let i = 0; i < stepArr.length / 2; i += 1) {
     const check1 = (steps.includes(stepArr[i])) ? mark : noMark;
@@ -414,7 +424,7 @@ exports.observation_generate_pdf = (req, res) => {
       } if (!obs) {
         return res.status(500).send('Could not find observation');
       }
-      const endTime = (obs.end_time) ? obs.end_time.toDateString() : ' ';
+      const endTime = (obs.end_time) ? moment(obs.end_time).format('MMM D, YYYY') : ' ';
       Patient
         .findById(obs.patient_ID)
         .populate('observation_periods', 'start_time end_time')
@@ -428,7 +438,7 @@ exports.observation_generate_pdf = (req, res) => {
             content: [
               { text: `Observation Summary for ${patient.name}`, bold: true, fontSize: 20 },
               `Age: ${patient.age}\nRoom:  ${patient.room}`,
-              `\nStart Time: ${obs.start_time.toDateString()}\nEnd Time:  ${endTime}`,
+              `\nStart Time: ${moment(obs.start_time).format('MMM D, YYYY')}\nEnd Time:  ${endTime}`,
               { text: '\nStarting Reasons:\n', bold: true, fontSize: 14 },
               {
                 style: 'tableExample',
