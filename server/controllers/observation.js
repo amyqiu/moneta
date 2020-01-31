@@ -322,7 +322,13 @@ exports.observation_get_correlations = (req, res) => {
             negativeBehaviours[i] = obs.personalized_behaviour_2_title;
           }
           b.behaviour = negativeBehaviours[i];
-          b.results = list.slice(0, 3);
+          let endIndex = 0;
+          for (let k = 0; k < 3; k += 1) {
+            if (list[k].coeff > 0) {
+              endIndex = k + 1;
+            }
+          }
+          b.results = list.slice(0, endIndex);
           if (times.length >= 3) {
             b.times = times.slice(0, 3);
           } else {
