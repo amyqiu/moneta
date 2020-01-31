@@ -27,7 +27,7 @@ const ObservationCheckBox = ({
 }) => {
   return (
     <View>
-      <Text style={styles.modalSubHeading}>Reasons</Text>
+      <Text style={styles.modalSubHeading}>Next Steps</Text>
       {NEXT_STEPS.map(nextStep => (
         <CheckBox
           title={nextStep}

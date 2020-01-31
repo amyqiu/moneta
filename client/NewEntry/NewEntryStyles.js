@@ -5,9 +5,7 @@ import colours from "../Colours";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    padding: 10,
-    backgroundColor: colours.backgroundGrey,
-    paddingBottom: 16
+    backgroundColor: colours.backgroundGrey
   },
   checkBoxContainer: {
     backgroundColor: colours.white,

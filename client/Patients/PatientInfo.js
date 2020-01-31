@@ -21,7 +21,7 @@ type State = {
   loadingEntryTime: boolean
 };
 
-const DATE_FORMAT = isTablet() ? "h:mmA - MMM Do, YYYY" : "hh:mm MMM D, YYYY";
+const DATE_FORMAT = isTablet() ? "h:mmA - MMM D, YYYY" : "hh:mm MMM D, YYYY";
 
 export default class PatientInfo extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -173,7 +173,7 @@ export default class PatientInfo extends React.Component<Props, State> {
         ? patient.observations[patient.observations.length - 1].start_time
         : null;
     const observationStartText = observationStartTime
-      ? moment(observationStartTime).format(DATE_FORMAT)
+      ? moment(observationStartTime).format("MMM D, YYYY")
       : "";
 
     return (

@@ -56,6 +56,13 @@ export default class CorrelationsView extends React.Component<Props, State> {
     this.getObservationCorrelations(observationID);
   };
 
+  getAllBehaviours = () => {
+    const allBehaviours = new Map<string, Object>(BEHAVIOURS);
+    allBehaviours.set("Personalized Behaviour 1", { subBehaviours: [] });
+    allBehaviours.set("Personalized Behaviour 2", { subBehaviours: [] });
+    return allBehaviours;
+  };
+
   getObservationCorrelations = async (observationID: string) => {
     try {
       const response = await fetch(
@@ -94,8 +101,13 @@ export default class CorrelationsView extends React.Component<Props, State> {
         let totalOccurrences = 0;
         const processedBehaviours = new Map<string, number>();
 
-        BEHAVIOURS.forEach((_, behaviour) => {
+        const allBehaviours = this.getAllBehaviours();
+
+        allBehaviours.forEach((_, behaviour) => {
           const entryData = observation.aggregated_behaviours[behaviour];
+          if (entryData == null) {
+            return;
+          }
           const count = entryData.reduce((a, b) => a + b, 0);
           totalOccurrences += count;
           if (!behaviour.includes("Sleeping") && !behaviour.includes("Awake")) {
@@ -114,6 +126,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
     if (item.includes("Sleeping") || item.includes("Awake")) {
       return null;
     }
+
     const { observation } = this.state;
     const { processedBehaviours, totalOccurrences, correlations } = this.state;
     if (
@@ -125,7 +138,14 @@ export default class CorrelationsView extends React.Component<Props, State> {
       return null;
     }
 
-    const correlation = correlations.get(item);
+    let itemLabel = item;
+    if (item === "Personalized Behaviour 1") {
+      itemLabel = observation.personalized_behaviour_1_title;
+    } else if (item === "Personalized Behaviour 2") {
+      itemLabel = observation.personalized_behaviour_2_title;
+    }
+
+    const correlation = correlations.get(itemLabel);
     if (correlation == null) {
       return null;
     }
@@ -135,12 +155,18 @@ export default class CorrelationsView extends React.Component<Props, State> {
       ? `${((count * 100.0) / totalOccurrences).toFixed(0)}%`
       : "0%";
 
+    const allBehaviours = this.getAllBehaviours();
     const subBehaviours = [];
-    BEHAVIOURS.get(item).subBehaviours.forEach(subBehaviour => {
-      if (observation.aggregated_behaviours[subBehaviour].some(c => c !== 0)) {
-        subBehaviours.push(subBehaviour);
-      }
-    });
+    const itemDetails = allBehaviours.get(item);
+    if (itemDetails) {
+      itemDetails.subBehaviours.forEach(subBehaviour => {
+        if (
+          observation.aggregated_behaviours[subBehaviour].some(c => c !== 0)
+        ) {
+          subBehaviours.push(subBehaviour);
+        }
+      });
+    }
 
     const correlationResults = correlation.results;
     const correlationTimes = correlation.times;
@@ -148,7 +174,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
     return (
       <View style={styles.behaviourCard}>
         <View style={styles.carouselContainer}>
-          <Text h4>{item}</Text>
+          <Text h4>{itemLabel}</Text>
           <View style={styles.carouselPercentage}>
             <Text style={styles.occurrenceLabel}>Occurrence: </Text>
             <Text style={styles.carouselMainText}>{percentage}</Text>
@@ -183,9 +209,15 @@ export default class CorrelationsView extends React.Component<Props, State> {
           ) : (
             <View>
               {correlationResults.map(behaviour => {
+                let triggerLabel = behaviour.trigger;
+                if (behaviour.trigger === "Personalized Context 1") {
+                  triggerLabel = observation.personalized_context_1_title;
+                } else if (behaviour.trigger === "Personalized Context 2") {
+                  triggerLabel = observation.personalized_context_2_title;
+                }
                 return (
                   <Text style={styles.carouselSubText} key={behaviour.trigger}>
-                    {`${behaviour.trigger} (${behaviour.coeff.toFixed(
+                    {`${triggerLabel} (${behaviour.coeff.toFixed(
                       2
                     )}) - ${SUGGESTIONS.get(behaviour.trigger)}`}
                   </Text>

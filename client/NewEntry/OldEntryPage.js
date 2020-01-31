@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { View, ScrollView, KeyboardAvoidingView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Card, Text, CheckBox } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import moment from "moment";
@@ -35,7 +35,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
     const { navigation } = this.props;
     const entry = navigation.getParam("entry");
     const entryDate = new Date(entry.time);
-    const formattedDate = moment(entryDate).format("MMMM Do YYYY, h:mm:ss a");
+    const formattedDate = moment(entryDate).format("MMM D, YYYY h:mm:ss a");
 
     // TODO: refactor BehaviourCheckbox and make this list a shared component with NewEntry
     const behavourCheckboxes = [];
@@ -117,14 +117,14 @@ export default class OldEntryPage extends React.Component<Props, {}> {
     });
 
     return (
-      <KeyboardAvoidingView behavior="position">
+      <View style={styles.background}>
         <View style={{ backgroundColor: "#b30000" }}>
           <Text style={styles.warning}>
             You are reviewing an old entry: you cannot edit this page.
           </Text>
         </View>
-        <ScrollView>
-          <View style={styles.background}>
+        <ScrollView style={{ marginBottom: 12 }}>
+          <View>
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Behaviours Observed</Text>
@@ -162,7 +162,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
                 <Text style={styles.date}>{entry.comments}</Text>
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4, paddingBottom: 100 }}>
+            <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4 style={{ paddingBottom: 4 }}>
                   Timestamp
@@ -174,7 +174,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
             </Card>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

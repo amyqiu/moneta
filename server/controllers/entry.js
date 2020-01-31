@@ -228,6 +228,7 @@ exports.entry_find_day = (req, res) => {
             const entryDay = entry.time.getDate();
             const entryYear = entry.time.getFullYear();
             if (entryMonth === month && entryDay === day && entryYear === year) {
+              // eslint-disable-next-line
               entryArray.push({ ...obsLabels.get(entry.observation_ID), ...entry._doc });
             } else if ((entryYear === year && entryMonth === month && entryDay > day)
               || (entryYear === year && entryMonth > month)
