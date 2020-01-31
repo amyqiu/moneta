@@ -70,13 +70,13 @@ export default StyleSheet.create({
   },
   observationButtonContainer: {
     paddingVertical: 8,
-    paddingHorizontal: isTablet() ? 0 : 32,
-    width: isTablet() ? 200 : "100%"
+    paddingHorizontal: isTablet() ? 0 : 12,
+    width: isTablet() ? 240 : "100%"
   },
   toast: {
     backgroundColor: colours.successGreen,
     opacity: 0.9,
-    borderRadius: 5,
+    borderRadius: 4,
     padding: 8
   },
   toastText: {
@@ -120,7 +120,8 @@ export default StyleSheet.create({
     backgroundColor: colours.primaryGrey,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    marginVertical: 12
+    marginVertical: 12,
+    borderRadius: 4
   },
   observationModalButtons: {
     flexDirection: "row",

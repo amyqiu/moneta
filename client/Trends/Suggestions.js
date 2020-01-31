@@ -44,7 +44,9 @@ const SUGGESTIONS = new Map([
   [
     "Directed at Staff",
     "Look out for individual expressions of fatigue and anxiety to intervene earlier rather than later."
-  ]
+  ],
+  ["Personalized Context 1", "No suggestion available (custom context)"],
+  ["Personalized Context 2", "No suggestion available (custom context)"]
 ]);
 
 export default SUGGESTIONS;

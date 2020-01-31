@@ -150,6 +150,7 @@ export default class Exporter extends React.Component<Props, State> {
             }}
             colors={SELECT_COLOURS}
             selectedIconComponent={SELECT_ICON}
+            showCancelButton
           />
         </View>
         {isLoading ? spinner : download}

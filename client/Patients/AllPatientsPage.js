@@ -179,7 +179,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           searchIcon={searchIcon}
           clearIcon={null}
         />
-        <ScrollView style={{ marginBottom: 8 }}>
+        <ScrollView style={{ marginBottom: 12 }}>
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={this.onRefresh}

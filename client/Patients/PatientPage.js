@@ -239,7 +239,7 @@ export default class PatientPage extends React.Component<Props, State> {
           endObservation={this.handleEndObservation}
           observationID={observationID}
         />
-        <ScrollView style={styles.background}>
+        <ScrollView style={{ marginBottom: 12 }}>
           <PatientInfo
             patient={patient}
             onNavigatePatient={null}

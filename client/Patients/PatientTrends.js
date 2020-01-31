@@ -161,6 +161,8 @@ export default class EndObservationModal extends React.Component<Props, State> {
     const { patient } = this.props;
     const {
       isLoading,
+      aggregatedBehaviours,
+      entryTimes,
       selectedBehaviours,
       selectedPeriods,
       observation
@@ -182,7 +184,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
       );
       if (selectedObservation) {
         periodStart = moment(selectedObservation.start_time);
-        periodEnd = moment(selectedObservation.end_time);
+        periodEnd = moment(selectedObservation.end_time || new Date());
       }
     }
 
@@ -190,8 +192,16 @@ export default class EndObservationModal extends React.Component<Props, State> {
       <ActivityIndicator size="large" color={colours.primaryGrey} />
     );
 
+    const behaviourSelectStyle = {
+      ...styles.observationToggle,
+      width: isTablet() ? 420 : 180
+    };
+
     const data =
-      processedData.length === 0 || selectedObservationID == null ? (
+      aggregatedBehaviours == null ||
+      entryTimes == null ||
+      entryTimes.length === 0 ||
+      selectedObservationID == null ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
             No entries available for selected observation period.
@@ -210,16 +220,15 @@ export default class EndObservationModal extends React.Component<Props, State> {
             selectedItems={selectedBehaviours}
             hideSearch
             styles={{
+              selectToggle: behaviourSelectStyle,
               selectToggleText: styles.dropdownToggleText,
               chipText: styles.dropdownChipText,
               confirmText: styles.dropdownConfirmText,
               itemText: styles.dropdownItemText
             }}
-            colors={{
-              ...SELECT_COLOURS,
-              selectToggleTextColor: colours.primaryGrey
-            }}
+            colors={SELECT_COLOURS}
             selectedIconComponent={SELECT_ICON}
+            showCancelButton
           />
           <HourlyColumnChart
             graphData={processedData}
@@ -255,6 +264,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
             }}
             colors={SELECT_COLOURS}
             selectedIconComponent={SELECT_ICON}
+            showCancelButton
           />
         </View>
         {observation != null ? (

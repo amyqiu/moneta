@@ -11,6 +11,7 @@ import {
   VictoryGroup,
   VictoryLabel
 } from "victory-native";
+import { Table, Row, Rows } from "react-native-table-component";
 import { RFValue } from "react-native-responsive-fontsize";
 import styles from "../Patients/PatientStyles";
 import type { Patient } from "../Patients/Patient";
@@ -104,7 +105,7 @@ export default class ObservationComparison extends React.Component<
       return null;
     }
 
-    const trends = [];
+    const data = [];
     BEHAVIOURS.forEach((_, behaviour) => {
       if (!behaviour.includes("Sleeping") && !behaviour.includes("Calm")) {
         const firstCount = firstObservationData.find(d => d.x === behaviour).y;
@@ -113,25 +114,29 @@ export default class ObservationComparison extends React.Component<
 
         let text;
         if (firstCount === secondCount) {
-          text = `○ ${behaviour}: No change`;
+          text = "No change";
         } else if (firstCount === 0) {
-          text = `○ ${behaviour}: ${secondCount} new occurences`;
+          text = `${secondCount} new occurences`;
         } else {
           const diff = (secondCount - firstCount) / (firstCount * 1.0);
           const displayDiff = Math.abs(diff * 100).toFixed(0);
-          text = `○ ${behaviour}: ${displayDiff}% ${
-            diff > 0 ? "increase" : "decrease"
-          }`;
+          text = `${displayDiff}% ${diff > 0 ? "increase" : "decrease"}`;
         }
 
-        trends.push(
-          <Text style={{ paddingBottom: 4, fontSize: RFValue(14) }} key={text}>
-            {text}
-          </Text>
-        );
+        data.push([behaviour, text]);
       }
     });
-    return trends;
+
+    return (
+      <Table borderStyle={{ borderWidth: 1 }}>
+        <Row
+          data={["Behaviour", "Trend"]}
+          style={styles.tableHeader}
+          textStyle={styles.tableHeaderText}
+        />
+        <Rows data={data} textStyle={styles.tableText} />
+      </Table>
+    );
   };
 
   handleFirstPeriodChange = async (selectedPeriods: Array<Object>) => {
@@ -216,6 +221,7 @@ export default class ObservationComparison extends React.Component<
               }}
               colors={SELECT_COLOURS}
               selectedIconComponent={SELECT_ICON}
+              showCancelButton
             />
           </View>
           <View>
@@ -239,6 +245,7 @@ export default class ObservationComparison extends React.Component<
               }}
               colors={SELECT_COLOURS}
               selectedIconComponent={SELECT_ICON}
+              showCancelButton
             />
           </View>
         </View>

@@ -204,7 +204,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     const lastEntryTime = navigation.getParam("lastEntryTime");
     const patient = navigation.getParam("patient");
 
-    const formattedDate = format(date, "MMMM d, yyyy H:mm:ss a");
+    const formattedDate = format(date, "MMM d, yyyy H:mm:ss a");
 
     const behavourCheckboxes = [];
     BEHAVIOURS.forEach(behaviour => {
@@ -300,9 +300,9 @@ export default class NewEntryPage extends React.Component<Props, State> {
     });
 
     return (
-      <KeyboardAvoidingView behavior="position">
-        <ScrollView>
-          <View style={styles.background}>
+      <KeyboardAvoidingView behavior="position" style={styles.background}>
+        <ScrollView style={{ marginBottom: 12 }}>
+          <View>
             <Card containerStyle={{ borderRadius: 4 }}>
               <View>
                 <Text h4>Behaviours Observed</Text>
