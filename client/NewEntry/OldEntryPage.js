@@ -118,7 +118,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
 
     return (
       <View style={styles.background}>
-        <View style={{ backgroundColor: "#b30000" }}>
+        <View style={{ backgroundColor: colours.errorRed }}>
           <Text style={styles.warning}>
             You are reviewing an old entry: you cannot edit this page.
           </Text>

@@ -24,6 +24,8 @@ type State = {
 };
 
 export default class Calendar extends React.Component<Props, State> {
+  _isMounted = false;
+
   constructor(props: Props) {
     super(props);
     const today = moment();
@@ -37,8 +39,13 @@ export default class Calendar extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    this._isMounted = true;
     this.setObservationDaysWithinMonth(moment());
     this.setObservationTimesWithinDay(moment());
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   setObservationDaysWithinMonth = async (date: moment) => {
@@ -49,21 +56,29 @@ export default class Calendar extends React.Component<Props, State> {
           patient.id
         }&month=${date.month() + 1}&year=${date.year()}`
       );
-      if (!response.ok) {
+      if (this._isMounted) {
+        if (!response.ok) {
+          this.setState({
+            isError: true,
+            entryDates: [],
+            selectedStartDate: date
+          });
+        }
+        const json = await response.json();
+        this.setState({
+          isError: false,
+          entryDates: json,
+          selectedStartDate: date
+        });
+      }
+    } catch (error) {
+      if (this._isMounted) {
         this.setState({
           isError: true,
           entryDates: [],
           selectedStartDate: date
         });
       }
-      const json = await response.json();
-      this.setState({
-        isError: false,
-        entryDates: json,
-        selectedStartDate: date
-      });
-    } catch (error) {
-      this.setState({ isError: true, entryDates: [], selectedStartDate: date });
     }
   };
 
@@ -75,7 +90,36 @@ export default class Calendar extends React.Component<Props, State> {
           patient.id
         }&month=${date.month() + 1}&year=${date.year()}&day=${date.date()}`
       );
-      if (!response.ok) {
+      if (this._isMounted) {
+        if (!response.ok) {
+          this.setState({
+            isError: true,
+            entryTimes: [],
+            observationIds: new Set(),
+            selectedStartDate: date
+          });
+        }
+        const json = await response.json();
+        const observationIds = new Set();
+        const parsedEntries = json.map(rawEntry => {
+          observationIds.add(rawEntry.observation_ID);
+          return {
+            locations: rawEntry.locations,
+            contexts: rawEntry.contexts,
+            behaviours: rawEntry.behaviours,
+            time: rawEntry.time,
+            comments: rawEntry.comments
+          };
+        });
+        this.setState({
+          isError: false,
+          entryTimes: parsedEntries, // this needs to be a map from date to id
+          observationIds,
+          selectedStartDate: date
+        });
+      }
+    } catch (error) {
+      if (this._isMounted) {
         this.setState({
           isError: true,
           entryTimes: [],
@@ -83,31 +127,6 @@ export default class Calendar extends React.Component<Props, State> {
           selectedStartDate: date
         });
       }
-      const json = await response.json();
-      const observationIds = new Set();
-      const parsedEntries = json.map(rawEntry => {
-        observationIds.add(rawEntry.observation_ID);
-        return {
-          locations: rawEntry.locations,
-          contexts: rawEntry.contexts,
-          behaviours: rawEntry.behaviours,
-          time: rawEntry.time,
-          comments: rawEntry.comments
-        };
-      });
-      this.setState({
-        isError: false,
-        entryTimes: parsedEntries, // this needs to be a map from date to id
-        observationIds,
-        selectedStartDate: date
-      });
-    } catch (error) {
-      this.setState({
-        isError: true,
-        entryTimes: [],
-        observationIds: new Set(),
-        selectedStartDate: date
-      });
     }
   };
 

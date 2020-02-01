@@ -168,6 +168,14 @@ export default class EndObservationModal extends React.Component<Props, State> {
       observation
     } = this.state;
 
+    if (patient.observations.length === 0) {
+      return (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>No observation periods yet.</Text>
+        </View>
+      );
+    }
+
     const processedData = this.processHourlyTrends();
     const dropdownBehaviours = createDropdownBehaviours(
       observation ? observation.personalized_behaviour_1_title : "",
