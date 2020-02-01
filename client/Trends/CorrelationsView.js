@@ -271,7 +271,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
         correlations == null ||
         correlations.size === 0 ? (
           <Text style={styles.carouselSubText}>
-            Not enough data for correlations
+            Not enough data for correlations.
           </Text>
         ) : (
           <View style={{ marginBottom: 4 }}>

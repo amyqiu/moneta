@@ -71,48 +71,38 @@ export default class ObservationOverview extends React.Component<Props, State> {
     }
 
     return (
-      <View style={{ paddingBottom: 12 }}>
-        <View style={{ backgroundColor: "#b30000" }}>
+      <View style={styles.background}>
+        <View style={{ backgroundColor: colours.errorRed }}>
           <Text style={styles.warning}>
             You are reviewing an old observation period: you cannot edit this
             page.
           </Text>
         </View>
-        <ScrollView>
-          <View style={styles.background}>
-            <Card containerStyle={{ borderRadius: 4 }}>
-              <ObservationSummaryTable
-                observationID={observationId}
-                observationData={observationData}
-              />
-            </Card>
-          </View>
-          <View style={styles.background}>
-            <Card containerStyle={{ borderRadius: 4 }}>
-              <ObservationCheckBox
-                nextSteps={new Set(observationData.next_steps)}
-                handleNextStepChecked={() => {}}
-              />
-            </Card>
-          </View>
-          <View style={styles.background}>
-            <Card containerStyle={{ borderRadius: 4 }}>
-              <View>
-                <Text h4>Starting Notes</Text>
-                <Text style={styles.date}>
-                  {observationData.starting_notes}
-                </Text>
-              </View>
-            </Card>
-          </View>
-          <View style={styles.background}>
-            <Card containerStyle={{ borderRadius: 4, marginBottom: 20 }}>
-              <View>
-                <Text h4>Ending Notes</Text>
-                <Text style={styles.date}>{observationData.ending_notes}</Text>
-              </View>
-            </Card>
-          </View>
+        <ScrollView style={{ marginBottom: 12 }}>
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <ObservationSummaryTable
+              observationID={observationId}
+              observationData={observationData}
+            />
+          </Card>
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <ObservationCheckBox
+              nextSteps={new Set(observationData.next_steps)}
+              handleNextStepChecked={() => {}}
+            />
+          </Card>
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <View>
+              <Text h4>Starting Notes</Text>
+              <Text style={styles.date}>{observationData.starting_notes}</Text>
+            </View>
+          </Card>
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <View>
+              <Text h4>Ending Notes</Text>
+              <Text style={styles.date}>{observationData.ending_notes}</Text>
+            </View>
+          </Card>
         </ScrollView>
       </View>
     );

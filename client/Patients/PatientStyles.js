@@ -66,7 +66,12 @@ export default StyleSheet.create({
   },
   errorText: {
     fontSize: RFValue(16),
-    paddingBottom: isTablet() ? 12 : 4
+    paddingBottom: isTablet() ? 12 : 4,
+    paddingTop: 4
+  },
+  errorComparisonText: {
+    fontSize: RFValue(16),
+    paddingTop: isTablet() ? 8 : 4
   },
   observationButtonContainer: {
     paddingVertical: 8,
@@ -110,6 +115,11 @@ export default StyleSheet.create({
   errorContainer: {
     flexDirection: "row",
     justifyContent: "center"
+  },
+  comparisonErrorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: isTablet() ? 12 : 4
   },
   observationSelect: {
     flexDirection: "row",
@@ -216,7 +226,8 @@ export default StyleSheet.create({
   singleObservation: {
     paddingBottom: 8,
     paddingLeft: 18,
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "center"
   },
   carouselContainer: {
     alignItems: "center"

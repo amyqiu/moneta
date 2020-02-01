@@ -109,6 +109,14 @@ export default class Exporter extends React.Component<Props, State> {
     const { patient } = this.props;
     const { isLoading, selectedPeriods, downloadLink } = this.state;
 
+    if (patient.observations.length === 0) {
+      return (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>No observation periods yet.</Text>
+        </View>
+      );
+    }
+
     const dropdownPeriods = createDropdownPeriods(patient.observations);
 
     const spinner = (
@@ -117,42 +125,36 @@ export default class Exporter extends React.Component<Props, State> {
 
     const download =
       downloadLink != null ? (
-        <View style={styles.centerContainer}>
-          <Text>
-            <Text style={styles.downloadLink} onPress={this.openPDFLink}>
-              Download PDF Here
-            </Text>
+        <Text>
+          <Text style={styles.downloadLink} onPress={this.openPDFLink}>
+            Download PDF Here
           </Text>
-        </View>
+        </Text>
       ) : (
         <Text style={styles.errorText}>Could not generate download link.</Text>
       );
 
     return (
-      <View>
-        <View style={styles.singleObservation}>
-          <View style={styles.centerContainer}>
-            <Text style={styles.selectText}>Select observation period:</Text>
-          </View>
-          <SectionedMultiSelect
-            items={dropdownPeriods}
-            single
-            uniqueKey="id"
-            selectText="Select observation period"
-            onSelectedItemsChange={this.handleObservationChange}
-            selectedItems={selectedPeriods}
-            styles={{
-              selectToggle: styles.observationToggle,
-              selectToggleText: styles.dropdownToggleText,
-              chipText: styles.dropdownChipText,
-              confirmText: styles.dropdownConfirmText,
-              itemText: styles.dropdownItemText
-            }}
-            colors={SELECT_COLOURS}
-            selectedIconComponent={SELECT_ICON}
-            showCancelButton
-          />
-        </View>
+      <View style={styles.singleObservation}>
+        <Text style={styles.selectText}>Select observation period:</Text>
+        <SectionedMultiSelect
+          items={dropdownPeriods}
+          single
+          uniqueKey="id"
+          selectText="Select observation period"
+          onSelectedItemsChange={this.handleObservationChange}
+          selectedItems={selectedPeriods}
+          styles={{
+            selectToggle: styles.observationToggle,
+            selectToggleText: styles.dropdownToggleText,
+            chipText: styles.dropdownChipText,
+            confirmText: styles.dropdownConfirmText,
+            itemText: styles.dropdownItemText
+          }}
+          colors={SELECT_COLOURS}
+          selectedIconComponent={SELECT_ICON}
+          showCancelButton
+        />
         {isLoading ? spinner : download}
       </View>
     );

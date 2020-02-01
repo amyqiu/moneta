@@ -66,8 +66,10 @@ export default class ObservationComparison extends React.Component<
     const { patient } = this.props;
     const lastPeriod = getLastObservation(patient);
     const secondLastPeriod = getSecondLastObservation(patient);
-    this.handleFirstPeriodChange([lastPeriod]);
-    this.handleSecondPeriodChange([secondLastPeriod]);
+    if (lastPeriod != null && secondLastPeriod != null) {
+      this.handleFirstPeriodChange([lastPeriod]);
+      this.handleSecondPeriodChange([secondLastPeriod]);
+    }
   }
 
   getObservation = async (observationID: string, isFirstPeriod: boolean) => {
@@ -77,6 +79,7 @@ export default class ObservationComparison extends React.Component<
         `https://vast-savannah-47684.herokuapp.com/observation/${observationID}`
       );
       if (!response.ok) {
+        console.log(response);
         throw Error(response.statusText);
       }
       const observation = await response.json();
@@ -197,6 +200,16 @@ export default class ObservationComparison extends React.Component<
 
     const trendChanges = this.calculateTrendChanges();
 
+    if (!firstObservation || !secondObservation) {
+      return (
+        <View style={styles.comparisonErrorContainer}>
+          <Text style={styles.errorComparisonText}>
+            Not enough observation periods for comparison.
+          </Text>
+        </View>
+      );
+    }
+
     return (
       <View>
         <View style={styles.observationSelect}>
@@ -249,7 +262,7 @@ export default class ObservationComparison extends React.Component<
             />
           </View>
         </View>
-        {isLoading || !firstObservation || !secondObservation ? (
+        {isLoading ? (
           <ActivityIndicator size="large" color={colours.primaryGrey} />
         ) : (
           <View pointerEvents="none">
