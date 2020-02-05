@@ -39,5 +39,11 @@ Server deployed to: https://vast-savannah-47684.herokuapp.com/
   * If on public wifi, use `expo start --tunnel`
   * Expo is on React version 59.0: https://facebook.github.io/react-native/docs/0.59/getting-started
 
+### Testing on iPad
+  * Update version number
+  * Run `expo build:ios` in client client directory and use link to download package
+  * Upload package to Transporter
+  * Can also run `expo publish` after so it is updated for Android as well
+
 ### Icons
 Logo icon is provided by Tilda Publishing: https://tilda.cc.
