@@ -191,6 +191,8 @@ exports.last_entry_time = (req, res) => {
       if (numEntries === 0) {
         return res.status(200).send(lastObservationPeriod.start_time);
       }
-      return res.status(200).send(lastObservationPeriod.entry_times[numEntries - 1]);
+
+      const lastEntry = lastObservationPeriod.entry_times.sort()[numEntries - 1];
+      return res.status(200).send(lastEntry);
     });
 };
