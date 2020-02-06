@@ -74,7 +74,7 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
             x={scaleWidth(0.45)}
             y={32}
             textAnchor="middle"
-            style={{ fontSize: RFValue(16) }}
+            style={{ fontSize: RFValue(16), fontFamily: "Arial" }}
           />
           <VictoryLabel
             text={
@@ -83,7 +83,7 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
             x={scaleWidth(0.45)}
             y={isTablet() ? 56 : 48}
             textAnchor="middle"
-            style={{ fontSize: RFValue(14) }}
+            style={{ fontSize: RFValue(14), fontFamily: "Arial" }}
           />
           <VictoryStack>
             {graphData.map(data => {
@@ -103,10 +103,12 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
             style={{
               tickLabels: {
                 fontSize: RFValue(isTablet() ? 14 : 12),
+                fontFamily: "Arial",
                 padding: isTablet() ? 6 : 2
               },
               axisLabel: {
                 fontSize: RFValue(isTablet() ? 14 : 12),
+                fontFamily: "Arial",
                 padding: isTablet() ? 24 : 12
               }
             }}
@@ -117,7 +119,9 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
               <VictoryLabel angle={-45} dx={isTablet() ? -8 : -1} />
             }
             padding={{ right: isTablet() ? 32 : 8 }}
-            style={{ tickLabels: { fontSize: RFValue(12) } }}
+            style={{
+              tickLabels: { fontSize: RFValue(12), fontFamily: "Arial" }
+            }}
             tickCount={isTablet() ? 24 : 12}
             label={isTablet() ? null : "Hour"}
           />
@@ -130,7 +134,7 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
             symbolSpacer={isTablet() ? 12 : 8}
             padding={{ bottom: 0 }}
             style={{
-              labels: { fontSize: RFValue(14) }
+              labels: { fontSize: RFValue(12), fontFamily: "Arial" }
             }}
             orientation="horizontal"
           />

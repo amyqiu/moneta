@@ -21,7 +21,7 @@ type State = {
   loadingEntryTime: boolean
 };
 
-const DATE_FORMAT = isTablet() ? "h:mmA - MMM D, YYYY" : "hh:mm MMM D, YYYY";
+const DATE_FORMAT = isTablet() ? "h:mmA - MMM D, YYYY" : "H:mm MMM D, YYYY";
 
 export default class PatientInfo extends React.Component<Props, State> {
   constructor(props: Props) {
