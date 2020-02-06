@@ -233,10 +233,10 @@ exports.getPearsonCoefficient = (x, y) => {
 };
 
 // Timezone Conversion
-function convertUTCToLocal(date) {
-  const newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-  const offset = date.getTimezoneOffset() / 60;
-  newDate.setHours(date.getHours() - offset);
+function convertUTCToEST(date) {
+  const offset = 300;
+  const newDate = new Date(date.getTime() + offset * 60 * 1000);
+  newDate.setHours(date.getHours() - offset / 60);
   return newDate;
 }
 
@@ -285,7 +285,7 @@ exports.observation_get_correlations = (req, res) => {
           const hours = []; const times = []; let timeString = '';
           for (let l = 0; l < obs.entry_times.length; l += 1) {
             if (bArray[l] === 1) {
-              const entryTime = convertUTCToLocal(obs.entry_times[l]);
+              const entryTime = convertUTCToEST(obs.entry_times[l]);
               let hour = entryTime.getHours();
               const min = entryTime.getMinutes();
               let roundedMin = Math.round(min / 30) * 30;
