@@ -232,6 +232,14 @@ exports.getPearsonCoefficient = (x, y) => {
   return sum / (n - 1);
 };
 
+// Timezone Conversion
+function convertUTCToLocal(date) {
+  const newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+  const offset = date.getTimezoneOffset() / 60;
+  newDate.setHours(date.getHours() - offset);
+  return newDate;
+}
+
 // Return top 3 correlations for each negavtive behaviour in observation period
 exports.observation_get_correlations = (req, res) => {
   Observation
@@ -277,8 +285,9 @@ exports.observation_get_correlations = (req, res) => {
           const hours = []; const times = []; let timeString = '';
           for (let l = 0; l < obs.entry_times.length; l += 1) {
             if (bArray[l] === 1) {
-              let hour = obs.entry_times[l].getHours();
-              const min = obs.entry_times[l].getMinutes();
+              const entryTime = convertUTCToLocal(obs.entry_times[l]);
+              let hour = entryTime.getHours();
+              const min = entryTime.getMinutes();
               let roundedMin = Math.round(min / 30) * 30;
               if (roundedMin === 60) {
                 roundedMin = 0;
