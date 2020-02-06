@@ -204,7 +204,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
     const lastEntryTime = navigation.getParam("lastEntryTime");
     const patient = navigation.getParam("patient");
 
-    const formattedDate = format(date, "MMM d, yyyy H:mm:ss a");
+    const formattedDate = format(date, "MMM d, yyyy h:mm:ss a");
 
     const behavourCheckboxes = [];
     BEHAVIOURS.forEach(behaviour => {
@@ -368,6 +368,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
                   mode="datetime"
                   is24Hour={false}
                   minimumDate={new Date(lastEntryTime)}
+                  date={new Date()}
                 />
               </View>
             </Card>

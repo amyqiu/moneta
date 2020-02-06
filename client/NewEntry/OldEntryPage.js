@@ -78,20 +78,22 @@ export default class OldEntryPage extends React.Component<Props, {}> {
     });
 
     const contextCheckboxes = [];
-    CONTEXTS.map(context => (
-      <CheckBox
-        title={context}
-        key={context}
-        checked={entry.contexts.includes(context)}
-        containerStyle={styles.checkBoxContainer}
-        textStyle={styles.checkBoxLabel}
-        iconType="feather"
-        checkedIcon="check-square"
-        uncheckedIcon="square"
-        checkedColor={colours.primaryGrey}
-        uncheckedColor={colours.primaryGrey}
-      />
-    ));
+    CONTEXTS.forEach(context =>
+      contextCheckboxes.push(
+        <CheckBox
+          title={context}
+          key={context}
+          checked={entry.contexts.includes(context)}
+          containerStyle={styles.checkBoxContainer}
+          textStyle={styles.checkBoxLabel}
+          iconType="feather"
+          checkedIcon="check-square"
+          uncheckedIcon="square"
+          checkedColor={colours.primaryGrey}
+          uncheckedColor={colours.primaryGrey}
+        />
+      )
+    );
 
     const customContextEntries = new Map([
       [entry.personalized_context_1_title, "Personalized Context 1"],
