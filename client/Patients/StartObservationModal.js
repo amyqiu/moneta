@@ -86,7 +86,7 @@ export default class StartObservationModal extends React.Component<
                 }}
                 value={customEntryFields[0]}
                 height={isTablet() ? 60 : 30}
-                maxLength={20}
+                maxLength={32}
               />
               <TextInput
                 style={styles.comments}
@@ -96,7 +96,7 @@ export default class StartObservationModal extends React.Component<
                 }}
                 value={customEntryFields[1]}
                 height={isTablet() ? 60 : 30}
-                maxLength={20}
+                maxLength={32}
               />
             </View>
             <Text style={styles.startModalSubHeading}>
@@ -111,7 +111,7 @@ export default class StartObservationModal extends React.Component<
                 }}
                 value={customEntryFields[2]}
                 height={isTablet() ? 60 : 30}
-                maxLength={20}
+                maxLength={32}
               />
               <TextInput
                 style={styles.comments}
@@ -121,7 +121,7 @@ export default class StartObservationModal extends React.Component<
                 }}
                 value={customEntryFields[3]}
                 height={isTablet() ? 60 : 30}
-                maxLength={20}
+                maxLength={32}
               />
             </View>
             <Text style={styles.startModalSubHeading}>Notes</Text>

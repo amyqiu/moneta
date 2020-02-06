@@ -249,21 +249,26 @@ export default class Calendar extends React.Component<Props, State> {
     const entries = <View>{existingTimesList}</View>;
 
     const legend = (
-      <VictoryLegend
-        x={24}
-        y={24}
-        data={legendData}
-        gutter={isTablet() ? 20 : 4}
-        symbolSpacer={isTablet() ? 12 : 8}
-        padding={{ bottom: 0 }}
-        style={{
-          labels: {
-            fontSize: RFValue(14),
-            fontFamily: "Arial"
-          }
-        }}
-        orientation={isTablet() ? "vertical" : "horizontal"}
-      />
+      <View
+        pointerEvents="none"
+        style={{ marginBottom: isTablet() ? 0 : -200 }}
+      >
+        <VictoryLegend
+          x={24}
+          y={24}
+          data={legendData}
+          gutter={isTablet() ? 20 : 4}
+          symbolSpacer={isTablet() ? 12 : 8}
+          padding={{ bottom: 0 }}
+          style={{
+            labels: {
+              fontSize: RFValue(14),
+              fontFamily: "Arial"
+            }
+          }}
+          orientation="vertical"
+        />
+      </View>
     );
 
     return (
