@@ -107,6 +107,13 @@ exports.patient_delete = (req, res) => {
   });
 };
 
+exports.converToEST = (date) => {
+  if (date == null) {
+    return null;
+  }
+  return new Date(date.getTime() + (-5 * 3600 * 1000));
+};
+
 exports.find_days_with_entries = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -129,10 +136,14 @@ exports.find_days_with_entries = (req, res) => {
       const obsIDs = new Set();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
-        const startMonth = period.start_time.getMonth() + 1;
-        const startYear = period.start_time.getFullYear();
-        const endMonth = (period.end_time || new Date()).getMonth() + 1;
-        const endYear = (period.end_time || new Date()).getFullYear();
+
+        const periodStart = this.converToEST(period.start_time);
+        const startMonth = periodStart.getMonth() + 1;
+        const startYear = periodStart.getFullYear();
+
+        const periodEnd = this.converToEST(period.end_time);
+        const endMonth = (periodEnd || new Date()).getMonth() + 1;
+        const endYear = (periodEnd || new Date()).getFullYear();
 
         const withinMonth = startMonth <= month && endMonth >= month;
         const withinYear = startYear <= year && endYear >= year;
@@ -155,10 +166,11 @@ exports.find_days_with_entries = (req, res) => {
           }
           for (let j = 0; j < entries.length; j += 1) {
             const entry = entries[j];
-            const entryMonth = entry.time.getMonth() + 1;
-            const entryYear = entry.time.getFullYear();
+            const entryTime = this.converToEST(entry.time);
+            const entryMonth = entryTime.getMonth() + 1;
+            const entryYear = entryTime.getFullYear();
             if (entryMonth === month && entryYear === year) {
-              entryDays.add(entry.time.getDate());
+              entryDays.add(entryTime.getDate());
             } else if ((entryYear === year && entryMonth > month)
               || (entryYear > year)) {
               break;
@@ -192,7 +204,7 @@ exports.last_entry_time = (req, res) => {
         return res.status(200).send(lastObservationPeriod.start_time);
       }
 
-      const lastEntry = lastObservationPeriod.entry_times.sort()[numEntries - 1];
+      const lastEntry = lastObservationPeriod.entry_times[numEntries - 1];
       return res.status(200).send(lastEntry);
     });
 };

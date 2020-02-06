@@ -162,6 +162,13 @@ exports.entry_find_all = (req, res) => {
   });
 };
 
+exports.converToEST = (date) => {
+  if (date == null) {
+    return null;
+  }
+  return new Date(date.getTime() + (-5 * 3600 * 1000));
+};
+
 exports.entry_find_day = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -192,10 +199,14 @@ exports.entry_find_day = (req, res) => {
       const obsLabels = new Map();
       for (let i = 0; i < patient.observation_periods.length; i += 1) {
         const period = patient.observation_periods[i];
-        const startMonth = period.start_time.getMonth() + 1;
-        const startYear = period.start_time.getFullYear();
-        const endMonth = (period.end_time || new Date()).getMonth() + 1;
-        const endYear = (period.end_time || new Date()).getFullYear();
+
+        const startTime = this.converToEST(period.start_time);
+        const startMonth = startTime.getMonth() + 1;
+        const startYear = startTime.getFullYear();
+
+        const endTime = this.converToEST(period.end_time);
+        const endMonth = (endTime || new Date()).getMonth() + 1;
+        const endYear = (endTime || new Date()).getFullYear();
 
         const withinMonth = startMonth <= month && endMonth >= month;
         const withinYear = startYear <= year && endYear >= year;
@@ -224,9 +235,10 @@ exports.entry_find_day = (req, res) => {
           }
           for (let j = 0; j < entries.length; j += 1) {
             const entry = entries[j];
-            const entryMonth = entry.time.getMonth() + 1;
-            const entryDay = entry.time.getDate();
-            const entryYear = entry.time.getFullYear();
+            const entryTime = this.converToEST(entry.time);
+            const entryMonth = entryTime.getMonth() + 1;
+            const entryDay = entryTime.getDate();
+            const entryYear = entryTime.getFullYear();
             if (entryMonth === month && entryDay === day && entryYear === year) {
               // eslint-disable-next-line
               entryArray.push({ ...obsLabels.get(entry.observation_ID), ...entry._doc });

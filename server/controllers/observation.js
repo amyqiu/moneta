@@ -139,6 +139,7 @@ exports.observation_end = (req, res) => {
     ending_notes: req.body.ending_notes,
     next_steps: req.body.next_steps,
   };
+
   Observation.findByIdAndUpdate(req.body.id, { $set: update }, (err, obs) => {
     if (err) {
       return res.status(500).send(err);
