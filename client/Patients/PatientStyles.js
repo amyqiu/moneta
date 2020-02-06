@@ -58,7 +58,8 @@ export default StyleSheet.create({
   },
   entryHeader: {
     fontSize: RFValue(16),
-    textAlign: "center"
+    textAlign: "center",
+    paddingBottom: 8
   },
   entrySeparator: {
     height: 1,

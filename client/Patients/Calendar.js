@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { FlatList, View, ScrollView, TouchableOpacity } from "react-native";
+import { FlatList, View, TouchableOpacity } from "react-native";
 import { Text } from "react-native-elements";
 import CalendarPicker from "react-native-calendar-picker";
 import { VictoryLegend } from "victory-native";
@@ -173,9 +173,11 @@ export default class Calendar extends React.Component<Props, State> {
       });
     });
 
-    const error = (
-      <Text style={styles.errorText}>Could not retrieve old entries.</Text>
-    );
+    if (isError) {
+      return (
+        <Text style={styles.errorText}>Could not retrieve old entries.</Text>
+      );
+    }
 
     const data = [];
     const formattedDay = selectedStartDate.format("LL");
@@ -226,7 +228,7 @@ export default class Calendar extends React.Component<Props, State> {
     );
 
     const calendar = (
-      <View style={{ marginBottom: -32 }}>
+      <View style={{ marginBottom: -48 }}>
         <CalendarPicker
           onDateChange={this.onDateChange}
           onMonthChange={this.onMonthChange}
@@ -239,35 +241,38 @@ export default class Calendar extends React.Component<Props, State> {
     );
 
     const legendData = [
-      { name: "today", symbol: { fill: colours.secondaryGrey } },
-      { name: "day contains entries", symbol: { fill: colours.backupGreen } },
-      { name: "selected day", symbol: { fill: colours.successGreen } }
+      { name: "Today", symbol: { fill: colours.secondaryGrey } },
+      { name: "Day contains entries", symbol: { fill: colours.backupGreen } },
+      { name: "Selected day", symbol: { fill: colours.successGreen } }
     ];
 
     const entries = <View>{existingTimesList}</View>;
 
     const legend = (
-      <View style={styles.centerContainer}>
-        <VictoryLegend
-          x={0}
-          y={0}
-          data={legendData}
-          gutter={isTablet() ? 20 : 4}
-          symbolSpacer={isTablet() ? 12 : 8}
-          padding={{ bottom: 0 }}
-          style={{
-            labels: { fontSize: RFValue(14) }
-          }}
-          orientation="horizontal"
-        />
-      </View>
+      <VictoryLegend
+        x={24}
+        y={24}
+        data={legendData}
+        gutter={isTablet() ? 20 : 4}
+        symbolSpacer={isTablet() ? 12 : 8}
+        padding={{ bottom: 0 }}
+        style={{
+          labels: {
+            fontSize: RFValue(14),
+            fontFamily: "Arial"
+          }
+        }}
+        orientation={isTablet() ? "vertical" : "horizontal"}
+      />
     );
 
     return (
-      <View style={isTablet() ? styles.tabletCalendar : {}}>
-        {isError ? error : calendar}
-        {legend}
-        {entries}
+      <View>
+        <View style={isTablet() ? styles.tabletCalendar : {}}>
+          {calendar}
+          {legend}
+        </View>
+        {data.length > 0 ? entries : null}
       </View>
     );
   }
