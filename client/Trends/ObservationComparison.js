@@ -215,7 +215,7 @@ export default class ObservationComparison extends React.Component<
         <View style={styles.observationSelect}>
           <View>
             <Text style={styles.selectText}>
-              {isTablet() ? "1st Observation Period:" : "1st Period"}
+              {isTablet() ? "1st Observation Period:" : "1st Period:"}
             </Text>
             <SectionedMultiSelect
               items={items}
@@ -239,7 +239,7 @@ export default class ObservationComparison extends React.Component<
           </View>
           <View>
             <Text style={styles.selectText}>
-              {isTablet() ? "2nd Observation Period:" : "2nd Period"}
+              {isTablet() ? "2nd Observation Period:" : "2nd Period:"}
             </Text>
             <SectionedMultiSelect
               items={items}
@@ -299,10 +299,12 @@ export default class ObservationComparison extends React.Component<
                 style={{
                   tickLabels: {
                     fontSize: RFValue(isTablet() ? 14 : 12),
+                    fontFamily: "Arial",
                     padding: isTablet() ? 6 : 2
                   },
                   axisLabel: {
                     fontSize: RFValue(isTablet() ? 14 : 12),
+                    fontFamily: "Arial",
                     padding: isTablet() ? 24 : 12
                   }
                 }}
@@ -313,7 +315,8 @@ export default class ObservationComparison extends React.Component<
                 tickFormat={t => t.split(" ").filter(c => c !== "-")}
                 style={{
                   tickLabels: {
-                    fontSize: RFValue(12),
+                    fontSize: RFValue(11),
+                    fontFamily: "Arial",
                     angle: isTablet() ? 0 : -90
                   }
                 }}
@@ -326,7 +329,9 @@ export default class ObservationComparison extends React.Component<
                 itemsPerRow={isTablet() ? 2 : 1}
                 symbolSpacer={isTablet() ? 12 : 8}
                 padding={{ bottom: 0 }}
-                style={{ labels: { fontSize: RFValue(14) } }}
+                style={{
+                  labels: { fontSize: RFValue(14), fontFamily: "Arial" }
+                }}
                 orientation="horizontal"
               />
             </VictoryChart>
