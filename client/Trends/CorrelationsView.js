@@ -123,10 +123,6 @@ export default class CorrelationsView extends React.Component<Props, State> {
   };
 
   renderCarouselItem = ({ item }: { item: string }) => {
-    if (item.includes("Sleeping") || item.includes("Awake")) {
-      return null;
-    }
-
     const { observation } = this.state;
     const { processedBehaviours, totalOccurrences, correlations } = this.state;
     if (
@@ -276,11 +272,26 @@ export default class CorrelationsView extends React.Component<Props, State> {
         ) : (
           <View style={{ marginBottom: 4 }}>
             <Carousel
-              data={Array.from(processedBehaviours.keys()).sort(
-                (a, b) =>
-                  (processedBehaviours.get(b) || 0) -
-                  (processedBehaviours.get(a) || 0)
-              )}
+              data={Array.from(processedBehaviours.keys())
+                .sort(
+                  (a, b) =>
+                    (processedBehaviours.get(b) || 0) -
+                    (processedBehaviours.get(a) || 0)
+                )
+                .filter(item => {
+                  let itemLabel = item;
+                  if (item === "Personalized Behaviour 1") {
+                    itemLabel = observation.personalized_behaviour_1_title;
+                  } else if (item === "Personalized Behaviour 2") {
+                    itemLabel = observation.personalized_behaviour_2_title;
+                  }
+
+                  const correlation = correlations.get(itemLabel);
+                  if (correlation == null) {
+                    return false;
+                  }
+                  return true;
+                })}
               renderItem={this.renderCarouselItem}
               sliderWidth={isTablet() ? scaleWidth(0.92) : scaleWidth(0.82)}
               itemWidth={isTablet() ? 480 : 250}
