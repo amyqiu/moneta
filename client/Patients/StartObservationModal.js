@@ -77,49 +77,53 @@ export default class StartObservationModal extends React.Component<
             <Text style={styles.startModalSubHeading}>
               Add optional custom behaviour fields
             </Text>
-            <TextInput
-              style={styles.comments}
-              onChangeText={notes => {
-                customEntryFields[0] = notes;
-                this.setState({ customEntryFields });
-              }}
-              value={customEntryFields[0]}
-              multiline
-              height={isTablet() ? 80 : 40}
-            />
-            <TextInput
-              style={styles.comments}
-              onChangeText={notes => {
-                customEntryFields[1] = notes;
-                this.setState({ customEntryFields });
-              }}
-              value={customEntryFields[1]}
-              multiline
-              height={isTablet() ? 80 : 40}
-            />
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <TextInput
+                style={styles.comments}
+                onChangeText={notes => {
+                  customEntryFields[0] = notes;
+                  this.setState({ customEntryFields });
+                }}
+                value={customEntryFields[0]}
+                height={isTablet() ? 60 : 30}
+                maxLength={20}
+              />
+              <TextInput
+                style={styles.comments}
+                onChangeText={notes => {
+                  customEntryFields[1] = notes;
+                  this.setState({ customEntryFields });
+                }}
+                value={customEntryFields[1]}
+                height={isTablet() ? 60 : 30}
+                maxLength={20}
+              />
+            </View>
             <Text style={styles.startModalSubHeading}>
               Add optional custom context fields
             </Text>
-            <TextInput
-              style={styles.comments}
-              onChangeText={notes => {
-                customEntryFields[2] = notes;
-                this.setState({ customEntryFields });
-              }}
-              value={customEntryFields[2]}
-              multiline
-              height={isTablet() ? 80 : 40}
-            />
-            <TextInput
-              style={styles.comments}
-              onChangeText={notes => {
-                customEntryFields[3] = notes;
-                this.setState({ customEntryFields });
-              }}
-              value={customEntryFields[3]}
-              multiline
-              height={isTablet() ? 80 : 40}
-            />
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <TextInput
+                style={styles.comments}
+                onChangeText={notes => {
+                  customEntryFields[2] = notes;
+                  this.setState({ customEntryFields });
+                }}
+                value={customEntryFields[2]}
+                height={isTablet() ? 60 : 30}
+                maxLength={20}
+              />
+              <TextInput
+                style={styles.comments}
+                onChangeText={notes => {
+                  customEntryFields[3] = notes;
+                  this.setState({ customEntryFields });
+                }}
+                value={customEntryFields[3]}
+                height={isTablet() ? 60 : 30}
+                maxLength={20}
+              />
+            </View>
             <Text style={styles.startModalSubHeading}>Notes</Text>
             <TextInput
               style={styles.comments}

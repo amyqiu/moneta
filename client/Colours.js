@@ -7,9 +7,9 @@ const colours = {
   link: "#0000EE",
   disabled: "#919191",
   successGreen: "#28A144",
+  backupGreen: "#b6debf",
   warningOrange: "#CF7911",
   errorRed: "#B80D0D",
-  actionBlue: "#3272D9",
   compareRed: "#FA4D56",
   compareBlue: "#4589ff"
 };

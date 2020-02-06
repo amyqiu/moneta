@@ -3,11 +3,14 @@ import React from "react";
 import { FlatList, View, ScrollView, TouchableOpacity } from "react-native";
 import { Text } from "react-native-elements";
 import CalendarPicker from "react-native-calendar-picker";
+import { VictoryLegend } from "victory-native";
 import moment from "moment";
+import { RFValue } from "react-native-responsive-fontsize";
 import styles from "./PatientStyles";
 import type { Patient } from "./Patient";
 import type { Entry } from "../NewEntry/Entry";
 import { scaleWidth, isTablet } from "../Helpers";
+import colours from "../Colours";
 
 type Props = {
   patient: Patient,
@@ -166,7 +169,7 @@ export default class Calendar extends React.Component<Props, State> {
           month: selectedStartDate.month(),
           date: day
         }),
-        style: { backgroundColor: "#ccffee" }
+        style: { backgroundColor: colours.backupGreen }
       });
     });
 
@@ -199,6 +202,8 @@ export default class Calendar extends React.Component<Props, State> {
       <FlatList
         key="data"
         data={data}
+        horizontal={false}
+        numColumns={isTablet() ? 3 : 2}
         ItemSeparatorComponent={() => <View style={styles.entrySeparator} />}
         ListHeaderComponent={() => (
           <Text style={styles.entryHeader} key={formattedDay}>
@@ -207,6 +212,7 @@ export default class Calendar extends React.Component<Props, State> {
         )}
         renderItem={({ item }) => (
           <TouchableOpacity
+            style={styles.entryItem}
             onPress={
               item.isEntry
                 ? () => this.navigateOldEntry(item.entryData)
@@ -225,20 +231,42 @@ export default class Calendar extends React.Component<Props, State> {
           onDateChange={this.onDateChange}
           onMonthChange={this.onMonthChange}
           customDatesStyles={customDatesStyles}
+          selectedDayColor={colours.successGreen}
+          todayBackgroundColor={colours.secondaryGrey}
           width={scaleWidth(isTablet() ? 0.64 : 0.9)}
         />
       </View>
     );
 
-    const entries = (
-      <View>
-        <ScrollView style={{ flexGrow: 0 }}>{existingTimesList}</ScrollView>
+    const legendData = [
+      { name: "today", symbol: { fill: colours.secondaryGrey } },
+      { name: "day contains entries", symbol: { fill: colours.backupGreen } },
+      { name: "selected day", symbol: { fill: colours.successGreen } }
+    ];
+
+    const entries = <View>{existingTimesList}</View>;
+
+    const legend = (
+      <View style={styles.centerContainer}>
+        <VictoryLegend
+          x={0}
+          y={0}
+          data={legendData}
+          gutter={isTablet() ? 20 : 4}
+          symbolSpacer={isTablet() ? 12 : 8}
+          padding={{ bottom: 0 }}
+          style={{
+            labels: { fontSize: RFValue(14) }
+          }}
+          orientation="horizontal"
+        />
       </View>
     );
 
     return (
       <View style={isTablet() ? styles.tabletCalendar : {}}>
         {isError ? error : calendar}
+        {legend}
         {entries}
       </View>
     );

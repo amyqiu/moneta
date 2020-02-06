@@ -37,13 +37,15 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
     } = this.props;
 
     const legendData = [];
-    BEHAVIOURS.forEach(behaviour => {
-      if (selectedBehaviours.has(behaviour.label)) {
-        legendData.push({
-          name: behaviour.label,
-          symbol: { fill: behaviour.color }
-        });
-      }
+    selectedBehaviours.forEach(behaviour => {
+      legendData.push({
+        name: behaviour,
+        symbol: {
+          fill: BEHAVIOURS.get(behaviour)
+            ? BEHAVIOURS.get(behaviour).color
+            : "#00008b"
+        }
+      });
     });
 
     const width = scaleWidth(0.95);
