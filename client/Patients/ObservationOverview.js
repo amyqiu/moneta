@@ -1,7 +1,7 @@
 // @flow
 import * as React from "react";
 import { View, ScrollView } from "react-native";
-import { Card, Text } from "react-native-elements";
+import { Card, Text, CheckBox } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import Icon from "react-native-vector-icons/Ionicons";
 import navigationStyles from "../NavigationStyles";
@@ -9,6 +9,7 @@ import ObservationCheckBox from "./ObservationCheckBox";
 import ObservationSummaryTable from "./ObservationSummaryTable";
 import styles from "./PatientStyles";
 import colours from "../Colours";
+import { STARTING_REASONS } from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -69,6 +70,7 @@ export default class ObservationOverview extends React.Component<Props, State> {
     if (observationData == null) {
       return null;
     }
+    const observationReasons = new Set(observationData.reasons);
 
     return (
       <View style={styles.background}>
@@ -84,6 +86,26 @@ export default class ObservationOverview extends React.Component<Props, State> {
               observationID={observationId}
               observationData={observationData}
             />
+          </Card>
+          <Card containerStyle={{ borderRadius: 4 }}>
+            <View>
+              <Text h4>Starting Reasons</Text>
+              {STARTING_REASONS.map(reason => (
+                <CheckBox
+                  title={reason}
+                  key={reason}
+                  checked={observationReasons.has(reason)}
+                  onPress={() => {}}
+                  containerStyle={styles.checkBoxContainer}
+                  textStyle={styles.checkBoxLabel}
+                  iconType="feather"
+                  checkedIcon="check-square"
+                  uncheckedIcon="square"
+                  checkedColor={colours.primaryGrey}
+                  uncheckedColor={colours.primaryGrey}
+                />
+              ))}
+            </View>
           </Card>
           <Card containerStyle={{ borderRadius: 4 }}>
             <ObservationCheckBox

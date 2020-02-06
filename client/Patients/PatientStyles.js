@@ -52,17 +52,23 @@ export default StyleSheet.create({
     fontSize: RFValue(14),
     color: colours.link,
     textAlign: "center",
-    paddingBottom: 2
+    paddingBottom: 2,
+    justifyContent: "center",
+    alignItems: "center"
   },
   entryHeader: {
     fontSize: RFValue(16),
-    textAlign: "center",
-    paddingBottom: 4
+    textAlign: "center"
   },
   entrySeparator: {
     height: 1,
     width: "100%",
     backgroundColor: colours.secondaryGrey
+  },
+  entryItem: {
+    flex: 1,
+    flexDirection: "column",
+    margin: 1
   },
   errorText: {
     fontSize: RFValue(16),
@@ -156,10 +162,11 @@ export default StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colours.white,
     textAlignVertical: "top",
-    fontSize: RFValue(14)
+    fontSize: RFValue(14),
+    flex: 1
   },
   modalButton: {
-    backgroundColor: colours.actionBlue,
+    backgroundColor: colours.link,
     paddingVertical: 8,
     paddingHorizontal: 14
   },
@@ -283,8 +290,16 @@ export default StyleSheet.create({
     paddingBottom: 12
   },
   downloadLink: {
-    color: colours.actionBlue,
+    color: colours.link,
     fontSize: RFValue(16),
     textDecorationLine: "underline"
+  },
+  warning: {
+    color: colours.white,
+    fontWeight: "normal",
+    fontSize: RFValue(18),
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+    textAlign: "center"
   }
 });
