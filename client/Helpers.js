@@ -66,15 +66,15 @@ export function parseRawPatient(rawPatient: Object) {
 
 export function getLastObservation(patient: Patient) {
   const observationCount = patient.observations.length;
-  return observationCount > 0
-    ? patient.observations[observationCount - 1]._id
+  return observationCount > 1
+    ? patient.observations[observationCount - 2]._id
     : null;
 }
 
 export function getSecondLastObservation(patient: Patient) {
   const observationCount = patient.observations.length;
-  return observationCount > 1
-    ? patient.observations[observationCount - 2]._id
+  return observationCount > 0
+    ? patient.observations[observationCount - 1]._id
     : null;
 }
 
