@@ -201,6 +201,9 @@ export default class ObservationComparison extends React.Component<
     const trendChanges = this.calculateTrendChanges();
 
     if (!firstObservation || !secondObservation) {
+      if (isLoading) {
+        return <ActivityIndicator size="large" color={colours.primaryGrey} />;
+      }
       return (
         <View style={styles.comparisonErrorContainer}>
           <Text style={styles.errorComparisonText}>
