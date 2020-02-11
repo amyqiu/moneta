@@ -28,7 +28,7 @@ export default StyleSheet.create({
     marginBottom: 10
   },
   textInput: {
-    height: 50,
+    height: isTablet() ? 50 : 30,
     fontSize: RFValue(14),
     borderColor: colours.primaryGrey,
     borderBottomWidth: StyleSheet.hairlineWidth

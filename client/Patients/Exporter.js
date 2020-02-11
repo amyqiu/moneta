@@ -8,7 +8,7 @@ import colours from "../Colours";
 import type { Patient } from "./Patient";
 import styles from "./PatientStyles";
 import {
-  getSecondLastObservation,
+  getLastObservation,
   createDropdownPeriods,
   SELECT_COLOURS,
   SELECT_ICON
@@ -27,7 +27,7 @@ type State = {
 export default class Exporter extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getSecondLastObservation(props.patient);
+    const lastObservation = getLastObservation(props.patient);
     this.state = {
       isLoading: false,
       selectedPeriods: lastObservation ? [lastObservation] : [],
@@ -145,7 +145,11 @@ export default class Exporter extends React.Component<Props, State> {
           onSelectedItemsChange={this.handleObservationChange}
           selectedItems={selectedPeriods}
           styles={{
-            selectToggle: styles.observationToggle,
+            selectToggle: {
+              ...styles.observationToggle,
+              borderColor: colours.actionBlue,
+              borderWidth: 2
+            },
             selectToggleText: styles.dropdownToggleText,
             chipText: styles.dropdownChipText,
             confirmText: styles.dropdownConfirmText,

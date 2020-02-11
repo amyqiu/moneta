@@ -18,11 +18,7 @@ import CollapsibleCard from "./CollapsibleCard";
 import Exporter from "./Exporter";
 import type { Patient } from "./Patient";
 import ObservationComparison from "../Trends/ObservationComparison";
-import {
-  parseRawPatient,
-  getSecondLastObservation,
-  isTablet
-} from "../Helpers";
+import { parseRawPatient, getLastObservation, isTablet } from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -169,7 +165,7 @@ export default class PatientPage extends React.Component<Props, State> {
   handleEndObservation = (nextSteps: Set<string>, endingNotes: string) => {
     this.setState({ loadingObservation: true });
     const { patient } = this.state;
-    const observationID = getSecondLastObservation(patient);
+    const observationID = getLastObservation(patient);
     const data = JSON.stringify({
       id: observationID,
       patient_ID: patient.id,
@@ -208,7 +204,7 @@ export default class PatientPage extends React.Component<Props, State> {
       endObservationModal,
       patient
     } = this.state;
-    const observationID = getSecondLastObservation(patient);
+    const observationID = getLastObservation(patient);
 
     const observationTitle = patient.inObservation
       ? "End Observation"

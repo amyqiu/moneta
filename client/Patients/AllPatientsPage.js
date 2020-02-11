@@ -130,17 +130,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
 
   static navigationOptions = {
     ...navigationStyles,
-    title: "Residents",
-    headerRight: (
-      <Button
-        buttonStyle={styles.headerButton}
-        containerStyle={styles.headerContainer}
-        title="Add Resident"
-        titleProps={{
-          style: styles.headerButtonTitle
-        }}
-      />
-    )
+    title: "Residents"
   };
 
   render() {

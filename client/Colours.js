@@ -1,17 +1,18 @@
 const colours = {
   white: "#ffffff",
   black: "#000000",
-  primaryGrey: "#393939",
-  secondaryGrey: "#c4c4c4",
-  backgroundGrey: "#e4e4e4",
+  primaryGrey: "#3A3A3C",
+  secondaryGrey: "#AEAEB2",
+  backgroundGrey: "#E5E5EA",
   link: "#0000EE",
-  disabled: "#919191",
+  disabled: "#8E8E93",
   successGreen: "#28A144",
-  backupGreen: "#b6debf",
+  backupBlue: "#5AC8FA",
   warningOrange: "#CF7911",
   errorRed: "#B80D0D",
-  compareRed: "#FA4D56",
-  compareBlue: "#4589ff"
+  compareRed: "#FF3B30",
+  compareBlue: "#5856D6",
+  actionBlue: "#007AFF"
 };
 
 export default colours;

@@ -12,7 +12,7 @@ import styles from "./PatientStyles";
 import colours from "../Colours";
 import {
   isTablet,
-  getSecondLastObservation,
+  getLastObservation,
   createDropdownPeriods,
   createDropdownBehaviours,
   SELECT_COLOURS,
@@ -35,7 +35,7 @@ type State = {
 export default class EndObservationModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getSecondLastObservation(props.patient);
+    const lastObservation = getLastObservation(props.patient);
     this.state = {
       isLoading: false,
       selectedBehaviours: [...BEHAVIOURS.keys()],
@@ -202,7 +202,9 @@ export default class EndObservationModal extends React.Component<Props, State> {
 
     const behaviourSelectStyle = {
       ...styles.observationToggle,
-      width: isTablet() ? 420 : 180
+      width: isTablet() ? 420 : 180,
+      borderColor: colours.actionBlue,
+      borderWidth: 2
     };
 
     const data =
@@ -264,7 +266,11 @@ export default class EndObservationModal extends React.Component<Props, State> {
             onSelectedItemsChange={this.handleObservationChange}
             selectedItems={selectedPeriods}
             styles={{
-              selectToggle: styles.observationToggle,
+              selectToggle: {
+                ...styles.observationToggle,
+                borderColor: colours.actionBlue,
+                borderWidth: 2
+              },
               selectToggleText: styles.dropdownToggleText,
               chipText: styles.dropdownChipText,
               confirmText: styles.dropdownConfirmText,

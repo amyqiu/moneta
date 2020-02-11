@@ -105,7 +105,7 @@ export default class ObservationSummaryTable extends React.Component<
     }
 
     const startDate = moment(observationData.start_time);
-    const daysPassed = moment().diff(startDate, "days");
+    const daysPassed = Math.round(moment().diff(startDate, "days", true));
     const tableData = this.generateTableData(observationData, daysPassed);
 
     return (

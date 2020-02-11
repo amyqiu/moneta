@@ -175,7 +175,7 @@ export default class Calendar extends React.Component<Props, State> {
           month: selectedStartDate.month(),
           date: day
         }),
-        style: { backgroundColor: colours.backupGreen }
+        style: { backgroundColor: colours.backupBlue }
       });
     });
 
@@ -196,7 +196,7 @@ export default class Calendar extends React.Component<Props, State> {
       });
     });
     entryTimes.forEach(entry => {
-      const time = moment(entry.time).format("HH:mm A");
+      const time = moment(entry.time).format("h:mm A");
       data.push({
         key: entry.time,
         isEntry: true,
@@ -239,7 +239,7 @@ export default class Calendar extends React.Component<Props, State> {
           onDateChange={this.onDateChange}
           onMonthChange={this.onMonthChange}
           customDatesStyles={customDatesStyles}
-          selectedDayColor={colours.successGreen}
+          selectedDayColor={colours.actionBlue}
           todayBackgroundColor={colours.secondaryGrey}
           width={scaleWidth(isTablet() ? 0.64 : 0.9)}
         />
@@ -248,8 +248,8 @@ export default class Calendar extends React.Component<Props, State> {
 
     const legendData = [
       { name: "Today", symbol: { fill: colours.secondaryGrey } },
-      { name: "Day contains entries", symbol: { fill: colours.backupGreen } },
-      { name: "Selected day", symbol: { fill: colours.successGreen } }
+      { name: "Day contains entries", symbol: { fill: colours.backupBlue } },
+      { name: "Selected day", symbol: { fill: colours.actionBlue } }
     ];
 
     const entries = <View>{existingTimesList}</View>;
