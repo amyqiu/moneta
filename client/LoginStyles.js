@@ -11,8 +11,8 @@ export default StyleSheet.create({
     justifyContent: "center"
   },
   logo: {
-    width: "50%",
-    height: "50%",
+    width: "30%",
+    height: "30%",
     resizeMode: "center"
   },
   form: {
