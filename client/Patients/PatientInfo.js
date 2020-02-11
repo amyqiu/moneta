@@ -146,11 +146,7 @@ export default class PatientInfo extends React.Component<Props, State> {
     );
 
     const name = (
-      <Text
-        h4
-        style={{ paddingBottom: 4, fontWeight: "bold" }}
-        onPress={onNavigatePatient}
-      >
+      <Text h3 style={{ paddingBottom: 4 }} onPress={onNavigatePatient}>
         {patient.name}
       </Text>
     );

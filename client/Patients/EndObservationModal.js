@@ -1,6 +1,11 @@
 // @flow
 import * as React from "react";
-import { View, TextInput, ScrollView } from "react-native";
+import {
+  KeyboardAvoidingView,
+  View,
+  TextInput,
+  ScrollView
+} from "react-native";
 import { Button, Text } from "react-native-elements";
 import Modal from "react-native-modal";
 import ObservationCheckBox from "./ObservationCheckBox";
@@ -42,15 +47,19 @@ export default class EndObservationModal extends React.Component<Props, State> {
     this.setState({ nextSteps });
   };
 
+  handleEndObservation = () => {
+    const { nextSteps, endingNotes } = this.state;
+    const { endObservation } = this.props;
+    endObservation(nextSteps, endingNotes);
+    this.setState({
+      nextSteps: new Set(),
+      endingNotes: ""
+    });
+  };
+
   render() {
     const { nextSteps, endingNotes } = this.state;
-    const {
-      patientName,
-      isVisible,
-      closeModal,
-      endObservation,
-      observationID
-    } = this.props;
+    const { patientName, isVisible, closeModal, observationID } = this.props;
     if (observationID == null) {
       // Should never be this state bc "End Observation" button will not show
       return null;
@@ -59,48 +68,50 @@ export default class EndObservationModal extends React.Component<Props, State> {
     const message = `End observation for ${patientName}?`;
     return (
       <Modal isVisible={isVisible} onBackdropPress={closeModal}>
-        <ScrollView style={styles.modalContainer}>
-          <View style={styles.endModalView}>
-            <Text style={styles.modalHeading}>{message}</Text>
-            <ObservationSummaryTable
-              observationData={null}
-              observationID={observationID}
-            />
-            <ObservationCheckBox
-              nextSteps={nextSteps}
-              handleNextStepChecked={this.handleNextStepChecked}
-            />
-            <Text
-              style={{
-                ...styles.modalSubHeading,
-                ...{ paddingTop: 12, paddingBottom: 8 }
-              }}
-            >
-              Notes
-            </Text>
-            <TextInput
-              style={styles.comments}
-              onChangeText={notes => this.setState({ endingNotes: notes })}
-              value={endingNotes}
-              multiline
-              height={isTablet() ? 200 : 100}
-            />
-            <View style={styles.observationModalButtons}>
-              <Button
-                onPress={closeModal}
-                title="Cancel"
-                buttonStyle={styles.modalCancelButton}
-                titleProps={{ style: styles.modalButtonTitle }}
+        <KeyboardAvoidingView behavior="position">
+          <ScrollView style={styles.modalContainer}>
+            <View style={styles.endModalView}>
+              <Text style={styles.modalHeading}>{message}</Text>
+              <ObservationSummaryTable
+                observationData={null}
+                observationID={observationID}
               />
-              <Button
-                onPress={() => endObservation(nextSteps, endingNotes)}
-                title="End Observation"
-                buttonStyle={styles.modalButton}
-                titleProps={{ style: styles.modalButtonTitle }}
+              <ObservationCheckBox
+                nextSteps={nextSteps}
+                handleNextStepChecked={this.handleNextStepChecked}
               />
+              <Text
+                style={{
+                  ...styles.modalSubHeading,
+                  ...{ paddingTop: 12, paddingBottom: 8 }
+                }}
+              >
+                Notes
+              </Text>
+              <TextInput
+                style={styles.comments}
+                onChangeText={notes => this.setState({ endingNotes: notes })}
+                value={endingNotes}
+                multiline
+                height={isTablet() ? 200 : 100}
+              />
+              <View style={styles.observationModalButtons}>
+                <Button
+                  onPress={closeModal}
+                  title="Cancel"
+                  buttonStyle={styles.modalCancelButton}
+                  titleProps={{ style: styles.modalButtonTitle }}
+                />
+                <Button
+                  onPress={this.handleEndObservation}
+                  title="End Observation"
+                  buttonStyle={styles.modalButton}
+                  titleProps={{ style: styles.modalButtonTitle }}
+                />
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Modal>
     );
   }

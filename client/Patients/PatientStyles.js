@@ -22,7 +22,7 @@ export default StyleSheet.create({
     paddingRight: 10
   },
   smallButton: {
-    backgroundColor: colours.primaryGrey,
+    backgroundColor: colours.actionBlue,
     paddingVertical: 8,
     paddingHorizontal: 14
   },
@@ -50,7 +50,7 @@ export default StyleSheet.create({
   },
   entryLink: {
     fontSize: RFValue(14),
-    color: colours.link,
+    color: colours.actionBlue,
     textAlign: "center",
     paddingBottom: 2,
     justifyContent: "center",
@@ -167,7 +167,7 @@ export default StyleSheet.create({
     flex: 1
   },
   modalButton: {
-    backgroundColor: colours.link,
+    backgroundColor: colours.actionBlue,
     paddingVertical: 8,
     paddingHorizontal: 14
   },
@@ -255,7 +255,7 @@ export default StyleSheet.create({
   },
   behaviourCard: {
     borderWidth: 1,
-    borderColor: colours.black,
+    borderColor: colours.primaryGrey,
     paddingVertical: 12,
     backgroundColor: colours.white,
     paddingHorizontal: 12,
@@ -291,7 +291,7 @@ export default StyleSheet.create({
     paddingBottom: 12
   },
   downloadLink: {
-    color: colours.link,
+    color: colours.actionBlue,
     fontSize: RFValue(16),
     textDecorationLine: "underline"
   },

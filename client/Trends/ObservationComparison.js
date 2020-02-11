@@ -49,8 +49,8 @@ export default class ObservationComparison extends React.Component<
 > {
   constructor(props: Props) {
     super(props);
-    const lastPeriod = getLastObservation(props.patient);
-    const secondLastPeriod = getSecondLastObservation(props.patient);
+    const lastPeriod = getSecondLastObservation(props.patient);
+    const secondLastPeriod = getLastObservation(props.patient);
     this.state = {
       firstSelectedPeriod: [lastPeriod],
       secondSelectedPeriod: [secondLastPeriod],
@@ -64,8 +64,8 @@ export default class ObservationComparison extends React.Component<
 
   async componentDidMount() {
     const { patient } = this.props;
-    const lastPeriod = getLastObservation(patient);
-    const secondLastPeriod = getSecondLastObservation(patient);
+    const lastPeriod = getSecondLastObservation(patient);
+    const secondLastPeriod = getLastObservation(patient);
     if (lastPeriod != null && secondLastPeriod != null) {
       this.handleFirstPeriodChange([lastPeriod]);
       this.handleSecondPeriodChange([secondLastPeriod]);
