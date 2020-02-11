@@ -8,7 +8,7 @@ import colours from "../Colours";
 import type { Patient } from "./Patient";
 import styles from "./PatientStyles";
 import {
-  getLastObservation,
+  getSecondLastObservation,
   createDropdownPeriods,
   SELECT_COLOURS,
   SELECT_ICON
@@ -27,7 +27,7 @@ type State = {
 export default class Exporter extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getLastObservation(props.patient);
+    const lastObservation = getSecondLastObservation(props.patient);
     this.state = {
       isLoading: false,
       selectedPeriods: lastObservation ? [lastObservation] : [],

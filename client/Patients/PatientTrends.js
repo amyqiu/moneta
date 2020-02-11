@@ -12,7 +12,7 @@ import styles from "./PatientStyles";
 import colours from "../Colours";
 import {
   isTablet,
-  getLastObservation,
+  getSecondLastObservation,
   createDropdownPeriods,
   createDropdownBehaviours,
   SELECT_COLOURS,
@@ -35,7 +35,7 @@ type State = {
 export default class EndObservationModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getLastObservation(props.patient);
+    const lastObservation = getSecondLastObservation(props.patient);
     this.state = {
       isLoading: false,
       selectedBehaviours: [...BEHAVIOURS.keys()],
