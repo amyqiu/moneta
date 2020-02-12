@@ -5,8 +5,7 @@ import colours from "../Colours";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: colours.backgroundGrey,
-    paddingBottom: 12
+    backgroundColor: colours.backgroundGrey
   },
   checkBoxContainer: {
     backgroundColor: colours.white,
@@ -31,6 +30,7 @@ export default StyleSheet.create({
   submitContainer: {
     paddingTop: 16,
     paddingRight: 16,
+    paddingBottom: 12,
     alignItems: "flex-end"
   },
   submitButton: {

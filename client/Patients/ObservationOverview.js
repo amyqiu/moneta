@@ -81,54 +81,56 @@ export default class ObservationOverview extends React.Component<Props, State> {
           </Text>
         </View>
         <ScrollView style={{ marginBottom: 12 }}>
-          <Card containerStyle={styles.card}>
-            <ObservationSummaryTable
-              observationID={observationId}
-              observationData={observationData}
-            />
-          </Card>
-          <Card containerStyle={styles.card}>
-            <View>
-              <Text style={styles.h4Text}>Starting Reasons</Text>
-              {STARTING_REASONS.map(reason => (
-                <CheckBox
-                  title={reason}
-                  key={reason}
-                  checked={observationReasons.has(reason)}
-                  onPress={() => {}}
-                  containerStyle={styles.checkBoxContainer}
-                  textStyle={styles.checkBoxLabel}
-                  iconType="feather"
-                  checkedIcon="check-square"
-                  uncheckedIcon="square"
-                  checkedColor={colours.primaryGrey}
-                  uncheckedColor={colours.primaryGrey}
-                />
-              ))}
-            </View>
-          </Card>
-          <Card containerStyle={styles.card}>
-            <ObservationCheckBox
-              nextSteps={new Set(observationData.next_steps)}
-              handleNextStepChecked={() => {}}
-            />
-          </Card>
-          <Card containerStyle={styles.card}>
-            <View>
-              <Text style={styles.h4Text}>Starting Notes</Text>
-              <Text style={styles.notesText}>
-                {observationData.starting_notes}
-              </Text>
-            </View>
-          </Card>
-          <Card containerStyle={styles.card}>
-            <View>
-              <Text style={styles.h4Text}>Ending Notes</Text>
-              <Text style={styles.notesText}>
-                {observationData.ending_notes}
-              </Text>
-            </View>
-          </Card>
+          <View style={{ paddingBottom: 12 }}>
+            <Card containerStyle={styles.card}>
+              <ObservationSummaryTable
+                observationID={observationId}
+                observationData={observationData}
+              />
+            </Card>
+            <Card containerStyle={styles.card}>
+              <View>
+                <Text style={styles.h4Text}>Starting Reasons</Text>
+                {STARTING_REASONS.map(reason => (
+                  <CheckBox
+                    title={reason}
+                    key={reason}
+                    checked={observationReasons.has(reason)}
+                    onPress={() => {}}
+                    containerStyle={styles.checkBoxContainer}
+                    textStyle={styles.checkBoxLabel}
+                    iconType="feather"
+                    checkedIcon="check-square"
+                    uncheckedIcon="square"
+                    checkedColor={colours.primaryGrey}
+                    uncheckedColor={colours.primaryGrey}
+                  />
+                ))}
+              </View>
+            </Card>
+            <Card containerStyle={styles.card}>
+              <ObservationCheckBox
+                nextSteps={new Set(observationData.next_steps)}
+                handleNextStepChecked={() => {}}
+              />
+            </Card>
+            <Card containerStyle={styles.card}>
+              <View>
+                <Text style={styles.h4Text}>Starting Notes</Text>
+                <Text style={styles.notesText}>
+                  {observationData.starting_notes}
+                </Text>
+              </View>
+            </Card>
+            <Card containerStyle={styles.card}>
+              <View>
+                <Text style={styles.h4Text}>Ending Notes</Text>
+                <Text style={styles.notesText}>
+                  {observationData.ending_notes}
+                </Text>
+              </View>
+            </Card>
+          </View>
         </ScrollView>
       </View>
     );
