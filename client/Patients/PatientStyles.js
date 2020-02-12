@@ -400,5 +400,16 @@ export default StyleSheet.create({
     shadowOpacity: 0.24,
     shadowRadius: 4.8,
     elevation: 6
+  },
+  searchContainer: {
+    backgroundColor: colours.white,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   }
 });

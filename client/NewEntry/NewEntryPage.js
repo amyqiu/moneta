@@ -301,8 +301,8 @@ export default class NewEntryPage extends React.Component<Props, State> {
 
     return (
       <KeyboardAvoidingView behavior="position" style={styles.background}>
-        <ScrollView style={{ marginBottom: 12 }}>
-          <View>
+        <ScrollView>
+          <View style={{ paddingBottom: 12 }}>
             <Card containerStyle={styles.cardStyle}>
               <View>
                 <Text style={styles.h4Text}>Behaviours Observed</Text>
