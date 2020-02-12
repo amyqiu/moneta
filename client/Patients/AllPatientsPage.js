@@ -125,7 +125,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
       );
     });
 
-    return patientBubbles;
+    return <View style={{ paddingBottom: 12 }}>{patientBubbles}</View>;
   };
 
   static navigationOptions = {
@@ -163,13 +163,13 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           placeholderTextColor={colours.black}
           onChangeText={this.updateSearch}
           value={search}
-          containerStyle={{ backgroundColor: colours.white }}
+          containerStyle={styles.searchContainer}
           inputContainerStyle={{ backgroundColor: colours.white }}
           inputStyle={styles.searchInput}
           searchIcon={searchIcon}
           clearIcon={null}
         />
-        <ScrollView style={{ marginBottom: 12 }}>
+        <ScrollView>
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={this.onRefresh}

@@ -80,7 +80,7 @@ export default class ObservationOverview extends React.Component<Props, State> {
             page.
           </Text>
         </View>
-        <ScrollView style={{ marginBottom: 12 }}>
+        <ScrollView>
           <View style={{ paddingBottom: 12 }}>
             <Card containerStyle={styles.card}>
               <ObservationSummaryTable

@@ -239,50 +239,54 @@ export default class PatientPage extends React.Component<Props, State> {
           endObservation={this.handleEndObservation}
           observationID={observationID}
         />
-        <ScrollView style={{ marginBottom: 12 }}>
-          <PatientInfo
-            patient={patient}
-            onNavigatePatient={null}
-            extraButton={null}
-            onAddEntry={this.handleNewEntry}
-            observationButton={observationButton}
-          />
-          <CollapsibleCard
-            startExpanded={false}
-            title="Export"
-            iconName="ios-arrow-round-down"
-          >
-            <Exporter patient={patient} />
-          </CollapsibleCard>
-          <CollapsibleCard
-            startExpanded={false}
-            title="Recent Activity"
-            iconName="md-alarm"
-          >
-            <Calendar
+        <ScrollView>
+          <View style={{ paddingBottom: 12 }}>
+            <PatientInfo
               patient={patient}
-              onNavigateOldEntry={this.handleNavigateOldEntry}
-              onNavigateObservationOverview={
-                this.handleNavigateObservationOverview
-              }
+              onNavigatePatient={null}
+              extraButton={null}
+              onAddEntry={this.handleNewEntry}
+              observationButton={observationButton}
             />
-          </CollapsibleCard>
-          <CollapsibleCard
-            startExpanded
-            title={isTablet() ? "Observation Period Details" : "Period Details"}
-            iconName="ios-list"
-          >
-            <PatientTrends startExpanded patient={patient} />
-          </CollapsibleCard>
-          <CollapsibleCard
-            startExpanded
-            title={
-              isTablet() ? "Compare Observation Periods" : "Compare Periods"
-            }
-            iconName="ios-swap"
-          >
-            <ObservationComparison patient={patient} />
-          </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded={false}
+              title="Export"
+              iconName="ios-arrow-round-down"
+            >
+              <Exporter patient={patient} />
+            </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded={false}
+              title="Recent Activity"
+              iconName="md-alarm"
+            >
+              <Calendar
+                patient={patient}
+                onNavigateOldEntry={this.handleNavigateOldEntry}
+                onNavigateObservationOverview={
+                  this.handleNavigateObservationOverview
+                }
+              />
+            </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded
+              title={
+                isTablet() ? "Observation Period Details" : "Period Details"
+              }
+              iconName="ios-list"
+            >
+              <PatientTrends startExpanded patient={patient} />
+            </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded
+              title={
+                isTablet() ? "Compare Observation Periods" : "Compare Periods"
+              }
+              iconName="ios-swap"
+            >
+              <ObservationComparison patient={patient} />
+            </CollapsibleCard>
+          </View>
         </ScrollView>
         <Toast
           ref="toast"
