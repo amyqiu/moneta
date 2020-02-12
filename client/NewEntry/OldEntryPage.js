@@ -125,8 +125,8 @@ export default class OldEntryPage extends React.Component<Props, {}> {
             You are reviewing an old entry: you cannot edit this page.
           </Text>
         </View>
-        <ScrollView>
-          <View>
+        <ScrollView style={{ marginBottom: 12 }}>
+          <View style={{ paddingBottom: 12 }}>
             <Card containerStyle={styles.cardStyle}>
               <View>
                 <Text style={styles.h4Text}>Behaviours Observed</Text>
