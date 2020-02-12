@@ -170,7 +170,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
     return (
       <View style={styles.behaviourCard}>
         <View style={styles.carouselContainer}>
-          <Text h4>{itemLabel}</Text>
+          <Text style={styles.h4Text}>{itemLabel}</Text>
           <View style={styles.carouselPercentage}>
             <Text style={styles.occurrenceLabel}>Occurrence: </Text>
             <Text style={styles.carouselMainText}>{percentage}</Text>
@@ -258,8 +258,8 @@ export default class CorrelationsView extends React.Component<Props, State> {
     const { processedBehaviours, observation, correlations } = this.state;
 
     return (
-      <View>
-        <Text h4 style={{ paddingBottom: 12 }}>
+      <View style={{ paddingBottom: 8 }}>
+        <Text style={{ ...styles.h4Text, paddingBottom: 12 }}>
           Behaviour Correlations
         </Text>
         {observation == null ||
@@ -294,7 +294,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
                 })}
               renderItem={this.renderCarouselItem}
               sliderWidth={isTablet() ? scaleWidth(0.92) : scaleWidth(0.82)}
-              itemWidth={isTablet() ? 480 : 250}
+              itemWidth={isTablet() ? 520 : 250}
               removeClippedSubviews={false}
             />
           </View>

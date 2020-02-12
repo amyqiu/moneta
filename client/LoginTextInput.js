@@ -23,7 +23,7 @@ export default class LoginTextInput extends React.Component<Props> {
       <View style={[styles.textContainer, style]}>
         <TextInput
           ref={this.textInputRef}
-          selectionColor={colours.activeBlue}
+          selectionColor={colours.actionBlue}
           style={styles.textInput}
           {...otherProps}
         />

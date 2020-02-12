@@ -147,8 +147,7 @@ export default class Exporter extends React.Component<Props, State> {
           styles={{
             selectToggle: {
               ...styles.observationToggle,
-              borderColor: colours.actionBlue,
-              borderWidth: 2
+              backgroundColor: colours.actionBlue
             },
             selectToggleText: styles.dropdownToggleText,
             chipText: styles.dropdownChipText,

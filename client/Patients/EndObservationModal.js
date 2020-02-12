@@ -82,7 +82,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
               />
               <Text
                 style={{
-                  ...styles.modalSubHeading,
+                  ...styles.h4Text,
                   ...{ paddingTop: 12, paddingBottom: 8 }
                 }}
               >
@@ -93,7 +93,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
                 onChangeText={notes => this.setState({ endingNotes: notes })}
                 value={endingNotes}
                 multiline
-                height={isTablet() ? 200 : 100}
+                height={isTablet() ? 160 : 100}
               />
               <View style={styles.observationModalButtons}>
                 <Button

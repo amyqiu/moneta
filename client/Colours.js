@@ -1,18 +1,20 @@
 const colours = {
   white: "#ffffff",
   black: "#000000",
-  primaryGrey: "#3A3A3C",
-  secondaryGrey: "#AEAEB2",
-  backgroundGrey: "#E5E5EA",
-  link: "#0000EE",
-  disabled: "#8E8E93",
-  successGreen: "#28A144",
-  backupBlue: "#5AC8FA",
-  warningOrange: "#CF7911",
-  errorRed: "#B80D0D",
-  compareRed: "#FF3B30",
-  compareBlue: "#5856D6",
-  actionBlue: "#007AFF"
+  primaryGrey: "#394049",
+  secondaryGrey: "#98a1ad",
+  backgroundGrey: "#eceef0",
+  link: "#003da9",
+  disabled: "#7f8a99",
+  successGreen: "#00BA06",
+  backupBlue: "#9BC8FA",
+  warningOrange: "#F28203",
+  errorRed: "#DA0700",
+  compareRed: "#eb574f",
+  compareBlue: "#5d56ec",
+  actionBlue: "#106de4",
+  backgroundBlue: "#4883fc",
+  customBlue: "#000e6b"
 };
 
 export default colours;

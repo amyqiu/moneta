@@ -131,7 +131,7 @@ export default class ObservationComparison extends React.Component<
     });
 
     return (
-      <Table borderStyle={{ borderWidth: 1 }}>
+      <Table borderStyle={{ borderWidth: 1, borderColor: colours.primaryGrey }}>
         <Row
           data={["Behaviour", "Trend"]}
           style={styles.tableHeader}
@@ -192,7 +192,7 @@ export default class ObservationComparison extends React.Component<
       }
     ];
 
-    const barWidth = isTablet() ? 25 : 12;
+    const barWidth = isTablet() ? 24 : 12;
 
     const xAxisLabel = (
       <VictoryLabel dx={isTablet() ? 0 : -20} dy={isTablet() ? 0 : -12} />
@@ -214,7 +214,7 @@ export default class ObservationComparison extends React.Component<
     }
 
     return (
-      <View>
+      <View style={{ paddingBottom: 12 }}>
         <View style={styles.observationSelect}>
           <View>
             <Text style={styles.selectText}>
@@ -231,8 +231,7 @@ export default class ObservationComparison extends React.Component<
                 ...selectStyles,
                 selectToggle: {
                   ...styles.observationToggle,
-                  borderColor: colours.compareRed,
-                  borderWidth: 2
+                  backgroundColor: colours.compareRed
                 }
               }}
               colors={SELECT_COLOURS}
@@ -255,8 +254,7 @@ export default class ObservationComparison extends React.Component<
                 ...selectStyles,
                 selectToggle: {
                   ...styles.observationToggle,
-                  borderColor: colours.compareBlue,
-                  borderWidth: 2
+                  backgroundColor: colours.compareBlue
                 }
               }}
               colors={SELECT_COLOURS}
@@ -303,7 +301,7 @@ export default class ObservationComparison extends React.Component<
                   tickLabels: {
                     fontSize: RFValue(isTablet() ? 14 : 12),
                     fontFamily: "Arial",
-                    padding: isTablet() ? 6 : 2
+                    padding: isTablet() ? 4 : 2
                   },
                   axisLabel: {
                     fontSize: RFValue(isTablet() ? 14 : 12),
@@ -338,7 +336,9 @@ export default class ObservationComparison extends React.Component<
                 orientation="horizontal"
               />
             </VictoryChart>
-            <Text h4 style={{ paddingVertical: isTablet() ? 16 : 8 }}>
+            <Text
+              style={{ ...styles.h4Text, paddingVertical: isTablet() ? 16 : 8 }}
+            >
               Behaviour Trends
             </Text>
             <View style={{ paddingLeft: isTablet() ? 16 : 4 }}>

@@ -105,10 +105,10 @@ export function createDropdownBehaviours(
 }
 
 export const SELECT_COLOURS = {
-  primary: colours.primaryGrey,
+  primary: colours.actionBlue,
   chipColor: colours.primaryGrey,
   selectToggleTextColor: colours.white,
-  cancel: colours.errorRed
+  cancel: colours.primaryGrey
 };
 
 export const SELECT_ICON = (

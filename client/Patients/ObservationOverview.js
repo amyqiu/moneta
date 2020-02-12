@@ -74,22 +74,22 @@ export default class ObservationOverview extends React.Component<Props, State> {
 
     return (
       <View style={styles.background}>
-        <View style={{ backgroundColor: colours.errorRed }}>
+        <View style={styles.banner}>
           <Text style={styles.warning}>
             You are reviewing an old observation period: you cannot edit this
             page.
           </Text>
         </View>
         <ScrollView style={{ marginBottom: 12 }}>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card containerStyle={styles.card}>
             <ObservationSummaryTable
               observationID={observationId}
               observationData={observationData}
             />
           </Card>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card containerStyle={styles.card}>
             <View>
-              <Text h4>Starting Reasons</Text>
+              <Text style={styles.h4Text}>Starting Reasons</Text>
               {STARTING_REASONS.map(reason => (
                 <CheckBox
                   title={reason}
@@ -107,22 +107,26 @@ export default class ObservationOverview extends React.Component<Props, State> {
               ))}
             </View>
           </Card>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card containerStyle={styles.card}>
             <ObservationCheckBox
               nextSteps={new Set(observationData.next_steps)}
               handleNextStepChecked={() => {}}
             />
           </Card>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card containerStyle={styles.card}>
             <View>
-              <Text h4>Starting Notes</Text>
-              <Text style={styles.date}>{observationData.starting_notes}</Text>
+              <Text style={styles.h4Text}>Starting Notes</Text>
+              <Text style={styles.notesText}>
+                {observationData.starting_notes}
+              </Text>
             </View>
           </Card>
-          <Card containerStyle={{ borderRadius: 4 }}>
+          <Card containerStyle={styles.card}>
             <View>
-              <Text h4>Ending Notes</Text>
-              <Text style={styles.date}>{observationData.ending_notes}</Text>
+              <Text style={styles.h4Text}>Ending Notes</Text>
+              <Text style={styles.notesText}>
+                {observationData.ending_notes}
+              </Text>
             </View>
           </Card>
         </ScrollView>
