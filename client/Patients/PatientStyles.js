@@ -15,51 +15,65 @@ export default StyleSheet.create({
   headerButton: {
     backgroundColor: colours.white,
     paddingVertical: 4,
-    paddingHorizontal: 14
+    paddingHorizontal: 16
   },
   headerContainer: {
     paddingVertical: 8,
-    paddingRight: 10
+    paddingRight: 12
   },
   smallButton: {
     backgroundColor: colours.actionBlue,
     paddingVertical: 8,
-    paddingHorizontal: 14
+    paddingHorizontal: isTablet() ? 16 : 8,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   smallButtonTitle: {
     color: colours.white,
     fontWeight: "normal",
-    fontSize: RFValue(14)
+    fontSize: isTablet() ? RFValue(16) : RFValue(14)
   },
   headerButtonTitle: {
     color: colours.primaryGrey,
     fontWeight: "normal",
-    fontSize: isTablet() ? RFValue(10) : RFValue(14)
+    fontSize: isTablet() ? RFValue(16) : RFValue(12)
   },
   searchInput: {
-    color: colours.black,
+    color: colours.primaryGrey,
     fontWeight: "normal",
     fontSize: RFValue(14)
   },
   patientDetailsText: {
-    fontSize: RFValue(14)
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    paddingVertical: 4
+  },
+  patientLabelText: {
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    fontWeight: "600",
+    paddingVertical: 4
   },
   obsDetailsText: {
-    fontSize: RFValue(14),
-    paddingVertical: isTablet() ? 24 : 6
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    paddingVertical: isTablet() ? 24 : 4
   },
   entryLink: {
     fontSize: RFValue(14),
-    color: colours.actionBlue,
+    color: colours.link,
     textAlign: "center",
-    paddingBottom: 2,
+    paddingVertical: 4,
     justifyContent: "center",
     alignItems: "center"
   },
   entryHeader: {
-    fontSize: RFValue(16),
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     textAlign: "center",
-    paddingBottom: 8
+    paddingVertical: 8
   },
   entrySeparator: {
     height: 1,
@@ -72,12 +86,12 @@ export default StyleSheet.create({
     margin: 1
   },
   errorText: {
-    fontSize: RFValue(16),
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     paddingBottom: isTablet() ? 12 : 4,
     paddingTop: 4
   },
   errorComparisonText: {
-    fontSize: RFValue(16),
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     paddingTop: isTablet() ? 8 : 4
   },
   observationButtonContainer: {
@@ -103,13 +117,17 @@ export default StyleSheet.create({
     fontSize: RFValue(14)
   },
   dropdownChipText: {
-    fontSize: RFValue(12)
+    fontSize: RFValue(14)
   },
   dropdownConfirmText: {
-    fontSize: RFValue(16)
+    fontSize: isTablet() ? RFValue(16) : RFValue(14)
   },
   dropdownItemText: {
     fontSize: RFValue(14)
+  },
+  notesText: {
+    fontSize: RFValue(14),
+    paddingTop: 12
   },
   centerContainer: {
     flexDirection: "row",
@@ -134,11 +152,18 @@ export default StyleSheet.create({
   },
   observationToggle: {
     width: isTablet() ? 320 : 142,
-    backgroundColor: colours.primaryGrey,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginVertical: 12,
-    borderRadius: 4
+    borderRadius: 4,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   observationModalButtons: {
     flexDirection: "row",
@@ -158,8 +183,8 @@ export default StyleSheet.create({
   comments: {
     margin: 4,
     padding: 8,
-    borderColor: colours.primaryGrey,
-    borderWidth: 1,
+    borderColor: colours.secondaryGrey,
+    borderWidth: 2,
     borderRadius: 4,
     backgroundColor: colours.white,
     textAlignVertical: "top",
@@ -169,7 +194,15 @@ export default StyleSheet.create({
   modalButton: {
     backgroundColor: colours.actionBlue,
     paddingVertical: 8,
-    paddingHorizontal: 14
+    paddingHorizontal: 16,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   modalButtonTitle: {
     color: colours.white,
@@ -179,33 +212,49 @@ export default StyleSheet.create({
   modalCancelButton: {
     backgroundColor: colours.primaryGrey,
     paddingVertical: 8,
-    paddingHorizontal: 14
+    paddingHorizontal: 16,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   modalSubHeading: {
-    fontSize: RFValue(16),
-    fontWeight: "bold"
+    fontSize: RFValue(20)
   },
   startModalSubHeading: {
-    fontSize: RFValue(16),
-    fontWeight: "bold",
+    fontSize: RFValue(20),
     paddingTop: 12,
     paddingBottom: 8
   },
   obsSubHeading: {
-    fontSize: RFValue(16),
-    fontWeight: "bold"
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    fontWeight: "600",
+    paddingVertical: 4
   },
   obsDetails: {
     paddingVertical: isTablet() ? 6 : 2
   },
   modalHeading: {
     fontSize: RFValue(20),
-    fontWeight: "bold",
     paddingBottom: 12
   },
   modalContainer: {
     borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colours.secondaryGrey,
     backgroundColor: colours.white,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6,
     padding: isTablet() ? 24 : 8
   },
   tableContainer: {
@@ -216,24 +265,23 @@ export default StyleSheet.create({
     backgroundColor: colours.white
   },
   tableHeaderText: {
-    margin: 6,
-    fontSize: RFValue(14),
-    fontWeight: "bold"
+    margin: 8,
+    fontSize: isTablet() ? RFValue(16) : RFValue(14)
   },
   tableText: {
-    margin: 6,
-    fontSize: RFValue(12)
+    margin: 8,
+    fontSize: RFValue(14)
   },
   endModalView: {
     paddingBottom: 48
   },
   observationStart: {
-    fontSize: RFValue(14),
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     paddingBottom: 12
   },
   singleObservation: {
-    paddingBottom: 8,
-    paddingLeft: 18,
+    paddingBottom: 12,
+    paddingLeft: 16,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -241,29 +289,34 @@ export default StyleSheet.create({
     alignItems: "center"
   },
   carouselMainText: {
-    fontSize: RFValue(16),
-    fontWeight: "bold"
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    fontWeight: "600",
+    paddingVertical: 4
   },
   carouselSubText: {
     fontSize: RFValue(14),
-    paddingVertical: isTablet() ? 6 : 2
+    paddingVertical: isTablet() ? 8 : 2
   },
   carouselFootnote: {
-    fontSize: RFValue(12),
+    fontSize: RFValue(14),
     paddingTop: isTablet() ? 8 : 4,
     fontStyle: "italic"
   },
   behaviourCard: {
-    borderWidth: 1,
-    borderColor: colours.primaryGrey,
+    borderWidth: 2,
+    borderColor: colours.secondaryGrey,
+    borderRadius: 4,
     paddingVertical: 12,
     backgroundColor: colours.white,
     paddingHorizontal: 12,
     shadowColor: colours.black,
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
-    elevation: 4
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   carouselPercentage: {
     flexDirection: "row",
@@ -272,8 +325,9 @@ export default StyleSheet.create({
     paddingVertical: 8
   },
   occurrenceLabel: {
-    fontSize: RFValue(16),
-    paddingRight: 4
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    paddingRight: 4,
+    paddingVertical: 4
   },
   carouselSub: {
     paddingVertical: 12
@@ -283,24 +337,68 @@ export default StyleSheet.create({
   },
   selectText: {
     paddingTop: 8,
-    fontSize: RFValue(16)
+    fontSize: isTablet() ? RFValue(16) : RFValue(14)
   },
   downloadText: {
-    fontSize: RFValue(16),
-    fontWeight: "bold",
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
+    fontWeight: "600",
     paddingBottom: 12
   },
   downloadLink: {
-    color: colours.actionBlue,
-    fontSize: RFValue(16),
+    color: colours.link,
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     textDecorationLine: "underline"
   },
   warning: {
     color: colours.white,
     fontWeight: "normal",
-    fontSize: RFValue(16),
+    fontSize: isTablet() ? RFValue(16) : RFValue(14),
     paddingHorizontal: 4,
     paddingVertical: 8,
     textAlign: "center"
+  },
+  h2Text: {
+    fontSize: RFValue(36)
+  },
+  h3Text: {
+    fontSize: RFValue(24)
+  },
+  h4Text: {
+    fontSize: RFValue(20)
+  },
+  card: {
+    borderRadius: 4,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6,
+    borderColor: colours.secondaryGrey,
+    borderWidth: 2
+  },
+  avatar: {
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6,
+    marginRight: isTablet() ? 32 : 12
+  },
+  banner: {
+    backgroundColor: colours.errorRed,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   }
 });

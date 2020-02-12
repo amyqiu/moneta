@@ -12,6 +12,7 @@ import {
 import { RFValue } from "react-native-responsive-fontsize";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import { scaleWidth, isTablet } from "../Helpers";
+import colours from "../Colours";
 
 type Props = {
   graphData: Array<Array<Object>>,
@@ -43,7 +44,7 @@ export default class HourlyColumnChart extends React.Component<Props, State> {
         symbol: {
           fill: BEHAVIOURS.get(behaviour)
             ? BEHAVIOURS.get(behaviour).color
-            : "#00008b"
+            : colours.customBlue
         }
       });
     });

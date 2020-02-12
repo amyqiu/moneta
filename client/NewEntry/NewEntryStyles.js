@@ -5,7 +5,8 @@ import colours from "../Colours";
 export default StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: colours.backgroundGrey
+    backgroundColor: colours.backgroundGrey,
+    paddingBottom: 12
   },
   checkBoxContainer: {
     backgroundColor: colours.white,
@@ -20,8 +21,8 @@ export default StyleSheet.create({
     margin: 4,
     padding: 8,
     height: 64,
-    borderColor: colours.primaryGrey,
-    borderWidth: 1,
+    borderColor: colours.secondaryGrey,
+    borderWidth: 2,
     borderRadius: 4,
     backgroundColor: colours.white,
     textAlignVertical: "top",
@@ -33,9 +34,20 @@ export default StyleSheet.create({
     alignItems: "flex-end"
   },
   submitButton: {
-    backgroundColor: colours.primaryGrey,
+    backgroundColor: colours.actionBlue,
     paddingVertical: 8,
     paddingHorizontal: 16
+  },
+  dateButton: {
+    backgroundColor: colours.actionBlue,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   },
   submitButtonTitle: {
     color: colours.white,
@@ -54,7 +66,7 @@ export default StyleSheet.create({
     fontSize: RFValue(16)
   },
   date: {
-    fontSize: RFValue(16),
+    fontSize: RFValue(14),
     paddingBottom: 4
   },
   innerCheckboxText: {
@@ -68,5 +80,32 @@ export default StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 8,
     textAlign: "center"
+  },
+  cardStyle: {
+    borderRadius: 4,
+    borderColor: colours.secondaryGrey,
+    borderWidth: 2,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
+  },
+  h4Text: {
+    fontSize: RFValue(20)
+  },
+  banner: {
+    backgroundColor: colours.errorRed,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
   }
 });

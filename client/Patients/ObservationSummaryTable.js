@@ -6,6 +6,7 @@ import { Table, Row, Rows } from "react-native-table-component";
 import moment from "moment";
 import styles from "./PatientStyles";
 import BEHAVIOURS from "../NewEntry/Behaviours";
+import colours from "../Colours";
 
 type Props = {
   observationID: string,
@@ -115,7 +116,9 @@ export default class ObservationSummaryTable extends React.Component<
             "MMM D, YYYY"
           )} (${daysPassed} days)`}
         </Text>
-        <Table borderStyle={{ borderWidth: 1 }}>
+        <Table
+          borderStyle={{ borderWidth: 1, borderColor: colours.primaryGrey }}
+        >
           <Row
             data={TABLE_HEADER}
             style={styles.tableHeader}

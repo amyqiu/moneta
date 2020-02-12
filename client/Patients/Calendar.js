@@ -239,7 +239,7 @@ export default class Calendar extends React.Component<Props, State> {
           onDateChange={this.onDateChange}
           onMonthChange={this.onMonthChange}
           customDatesStyles={customDatesStyles}
-          selectedDayColor={colours.actionBlue}
+          selectedDayColor={colours.backgroundBlue}
           todayBackgroundColor={colours.secondaryGrey}
           width={scaleWidth(isTablet() ? 0.64 : 0.9)}
         />
@@ -249,7 +249,7 @@ export default class Calendar extends React.Component<Props, State> {
     const legendData = [
       { name: "Today", symbol: { fill: colours.secondaryGrey } },
       { name: "Day contains entries", symbol: { fill: colours.backupBlue } },
-      { name: "Selected day", symbol: { fill: colours.actionBlue } }
+      { name: "Selected day", symbol: { fill: colours.backgroundBlue } }
     ];
 
     const entries = <View>{existingTimesList}</View>;
@@ -278,7 +278,7 @@ export default class Calendar extends React.Component<Props, State> {
     );
 
     return (
-      <View>
+      <View style={{ paddingBottom: 12 }}>
         <View style={isTablet() ? styles.tabletCalendar : {}}>
           {calendar}
           {legend}

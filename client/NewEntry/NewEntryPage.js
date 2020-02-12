@@ -239,7 +239,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
             key={endpointName}
             label={behaviour}
             endpointLabel={endpointName}
-            color="#00008b"
+            color={colours.customBlue}
             subBehaviours={[]}
             onBehaviourChecked={this.onBehaviourChecked}
             originallyChecked={null}
@@ -303,15 +303,15 @@ export default class NewEntryPage extends React.Component<Props, State> {
       <KeyboardAvoidingView behavior="position" style={styles.background}>
         <ScrollView style={{ marginBottom: 12 }}>
           <View>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Behaviours Observed</Text>
+                <Text style={styles.h4Text}>Behaviours Observed</Text>
                 {behavourCheckboxes}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Location</Text>
+                <Text style={styles.h4Text}>Location</Text>
                 {LOCATIONS.map(location => (
                   <CheckBox
                     title={location}
@@ -329,15 +329,15 @@ export default class NewEntryPage extends React.Component<Props, State> {
                 ))}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Context</Text>
+                <Text style={styles.h4Text}>Context</Text>
                 {contextCheckboxes}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Comments</Text>
+                <Text style={styles.h4Text}>Comments</Text>
                 <TextInput
                   style={styles.comments}
                   onChangeText={value => this.setState({ comments: value })}
@@ -347,17 +347,15 @@ export default class NewEntryPage extends React.Component<Props, State> {
                 />
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4 style={{ paddingBottom: 4 }}>
-                  Timestamp
-                </Text>
-                <View style={{ alignItems: "center" }}>
+                <Text style={styles.h4Text}>Timestamp</Text>
+                <View style={{ alignItems: "center", paddingTop: 4 }}>
                   <Text style={styles.date}>{formattedDate}</Text>
                   <Button
                     onPress={this.handleOpenDatePicker}
                     title="Edit Timestamp"
-                    buttonStyle={{ backgroundColor: colours.primaryGrey }}
+                    buttonStyle={styles.dateButton}
                     titleProps={{ style: styles.datePickerTitle }}
                   />
                 </View>
@@ -376,7 +374,7 @@ export default class NewEntryPage extends React.Component<Props, State> {
               <Button
                 onPress={this.handleSubmit}
                 title="Submit"
-                buttonStyle={styles.submitButton}
+                buttonStyle={styles.dateButton}
                 titleProps={{ style: styles.submitButtonTitle }}
                 loading={isSubmitting}
               />

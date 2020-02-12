@@ -79,7 +79,7 @@ export default class PatientInfo extends React.Component<Props, State> {
     if (!patient.inObservation) {
       return {
         colour: colours.secondaryGrey,
-        text: isTablet() ? "Not in observation period" : "Not in observation"
+        text: isTablet() ? "Not in observation period" : "N/A"
       };
     }
     if (lastEntryTime == null || lastEntryTime === "") {
@@ -146,7 +146,10 @@ export default class PatientInfo extends React.Component<Props, State> {
     );
 
     const name = (
-      <Text h3 style={{ paddingBottom: 4 }} onPress={onNavigatePatient}>
+      <Text
+        style={{ ...styles.h3Text, paddingBottom: 4 }}
+        onPress={onNavigatePatient}
+      >
         {patient.name}
       </Text>
     );
@@ -173,13 +176,7 @@ export default class PatientInfo extends React.Component<Props, State> {
       : "";
 
     return (
-      <Card
-        containerStyle={{
-          borderRadius: 4,
-          borderColor: nextEntry.colour,
-          borderWidth: 2
-        }}
-      >
+      <Card containerStyle={{ ...styles.card, borderColor: nextEntry.colour }}>
         <View>
           {isTablet() ? tabletHeader : name}
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -192,24 +189,24 @@ export default class PatientInfo extends React.Component<Props, State> {
             />
             <View>
               <Text style={styles.patientDetailsText}>
-                <Text style={{ fontWeight: "bold" }}>ID: </Text>
+                <Text style={styles.patientLabelText}>ID: </Text>
                 {patient.displayId}
               </Text>
               <Text style={styles.patientDetailsText}>
-                <Text style={{ fontWeight: "bold" }}>Room #: </Text>
+                <Text style={styles.patientLabelText}>Room #: </Text>
                 {patient.room}
               </Text>
               {loadingEntryTime ? (
                 spinner
               ) : (
                 <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>Next Entry: </Text>
+                  <Text style={styles.patientLabelText}>Next Entry: </Text>
                   {nextEntry.text}
                 </Text>
               )}
               {patient.inObservation ? (
                 <Text style={styles.patientDetailsText}>
-                  <Text style={{ fontWeight: "bold" }}>
+                  <Text style={styles.patientLabelText}>
                     {isTablet() ? "Observation Started: " : "Started: "}
                   </Text>
                   {observationStartText}

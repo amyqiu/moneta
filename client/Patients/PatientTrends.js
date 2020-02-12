@@ -138,7 +138,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
             y: hourlyData[i],
             color: BEHAVIOURS.get(behaviour)
               ? BEHAVIOURS.get(behaviour).color
-              : "#00008b"
+              : colours.customBlue
           });
         }
         processedData.push(dataPoints);
@@ -219,9 +219,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
         </View>
       ) : (
         <View>
-          <Text h4 style={{ paddingTop: 4 }}>
-            Hourly Trends
-          </Text>
+          <Text style={{ ...styles.h4Text, paddingTop: 4 }}>Hourly Trends</Text>
           <SectionedMultiSelect
             items={dropdownBehaviours}
             uniqueKey="id"
@@ -230,7 +228,10 @@ export default class EndObservationModal extends React.Component<Props, State> {
             selectedItems={selectedBehaviours}
             hideSearch
             styles={{
-              selectToggle: behaviourSelectStyle,
+              selectToggle: {
+                ...behaviourSelectStyle,
+                backgroundColor: colours.actionBlue
+              },
               selectToggleText: styles.dropdownToggleText,
               chipText: styles.dropdownChipText,
               confirmText: styles.dropdownConfirmText,
@@ -268,8 +269,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
             styles={{
               selectToggle: {
                 ...styles.observationToggle,
-                borderColor: colours.actionBlue,
-                borderWidth: 2
+                backgroundColor: colours.actionBlue
               },
               selectToggleText: styles.dropdownToggleText,
               chipText: styles.dropdownChipText,
@@ -283,9 +283,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
         </View>
         {observation != null ? (
           <View>
-            <Text h3 style={{ paddingBottom: 8 }}>
-              Notes
-            </Text>
+            <Text style={{ ...styles.h3Text, paddingBottom: 8 }}>Notes</Text>
             <Text style={styles.obsDetails}>
               <Text style={styles.obsSubHeading}>Starting Reasons: </Text>
               <Text style={styles.obsDetailsText}>
@@ -320,7 +318,14 @@ export default class EndObservationModal extends React.Component<Props, State> {
             ) : null}
           </View>
         ) : null}
-        <Text h3 style={{ paddingBottom: 8, paddingTop: isTablet() ? 28 : 12 }}>
+        <Text
+          h3
+          style={{
+            ...styles.h3Text,
+            paddingBottom: 8,
+            paddingTop: isTablet() ? 28 : 12
+          }}
+        >
           Trends/Correlations
         </Text>
         {isLoading ? spinner : data}

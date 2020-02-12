@@ -68,7 +68,7 @@ export default class OldEntryPage extends React.Component<Props, {}> {
             key={endpointName}
             label={behaviour}
             endpointLabel={endpointName}
-            color="#00008b"
+            color={colours.customBlue}
             subBehaviours={[]}
             onBehaviourChecked={() => {}}
             originallyChecked={endpointName in entry.behaviours}
@@ -120,22 +120,22 @@ export default class OldEntryPage extends React.Component<Props, {}> {
 
     return (
       <View style={styles.background}>
-        <View style={{ backgroundColor: colours.errorRed }}>
+        <View style={styles.banner}>
           <Text style={styles.warning}>
             You are reviewing an old entry: you cannot edit this page.
           </Text>
         </View>
-        <ScrollView style={{ marginBottom: 12 }}>
+        <ScrollView>
           <View>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Behaviours Observed</Text>
+                <Text style={styles.h4Text}>Behaviours Observed</Text>
                 {behavourCheckboxes}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Location</Text>
+                <Text style={styles.h4Text}>Location</Text>
                 {LOCATIONS.map(location => (
                   <CheckBox
                     title={location}
@@ -152,21 +152,21 @@ export default class OldEntryPage extends React.Component<Props, {}> {
                 ))}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Context</Text>
+                <Text style={styles.h4Text}>Context</Text>
                 {contextCheckboxes}
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4>Comments</Text>
+                <Text style={styles.h4Text}>Comments</Text>
                 <Text style={styles.date}>{entry.comments}</Text>
               </View>
             </Card>
-            <Card containerStyle={{ borderRadius: 4 }}>
+            <Card containerStyle={styles.cardStyle}>
               <View>
-                <Text h4 style={{ paddingBottom: 4 }}>
+                <Text style={{ ...styles.h4Text, paddingBottom: 4 }}>
                   Timestamp
                 </Text>
                 <View style={{ alignItems: "center" }}>

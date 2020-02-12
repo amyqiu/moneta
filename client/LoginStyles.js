@@ -20,21 +20,21 @@ export default StyleSheet.create({
   },
   background: {
     flex: 1,
-    padding: 18,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center"
   },
   textContainer: {
-    marginBottom: 10
+    marginBottom: 12
   },
   textInput: {
-    height: isTablet() ? 50 : 30,
+    height: isTablet() ? 52 : 32,
     fontSize: RFValue(14),
     borderColor: colours.primaryGrey,
     borderBottomWidth: StyleSheet.hairlineWidth
   },
   errorText: {
-    height: 30,
+    height: 32,
     fontSize: RFValue(14),
     color: colours.errorRed
   },

@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from "react-native";
 import { Card, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import colours from "../Colours";
+import styles from "./PatientStyles";
 
 type Props = {
   startExpanded: boolean,
@@ -37,21 +38,13 @@ export default class StartObservationModal extends React.Component<
     const { isExpanded } = this.state;
     const { title, children, iconName } = this.props;
     return (
-      <Card
-        containerStyle={{
-          borderRadius: 4,
-          borderColor: colours.secondaryGrey,
-          borderWidth: 2
-        }}
-      >
+      <Card containerStyle={styles.card}>
         <TouchableOpacity
           style={{ flexDirection: "row", alignItems: "center" }}
           onPress={this.toggleExpanded}
         >
           <Icon name={iconName} size={30} style={{ paddingRight: 12 }} />
-          <Text h3 style={{ paddingBottom: 4 }}>
-            {title}
-          </Text>
+          <Text style={{ ...styles.h3Text, paddingBottom: 4 }}>{title}</Text>
           <Icon
             name={isExpanded ? "md-arrow-dropup" : "md-arrow-dropdown"}
             color={colours.primaryGrey}
