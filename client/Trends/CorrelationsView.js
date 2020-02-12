@@ -4,11 +4,13 @@ import { View } from "react-native";
 import { Text } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import Carousel from "react-native-snap-carousel";
+import { Table, Row, Rows } from "react-native-table-component";
 import navigationStyles from "../NavigationStyles";
 import styles from "../Patients/PatientStyles";
 import { isTablet, scaleWidth } from "../Helpers";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import SUGGESTIONS from "./Suggestions";
+import colours from "../Colours";
 
 type Props = NavigationScreenProps & {
   observationID: string
@@ -152,20 +154,43 @@ export default class CorrelationsView extends React.Component<Props, State> {
       : "0%";
 
     const allBehaviours = this.getAllBehaviours();
-    const subBehaviours = [];
+    let subBehaviours = "";
     const itemDetails = allBehaviours.get(item);
     if (itemDetails) {
       itemDetails.subBehaviours.forEach(subBehaviour => {
         if (
           observation.aggregated_behaviours[subBehaviour].some(c => c !== 0)
         ) {
-          subBehaviours.push(subBehaviour);
+          subBehaviours += `${subBehaviour}, `;
         }
       });
     }
+    subBehaviours = subBehaviours.substring(0, subBehaviours.length - 2);
 
     const correlationResults = correlation.results;
     const correlationTimes = correlation.times;
+
+    const data = correlationResults.map(behaviour => {
+      let triggerLabel = behaviour.trigger;
+      if (behaviour.trigger === "Personalized Context 1") {
+        triggerLabel = observation.personalized_context_1_title;
+      } else if (behaviour.trigger === "Personalized Context 2") {
+        triggerLabel = observation.personalized_context_2_title;
+      }
+      return [
+        triggerLabel,
+        behaviour.coeff.toFixed(2),
+        SUGGESTIONS.get(behaviour.trigger)
+      ];
+    });
+
+    const cardWidth = isTablet() ? 535 : 228;
+
+    const widths = [
+      (3.0 * cardWidth) / 10,
+      (2.5 * cardWidth) / 10,
+      (4.5 * cardWidth) / 10
+    ];
 
     return (
       <View style={styles.behaviourCard}>
@@ -180,13 +205,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
           <Text style={styles.carouselMainText}>Sub-Behaviours:</Text>
           {subBehaviours.length > 0 ? (
             <View>
-              {subBehaviours.map(subBehaviour => {
-                return (
-                  <Text style={styles.carouselSubText} key={subBehaviour}>
-                    {subBehaviour}
-                  </Text>
-                );
-              })}
+              <Text style={styles.carouselSubText}>{subBehaviours}</Text>
             </View>
           ) : (
             <Text style={styles.carouselSubText}>
@@ -203,22 +222,25 @@ export default class CorrelationsView extends React.Component<Props, State> {
               Not enough data for correlations
             </Text>
           ) : (
-            <View>
-              {correlationResults.map(behaviour => {
-                let triggerLabel = behaviour.trigger;
-                if (behaviour.trigger === "Personalized Context 1") {
-                  triggerLabel = observation.personalized_context_1_title;
-                } else if (behaviour.trigger === "Personalized Context 2") {
-                  triggerLabel = observation.personalized_context_2_title;
-                }
-                return (
-                  <Text style={styles.carouselSubText} key={behaviour.trigger}>
-                    {`${triggerLabel} (${behaviour.coeff.toFixed(
-                      2
-                    )}) - ${SUGGESTIONS.get(behaviour.trigger)}`}
-                  </Text>
-                );
-              })}
+            <View style={{ paddingTop: 12 }}>
+              <Table
+                borderStyle={{
+                  borderWidth: 1,
+                  borderColor: colours.primaryGrey
+                }}
+              >
+                <Row
+                  data={["Trigger", "Correlation\nValue", "Suggestion"]}
+                  style={styles.tableHeader}
+                  textStyle={styles.tableHeaderText}
+                  widthArr={widths}
+                />
+                <Rows
+                  widthArr={widths}
+                  data={data}
+                  textStyle={styles.tableText}
+                />
+              </Table>
               <Text style={styles.carouselFootnote}>
                 * Correlations are calculated using Pearson Coefficients and may
                 not be exact. All suggestions should be reviewed by a healthcare
@@ -294,7 +316,7 @@ export default class CorrelationsView extends React.Component<Props, State> {
                 })}
               renderItem={this.renderCarouselItem}
               sliderWidth={isTablet() ? scaleWidth(0.92) : scaleWidth(0.82)}
-              itemWidth={isTablet() ? 520 : 250}
+              itemWidth={isTablet() ? 580 : 250}
               removeClippedSubviews={false}
             />
           </View>

@@ -248,17 +248,11 @@ export default class PatientPage extends React.Component<Props, State> {
               onAddEntry={this.handleNewEntry}
               observationButton={observationButton}
             />
-            <CollapsibleCard
-              startExpanded={false}
-              title="Export"
-              iconName="ios-arrow-round-down"
-            >
-              <Exporter patient={patient} />
-            </CollapsibleCard>
+
             <CollapsibleCard
               startExpanded={false}
               title="Recent Activity"
-              iconName="md-alarm"
+              iconName="ios-calendar"
             >
               <Calendar
                 patient={patient}
@@ -269,22 +263,29 @@ export default class PatientPage extends React.Component<Props, State> {
               />
             </CollapsibleCard>
             <CollapsibleCard
-              startExpanded
+              startExpanded={false}
               title={
                 isTablet() ? "Observation Period Details" : "Period Details"
               }
-              iconName="ios-list"
+              iconName="ios-information-circle"
             >
               <PatientTrends startExpanded patient={patient} />
             </CollapsibleCard>
             <CollapsibleCard
-              startExpanded
+              startExpanded={false}
               title={
                 isTablet() ? "Compare Observation Periods" : "Compare Periods"
               }
               iconName="ios-swap"
             >
               <ObservationComparison patient={patient} />
+            </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded={false}
+              title="Export"
+              iconName="ios-download"
+            >
+              <Exporter patient={patient} />
             </CollapsibleCard>
           </View>
         </ScrollView>

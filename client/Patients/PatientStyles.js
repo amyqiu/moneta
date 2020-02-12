@@ -308,7 +308,7 @@ export default StyleSheet.create({
     borderRadius: 4,
     paddingVertical: 12,
     backgroundColor: colours.white,
-    paddingHorizontal: 12,
+    paddingHorizontal: isTablet() ? 20 : 8,
     shadowColor: colours.black,
     shadowOffset: {
       width: 0,
