@@ -18,6 +18,7 @@ import CollapsibleCard from "./CollapsibleCard";
 import Exporter from "./Exporter";
 import type { Patient } from "./Patient";
 import ObservationComparison from "../Trends/ObservationComparison";
+import CorrelationsView from "../Trends/CorrelationsView";
 import { parseRawPatient, getLastObservation, isTablet } from "../Helpers";
 
 type Props = NavigationScreenProps & {};
@@ -270,6 +271,13 @@ export default class PatientPage extends React.Component<Props, State> {
               iconName="ios-information-circle"
             >
               <PatientTrends startExpanded patient={patient} />
+            </CollapsibleCard>
+            <CollapsibleCard
+              startExpanded={false}
+              title={isTablet() ? "Behaviour Correlations" : "Correlations"}
+              iconName="ios-paper"
+            >
+              <CorrelationsView patient={patient} />
             </CollapsibleCard>
             <CollapsibleCard
               startExpanded={false}

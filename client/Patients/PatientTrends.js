@@ -5,7 +5,6 @@ import { Text } from "react-native-elements";
 import moment from "moment";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import HourlyColumnChart from "../Trends/HourlyColumnChart";
-import CorrelationsView from "../Trends/CorrelationsView";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import type { Patient } from "./Patient";
 import styles from "./PatientStyles";
@@ -219,7 +218,6 @@ export default class EndObservationModal extends React.Component<Props, State> {
         </View>
       ) : (
         <View>
-          <Text style={{ ...styles.h4Text, paddingTop: 4 }}>Hourly Trends</Text>
           <SectionedMultiSelect
             items={dropdownBehaviours}
             uniqueKey="id"
@@ -247,9 +245,6 @@ export default class EndObservationModal extends React.Component<Props, State> {
             periodStart={periodStart ? periodStart.format("MMM D, YYYY") : null}
             periodEnd={periodEnd ? periodEnd.format("MMM D, YYYY") : null}
           />
-          <View style={{ paddingTop: isTablet() ? 8 : 0 }}>
-            <CorrelationsView observationID={selectedObservationID} />
-          </View>
         </View>
       );
 
@@ -283,7 +278,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
         </View>
         {observation != null ? (
           <View>
-            <Text style={{ ...styles.h3Text, paddingBottom: 8 }}>Notes</Text>
+            <Text style={{ ...styles.h4Text, paddingBottom: 8 }}>Notes</Text>
             <Text style={styles.obsDetails}>
               <Text style={styles.obsSubHeading}>Starting Reasons: </Text>
               <Text style={styles.obsDetailsText}>
@@ -319,14 +314,13 @@ export default class EndObservationModal extends React.Component<Props, State> {
           </View>
         ) : null}
         <Text
-          h3
           style={{
-            ...styles.h3Text,
+            ...styles.h4Text,
             paddingBottom: 8,
             paddingTop: isTablet() ? 28 : 12
           }}
         >
-          Trends/Correlations
+          Hourly Trends
         </Text>
         {isLoading ? spinner : data}
       </View>
