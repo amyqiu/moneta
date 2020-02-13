@@ -34,6 +34,19 @@ export default StyleSheet.create({
     shadowRadius: 4.8,
     elevation: 6
   },
+  smallButtonDisabled: {
+    backgroundColor: colours.disabled,
+    paddingVertical: 8,
+    paddingHorizontal: isTablet() ? 16 : 8,
+    shadowColor: colours.black,
+    shadowOffset: {
+      width: 0,
+      height: 3
+    },
+    shadowOpacity: 0.24,
+    shadowRadius: 4.8,
+    elevation: 6
+  },
   smallButtonTitle: {
     color: colours.white,
     fontWeight: "normal",

@@ -144,7 +144,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
     const error = (
       <Text style={styles.errorText}>Could not retrieve patients.</Text>
     );
-    const content = isLoading ? spinner : patientRows;
+    const content = isLoading ? spinner : <View>{patientRows}</View>;
 
     const searchIcon = (
       <Icon

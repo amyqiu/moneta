@@ -66,8 +66,4 @@ declare module 'expo-file-system' {
   declare module.exports: any
 }
 
-declare module 'expo-sharing' {
-  declare module.exports: any
-}
-
 declare var __DEV__: boolean;

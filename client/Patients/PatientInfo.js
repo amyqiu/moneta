@@ -47,6 +47,9 @@ export default class PatientInfo extends React.Component<Props, State> {
   handleNavigateNewEntry = () => {
     const { patient, onAddEntry } = this.props;
     const { lastEntryTime } = this.state;
+    if (!patient.inObservation) {
+      return;
+    }
     onAddEntry({ patient, lastEntryTime });
   };
 
@@ -132,14 +135,16 @@ export default class PatientInfo extends React.Component<Props, State> {
     const buttons = (
       <View style={{ flexDirection: "row" }}>
         <Button
-          buttonStyle={styles.smallButton}
+          buttonStyle={
+            patient.inObservation
+              ? styles.smallButton
+              : styles.smallButtonDisabled
+          }
           containerStyle={styles.buttonContainer}
           onPress={this.handleNavigateNewEntry}
           title="Add Entry"
           titleProps={{ style: styles.smallButtonTitle }}
           underlayColor="white"
-          disabled={!patient.inObservation}
-          disabledStyle={{ backgroundColor: colours.disabled }}
         />
         {extraButton}
       </View>
