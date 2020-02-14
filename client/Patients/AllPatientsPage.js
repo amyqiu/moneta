@@ -105,7 +105,7 @@ export default class AllPatientsPage extends React.Component<Props, State> {
           buttonStyle={styles.smallButton}
           containerStyle={styles.buttonContainer}
           onPress={() => this.navigatePatient(patient)}
-          title="Overview"
+          title="Profile"
           titleProps={{ style: styles.smallButtonTitle }}
         />
       );

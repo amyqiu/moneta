@@ -13,6 +13,7 @@ import {
 } from "victory-native";
 import { Table, Row, Rows } from "react-native-table-component";
 import { RFValue } from "react-native-responsive-fontsize";
+import moment from "moment";
 import styles from "../Patients/PatientStyles";
 import type { Patient } from "../Patients/Patient";
 import BEHAVIOURS from "../NewEntry/Behaviours";
@@ -40,6 +41,10 @@ type State = {
   secondObservation: ?Object,
   firstObservationData: ?Object,
   secondObservationData: ?Object,
+  firstStartTime: ?moment,
+  secondStartTime: ?moment,
+  firstEndTime: ?moment,
+  secondEndTime: ?moment,
   isLoading: boolean
 };
 
@@ -58,6 +63,10 @@ export default class ObservationComparison extends React.Component<
       secondObservation: null,
       firstObservationData: null,
       secondObservationData: null,
+      firstStartTime: null,
+      secondStartTime: null,
+      firstEndTime: null,
+      secondEndTime: null,
       isLoading: false
     };
   }
@@ -88,12 +97,16 @@ export default class ObservationComparison extends React.Component<
         this.setState({
           firstObservation: observation,
           firstObservationData: observationData,
+          firstStartTime: observation.start_time,
+          firstEndTime: observation.end_time,
           isLoading: false
         });
       } else {
         this.setState({
           secondObservation: observation,
           secondObservationData: observationData,
+          secondStartTime: observation.start_time,
+          secondEndTime: observation.end_time,
           isLoading: false
         });
       }
@@ -103,7 +116,14 @@ export default class ObservationComparison extends React.Component<
   };
 
   calculateTrendChanges = () => {
-    const { firstObservationData, secondObservationData } = this.state;
+    const {
+      firstObservationData,
+      secondObservationData,
+      firstStartTime,
+      secondStartTime,
+      firstEndTime,
+      secondEndTime
+    } = this.state;
     if (firstObservationData == null || secondObservationData == null) {
       return null;
     }
@@ -117,13 +137,21 @@ export default class ObservationComparison extends React.Component<
 
         let text;
         if (firstCount === secondCount) {
-          text = "No change";
+          text = "\u27F7 No change";
         } else if (firstCount === 0) {
           text = `${secondCount} new occurences`;
         } else {
-          const diff = (secondCount - firstCount) / (firstCount * 1.0);
+          const firstDaysPassed = firstEndTime
+            ? moment(firstEndTime).diff(firstStartTime, "hours")
+            : moment().diff(firstStartTime, "hours");
+          const secondDaysPassed = secondEndTime
+            ? moment(secondEndTime).diff(secondStartTime, "hours")
+            : moment().diff(secondStartTime, "hours");
+          const diff =
+            (secondCount / secondDaysPassed - firstCount / firstDaysPassed) /
+            ((firstCount / firstDaysPassed) * 1.0);
           const displayDiff = Math.abs(diff * 100).toFixed(0);
-          text = `${displayDiff}% ${diff > 0 ? "increase" : "decrease"}`;
+          text = `${diff > 0 ? "\u2191" : "\u2193"} ${displayDiff}%`;
         }
 
         data.push([behaviour, text]);
@@ -133,7 +161,7 @@ export default class ObservationComparison extends React.Component<
     return (
       <Table borderStyle={{ borderWidth: 1, borderColor: colours.primaryGrey }}>
         <Row
-          data={["Behaviour", "Trend"]}
+          data={["Behaviour", "Trend (Scaled by Duration)"]}
           style={styles.tableHeader}
           textStyle={styles.tableHeaderText}
         />
