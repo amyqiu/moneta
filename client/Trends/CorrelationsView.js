@@ -4,31 +4,22 @@ import { View } from "react-native";
 import { Text } from "react-native-elements";
 import Carousel from "react-native-snap-carousel";
 import { Table, Row, Rows } from "react-native-table-component";
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import type { Patient } from "../Patients/Patient";
 import navigationStyles from "../NavigationStyles";
 import styles from "../Patients/PatientStyles";
-import {
-  isTablet,
-  scaleWidth,
-  getLastObservation,
-  createDropdownPeriods,
-  SELECT_COLOURS,
-  SELECT_ICON
-} from "../Helpers";
+import { isTablet, scaleWidth } from "../Helpers";
 import BEHAVIOURS from "../NewEntry/Behaviours";
 import SUGGESTIONS from "./Suggestions";
 import colours from "../Colours";
 
 type Props = {
-  patient: Patient
+  multiselect: Object,
+  observationID: ?string
 };
 
 type State = {
   correlations: ?Map<string, Object>,
   processedBehaviours: ?Map<string, number>,
   totalOccurrences: ?number,
-  selectedPeriods: Array<string>,
   observation: ?Object
 };
 
@@ -37,13 +28,11 @@ export default class CorrelationsView extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const lastObservation = getLastObservation(props.patient);
     this.state = {
       correlations: null,
       processedBehaviours: null,
       totalOccurrences: null,
-      observation: null,
-      selectedPeriods: lastObservation ? [lastObservation] : []
+      observation: null
     };
   }
 
@@ -52,27 +41,19 @@ export default class CorrelationsView extends React.Component<Props, State> {
     this.updateData();
   }
 
-  // async componentDidUpdate(prevProps: Props) {
-  //   const { observationID } = this.props;
-  //   if (observationID !== prevProps.observationID) {
-  //     this.updateData();
-  //   }
-  // }
+  async componentDidUpdate(prevProps: Props) {
+    const { observationID } = this.props;
+    if (observationID !== prevProps.observationID) {
+      this.updateData();
+    }
+  }
 
   componentWillUnmount() {
     this._isMounted = false;
   }
 
-  getSelectedObservation = () => {
-    const { selectedPeriods } = this.state;
-    if (selectedPeriods.length > 0) {
-      return selectedPeriods[0];
-    }
-    return null;
-  };
-
   updateData = () => {
-    const observationID = this.getSelectedObservation();
+    const { observationID } = this.props;
     if (observationID == null) {
       return;
     }
@@ -293,57 +274,19 @@ export default class CorrelationsView extends React.Component<Props, State> {
     );
   };
 
-  handleObservationChange = async (selectedPeriods: Array<Object>) => {
-    if (selectedPeriods.length > 0) {
-      this.setState({ selectedPeriods }, this.updateData);
-    }
-  };
-
   static navigationOptions = {
     ...navigationStyles,
     title: "Trends"
   };
 
   render() {
-    const { patient } = this.props;
-    const {
-      processedBehaviours,
-      observation,
-      correlations,
-      selectedPeriods
-    } = this.state;
-
-    const dropdownPeriods = createDropdownPeriods(patient.observations);
+    const { multiselect } = this.props;
+    const { processedBehaviours, observation, correlations } = this.state;
 
     return (
       <View style={{ paddingBottom: 8 }}>
         <View style={{ marginBottom: 4 }}>
-          <View style={styles.centerContainer}>
-            <Text style={styles.selectText}>Select observation period:</Text>
-          </View>
-          <View style={{ ...styles.centerContainer, paddingBottom: 8 }}>
-            <SectionedMultiSelect
-              items={dropdownPeriods}
-              single
-              uniqueKey="id"
-              selectText="Select observation period"
-              onSelectedItemsChange={this.handleObservationChange}
-              selectedItems={selectedPeriods}
-              styles={{
-                selectToggle: {
-                  ...styles.observationToggle,
-                  backgroundColor: colours.actionBlue
-                },
-                selectToggleText: styles.dropdownToggleText,
-                chipText: styles.dropdownChipText,
-                confirmText: styles.dropdownConfirmText,
-                itemText: styles.dropdownItemText
-              }}
-              colors={SELECT_COLOURS}
-              selectedIconComponent={SELECT_ICON}
-              showCancelButton
-            />
-          </View>
+          {multiselect}
           {observation == null ||
           processedBehaviours == null ||
           correlations == null ||

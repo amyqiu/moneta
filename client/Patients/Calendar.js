@@ -185,21 +185,29 @@ export default class Calendar extends React.Component<Props, State> {
       );
     }
 
-    const data = [];
     const formattedDay = selectedStartDate.format("LL");
+    const header = [];
+    header.push(
+      <Text style={styles.entryHeader} key={formattedDay}>
+        {formattedDay}
+      </Text>
+    );
     observationIds.forEach(observation => {
-      data.push({
-        key: observation,
-        isEntry: false,
-        observationId: observation,
-        rowTitle: "Observation Overview"
-      });
+      header.push(
+        <TouchableOpacity
+          style={styles.entryItem}
+          onPress={() => this.navigateObservationOverview(observation)}
+          key={observation}
+        >
+          <Text style={styles.entryLink}>View Observation Overview</Text>
+        </TouchableOpacity>
+      );
     });
+    const data = [];
     entryTimes.forEach(entry => {
       const time = moment(entry.time).format("h:mm A");
       data.push({
         key: entry.time,
-        isEntry: true,
         entryData: entry,
         rowTitle: `${time} Entry`
       });
@@ -213,19 +221,11 @@ export default class Calendar extends React.Component<Props, State> {
         horizontal={false}
         numColumns={isTablet() ? 3 : 2}
         ItemSeparatorComponent={() => <View style={styles.entrySeparator} />}
-        ListHeaderComponent={() => (
-          <Text style={styles.entryHeader} key={formattedDay}>
-            {formattedDay}
-          </Text>
-        )}
+        ListHeaderComponent={() => <View>{header}</View>}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.entryItem}
-            onPress={
-              item.isEntry
-                ? () => this.navigateOldEntry(item.entryData)
-                : () => this.navigateObservationOverview(item.observationId)
-            }
+            onPress={() => this.navigateOldEntry(item.entryData)}
           >
             <Text style={styles.entryLink}>{item.rowTitle}</Text>
           </TouchableOpacity>

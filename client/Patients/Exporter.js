@@ -2,35 +2,25 @@
 import * as React from "react";
 import { Share, View, ActivityIndicator } from "react-native";
 import { Text } from "react-native-elements";
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import * as FileSystem from "expo-file-system";
 import colours from "../Colours";
-import type { Patient } from "./Patient";
 import styles from "./PatientStyles";
-import {
-  getLastObservation,
-  createDropdownPeriods,
-  SELECT_COLOURS,
-  SELECT_ICON
-} from "../Helpers";
 
 type Props = {
-  patient: Patient
+  multiselect: Object,
+  observationID: ?string
 };
 
 type State = {
   isLoading: boolean,
-  selectedPeriods: Array<string>,
   downloadLink: ?string
 };
 
 export default class Exporter extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getLastObservation(props.patient);
     this.state = {
       isLoading: false,
-      selectedPeriods: lastObservation ? [lastObservation] : [],
       downloadLink: null
     };
   }
@@ -39,22 +29,15 @@ export default class Exporter extends React.Component<Props, State> {
     this.getDownloadLink();
   }
 
-  getSelectedObservation = () => {
-    const { selectedPeriods } = this.state;
-    if (selectedPeriods.length > 0) {
-      return selectedPeriods[0];
+  async componentDidUpdate(prevProps: Props) {
+    const { observationID } = this.props;
+    if (observationID !== prevProps.observationID) {
+      this.getDownloadLink();
     }
-    return null;
-  };
-
-  handleObservationChange = async (selectedPeriods: Array<Object>) => {
-    if (selectedPeriods.length > 0) {
-      this.setState({ selectedPeriods });
-    }
-  };
+  }
 
   getDownloadLink = async () => {
-    const observationID = this.getSelectedObservation();
+    const { observationID } = this.props;
     // No observation selected
     if (observationID == null) {
       return;
@@ -82,7 +65,9 @@ export default class Exporter extends React.Component<Props, State> {
 
   openPDFLink = async () => {
     const { downloadLink } = this.state;
-    const observationID = this.getSelectedObservation();
+    const { observationID } = this.props;
+    console.log("download link:");
+    console.log(downloadLink);
 
     // No observation selected
     if (observationID == null || downloadLink == null) {
@@ -106,18 +91,8 @@ export default class Exporter extends React.Component<Props, State> {
   };
 
   render() {
-    const { patient } = this.props;
-    const { isLoading, selectedPeriods, downloadLink } = this.state;
-
-    if (patient.observations.length === 0) {
-      return (
-        <View style={styles.centerContainer}>
-          <Text style={styles.errorText}>No observation periods yet.</Text>
-        </View>
-      );
-    }
-
-    const dropdownPeriods = createDropdownPeriods(patient.observations);
+    const { multiselect } = this.props;
+    const { isLoading, downloadLink } = this.state;
 
     const spinner = (
       <ActivityIndicator size="large" color={colours.primaryGrey} />
@@ -136,28 +111,7 @@ export default class Exporter extends React.Component<Props, State> {
 
     return (
       <View style={styles.singleObservation}>
-        <Text style={styles.selectText}>Select observation period:</Text>
-        <SectionedMultiSelect
-          items={dropdownPeriods}
-          single
-          uniqueKey="id"
-          selectText="Select observation period"
-          onSelectedItemsChange={this.handleObservationChange}
-          selectedItems={selectedPeriods}
-          styles={{
-            selectToggle: {
-              ...styles.observationToggle,
-              backgroundColor: colours.actionBlue
-            },
-            selectToggleText: styles.dropdownToggleText,
-            chipText: styles.dropdownChipText,
-            confirmText: styles.dropdownConfirmText,
-            itemText: styles.dropdownItemText
-          }}
-          colors={SELECT_COLOURS}
-          selectedIconComponent={SELECT_ICON}
-          showCancelButton
-        />
+        {multiselect}
         {isLoading ? spinner : download}
       </View>
     );

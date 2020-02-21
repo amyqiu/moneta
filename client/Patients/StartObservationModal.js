@@ -100,8 +100,9 @@ export default class StartObservationModal extends React.Component<
                   customEntryFields[0] = notes;
                   this.setState({ customEntryFields });
                 }}
+                placeholder="Custom Behaviour 1"
                 value={customEntryFields[0]}
-                height={isTablet() ? 60 : 30}
+                height={isTablet() ? 60 : 35}
                 maxLength={32}
               />
               <TextInput
@@ -110,8 +111,9 @@ export default class StartObservationModal extends React.Component<
                   customEntryFields[1] = notes;
                   this.setState({ customEntryFields });
                 }}
+                placeholder="Custom Behaviour 2"
                 value={customEntryFields[1]}
-                height={isTablet() ? 60 : 30}
+                height={isTablet() ? 60 : 35}
                 maxLength={32}
               />
             </View>
@@ -125,8 +127,9 @@ export default class StartObservationModal extends React.Component<
                   customEntryFields[2] = notes;
                   this.setState({ customEntryFields });
                 }}
+                placeholder="Custom Context 1"
                 value={customEntryFields[2]}
-                height={isTablet() ? 60 : 30}
+                height={isTablet() ? 60 : 35}
                 maxLength={32}
               />
               <TextInput
@@ -135,8 +138,9 @@ export default class StartObservationModal extends React.Component<
                   customEntryFields[3] = notes;
                   this.setState({ customEntryFields });
                 }}
+                placeholder="Custom Context 2"
                 value={customEntryFields[3]}
-                height={isTablet() ? 60 : 30}
+                height={isTablet() ? 60 : 35}
                 maxLength={32}
               />
             </View>

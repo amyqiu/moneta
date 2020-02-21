@@ -1,9 +1,10 @@
 // @flow
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { Button } from "react-native-elements";
+import { Button, Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { NavigationScreenProps } from "react-navigation";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import Toast from "react-native-easy-toast";
 import colours from "../Colours";
 import styles from "./PatientStyles";
@@ -19,7 +20,14 @@ import Exporter from "./Exporter";
 import type { Patient } from "./Patient";
 import ObservationComparison from "../Trends/ObservationComparison";
 import CorrelationsView from "../Trends/CorrelationsView";
-import { parseRawPatient, getLastObservation, isTablet } from "../Helpers";
+import {
+  parseRawPatient,
+  getLastObservation,
+  createDropdownPeriods,
+  isTablet,
+  SELECT_COLOURS,
+  SELECT_ICON
+} from "../Helpers";
 
 type Props = NavigationScreenProps & {};
 
@@ -27,6 +35,7 @@ type State = {
   loadingObservation: boolean,
   startObservationModal: boolean,
   endObservationModal: boolean,
+  selectedPeriods: Array<string>,
   patient: Patient
 };
 
@@ -50,10 +59,12 @@ export default class PatientPage extends React.Component<Props, State> {
     super(props);
     const { navigation } = props;
     const patient = navigation.getParam("patient");
+    const lastObservation = getLastObservation(patient);
     this.state = {
       loadingObservation: false,
       startObservationModal: false,
       endObservationModal: false,
+      selectedPeriods: lastObservation ? [lastObservation] : [],
       patient
     };
   }
@@ -198,11 +209,26 @@ export default class PatientPage extends React.Component<Props, State> {
       });
   };
 
+  getSelectedObservation = () => {
+    const { selectedPeriods } = this.state;
+    if (selectedPeriods.length > 0) {
+      return selectedPeriods[0];
+    }
+    return null;
+  };
+
+  handleObservationChange = async (selectedPeriods: Array<Object>) => {
+    if (selectedPeriods.length > 0) {
+      this.setState({ selectedPeriods });
+    }
+  };
+
   render() {
     const {
       loadingObservation,
       startObservationModal,
       endObservationModal,
+      selectedPeriods,
       patient
     } = this.state;
     const observationID = getLastObservation(patient);
@@ -224,6 +250,43 @@ export default class PatientPage extends React.Component<Props, State> {
         loading={loadingObservation}
       />
     );
+
+    const dropdownPeriods = createDropdownPeriods(patient.observations);
+    const multiselect =
+      patient.observations.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>No observation periods yet.</Text>
+        </View>
+      ) : (
+        <View>
+          <View style={styles.centerContainer}>
+            <Text style={styles.selectText}>Select observation period:</Text>
+          </View>
+          <View style={{ ...styles.centerContainer, paddingBottom: 8 }}>
+            <SectionedMultiSelect
+              items={dropdownPeriods}
+              single
+              uniqueKey="id"
+              selectText="Select observation period"
+              onSelectedItemsChange={this.handleObservationChange}
+              selectedItems={selectedPeriods}
+              styles={{
+                selectToggle: {
+                  ...styles.observationToggle,
+                  backgroundColor: colours.actionBlue
+                },
+                selectToggleText: styles.dropdownToggleText,
+                chipText: styles.dropdownChipText,
+                confirmText: styles.dropdownConfirmText,
+                itemText: styles.dropdownItemText
+              }}
+              colors={SELECT_COLOURS}
+              selectedIconComponent={SELECT_ICON}
+              showCancelButton
+            />
+          </View>
+        </View>
+      );
 
     return (
       <View style={styles.background}>
@@ -270,14 +333,22 @@ export default class PatientPage extends React.Component<Props, State> {
               }
               iconName="ios-information-circle"
             >
-              <PatientTrends startExpanded patient={patient} />
+              <PatientTrends
+                startExpanded
+                patient={patient}
+                multiselect={multiselect}
+                observationID={this.getSelectedObservation()}
+              />
             </CollapsibleCard>
             <CollapsibleCard
               startExpanded={false}
               title={isTablet() ? "Behaviour Correlations" : "Correlations"}
               iconName="ios-paper"
             >
-              <CorrelationsView patient={patient} />
+              <CorrelationsView
+                multiselect={multiselect}
+                observationID={this.getSelectedObservation()}
+              />
             </CollapsibleCard>
             <CollapsibleCard
               startExpanded={false}
@@ -293,7 +364,10 @@ export default class PatientPage extends React.Component<Props, State> {
               title="Export"
               iconName="ios-download"
             >
-              <Exporter patient={patient} />
+              <Exporter
+                multiselect={multiselect}
+                observationID={this.getSelectedObservation()}
+              />
             </CollapsibleCard>
           </View>
         </ScrollView>
