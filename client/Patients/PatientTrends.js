@@ -11,21 +11,20 @@ import styles from "./PatientStyles";
 import colours from "../Colours";
 import {
   isTablet,
-  getLastObservation,
-  createDropdownPeriods,
   createDropdownBehaviours,
   SELECT_COLOURS,
   SELECT_ICON
 } from "../Helpers";
 
 type Props = {
-  patient: Patient
+  patient: Patient,
+  multiselect: Object,
+  observationID: ?string
 };
 
 type State = {
   isLoading: boolean,
   selectedBehaviours: Array<Object>,
-  selectedPeriods: Array<string>,
   aggregatedBehaviours: ?Map<string, Array<number>>,
   entryTimes: ?Array<moment>,
   observation: ?Object
@@ -34,11 +33,9 @@ type State = {
 export default class EndObservationModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const lastObservation = getLastObservation(props.patient);
     this.state = {
       isLoading: false,
       selectedBehaviours: [...BEHAVIOURS.keys()],
-      selectedPeriods: lastObservation ? [lastObservation] : [],
       aggregatedBehaviours: null,
       entryTimes: null,
       observation: null
@@ -49,16 +46,15 @@ export default class EndObservationModal extends React.Component<Props, State> {
     this.getTrendData();
   }
 
-  getSelectedObservation = () => {
-    const { selectedPeriods } = this.state;
-    if (selectedPeriods.length > 0) {
-      return selectedPeriods[0];
+  async componentDidUpdate(prevProps: Props) {
+    const { observationID } = this.props;
+    if (observationID !== prevProps.observationID) {
+      this.getTrendData();
     }
-    return null;
-  };
+  }
 
   getTrendData = async () => {
-    const observationID = this.getSelectedObservation();
+    const { observationID } = this.props;
     // No observation selected
     if (observationID == null) {
       return;
@@ -150,20 +146,13 @@ export default class EndObservationModal extends React.Component<Props, State> {
     this.setState({ selectedBehaviours });
   };
 
-  handleObservationChange = async (selectedPeriods: Array<Object>) => {
-    if (selectedPeriods.length > 0) {
-      this.setState({ selectedPeriods }, this.getTrendData);
-    }
-  };
-
   render() {
-    const { patient } = this.props;
+    const { patient, multiselect, observationID } = this.props;
     const {
       isLoading,
       aggregatedBehaviours,
       entryTimes,
       selectedBehaviours,
-      selectedPeriods,
       observation
     } = this.state;
 
@@ -180,14 +169,12 @@ export default class EndObservationModal extends React.Component<Props, State> {
       observation ? observation.personalized_behaviour_1_title : "",
       observation ? observation.personalized_behaviour_2_title : ""
     );
-    const dropdownPeriods = createDropdownPeriods(patient.observations);
-    const selectedObservationID = this.getSelectedObservation();
 
     let periodStart = null;
     let periodEnd = null;
-    if (selectedObservationID) {
+    if (observationID) {
       const selectedObservation = patient.observations.find(
-        o => o._id === selectedObservationID
+        o => o._id === observationID
       );
       if (selectedObservation) {
         periodStart = moment(selectedObservation.start_time);
@@ -210,7 +197,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
       aggregatedBehaviours == null ||
       entryTimes == null ||
       entryTimes.length === 0 ||
-      selectedObservationID == null ? (
+      observationID == null ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
             No entries available for selected observation period.
@@ -250,32 +237,7 @@ export default class EndObservationModal extends React.Component<Props, State> {
 
     return (
       <View>
-        <View style={styles.singleObservation}>
-          <View style={styles.centerContainer}>
-            <Text style={styles.selectText}>Select observation period:</Text>
-          </View>
-          <SectionedMultiSelect
-            items={dropdownPeriods}
-            single
-            uniqueKey="id"
-            selectText="Select observation period"
-            onSelectedItemsChange={this.handleObservationChange}
-            selectedItems={selectedPeriods}
-            styles={{
-              selectToggle: {
-                ...styles.observationToggle,
-                backgroundColor: colours.actionBlue
-              },
-              selectToggleText: styles.dropdownToggleText,
-              chipText: styles.dropdownChipText,
-              confirmText: styles.dropdownConfirmText,
-              itemText: styles.dropdownItemText
-            }}
-            colors={SELECT_COLOURS}
-            selectedIconComponent={SELECT_ICON}
-            showCancelButton
-          />
-        </View>
+        <View style={styles.singleObservation}>{multiselect}</View>
         {observation != null ? (
           <View>
             <Text style={{ ...styles.h4Text, paddingBottom: 8 }}>Notes</Text>
