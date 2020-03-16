@@ -1,4 +1,7 @@
 # Moneta
+Moneta is a an application that enables tracking and analysis of behavioural and psychological symptoms of dementia in long-term care homes.
+
+# For Developers
 https://expo.io/@bmefydpgroup/client
 
 ## Setup Instructions for Server
