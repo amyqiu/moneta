@@ -1,6 +1,7 @@
 # Moneta
 Moneta is a an application that enables tracking and analysis of behavioural and psychological symptoms of dementia in long-term care homes.
 
+## Screenshots
 <img src="https://github.com/amyqiu/moneta/blob/master/client/assets/New%20entry.png" width="460" height="633">
 <img src="https://github.com/amyqiu/moneta/blob/master/client/assets/Hourly%20graph.png" width="460" height="633">
 <img src="https://github.com/amyqiu/moneta/blob/master/client/assets/Correlations.png" width="460" height="633">
