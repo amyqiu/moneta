@@ -37,7 +37,7 @@
     "react-native-web": "^0.11.7",
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",
-    "victory-native": "31.0.0"
+    "victory-native": "36.6.8"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
